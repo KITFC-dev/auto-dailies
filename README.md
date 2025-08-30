@@ -32,3 +32,7 @@ Run `main.py` with arguments:
     -H, --headless: Starts the browser in headless mode.
     -C, --checkin: Runs the daily check-in.
     -G, --giveaway: Runs the giveaway.
+
+## Todo list
+
+*   Add automatic captcha solving/bypassing
