@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils.logger import prsuccess, prwarn, prinfo
-from config import ELEMENTS, GIVEAWAY_URL
+from config import ELEMENTS, GIVEAWAY_URL, PRICE_THRESHOLD
 
 def run_giveaway(driver):
     """Checks out all giveaways on the giveaways main page """
@@ -39,13 +39,22 @@ def click_giveaway_join_button(driver):
         # Scroll into view
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", join_button)
         
-        # Check if giveaway is free
+        # Check giveaway's price
         try:
             price_element = driver.find_element(By.CLASS_NAME, ELEMENTS["giveaway_price"])
             price_text = price_element.text.strip()
             if price_text not in ["0", "Бесплатно", "Free"]:
-                prwarn(f"Giveaway is PAID (Price: {price_text})")
-                return False
+                prwarn(f"Giveaway's price is: {price_text}")
+                
+                # Check if price is above threshold
+                try:
+                    price_value = float(price_text)
+                    if price_value > PRICE_THRESHOLD:
+                        prwarn(f"Giveaway price ({price_value}) is above {PRICE_THRESHOLD}. Skipping.")
+                        return False
+                except ValueError:
+                    prwarn(f"Value of PRICE_THRESHOLD is not a number: '{price_text}'. Skipping.")
+                    return False
         except Exception:
             prwarn("Could not determine giveaway price")
         

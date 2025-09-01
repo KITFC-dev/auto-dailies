@@ -9,6 +9,11 @@ GIVEAWAY_URL = f"{BASE_URL}/give"
 CHROMIUM_PATH = "res/chromium/chrome.exe"
 CHROMEDRIVER_PATH = "res/chromedriver.exe"
 
+# Settings
+# Price threshold for joining giveaways, if threshold is 1, 
+# it will join all giveaways with price 1 or less.
+PRICE_THRESHOLD = 0
+
 # Paths for account pickle files with cookies
 ACCOUNTS = {
     name: f"accounts/{name}"

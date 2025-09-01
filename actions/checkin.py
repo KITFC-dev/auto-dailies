@@ -18,7 +18,7 @@ def run_daily_checkin(driver):
         button.click()
         prsuccess("Daily check-in button clicked")
     except Exception:
-        prwarn("No daily check-in button detected")
+        prwarn("No daily check-in button detected. Seems like you already checked in today")
         return False
 
     return True

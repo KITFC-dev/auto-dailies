@@ -40,8 +40,8 @@ def main():
     """
     parser = argparse.ArgumentParser(description="AutoDailies")
     parser.add_argument("-H", "--headless", action="store_true")
-    parser.add_argument("-C", "--checkin", action="store_true")
-    parser.add_argument("-G", "--giveaway", action="store_true")
+    parser.add_argument("-c", "--checkin", action="store_true")
+    parser.add_argument("-g", "--giveaway", action="store_true")
     args = parser.parse_args()
 
     # Iterate over all accounts
