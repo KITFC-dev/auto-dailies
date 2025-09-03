@@ -21,11 +21,14 @@ def run_giveaway(driver):
         return False
 
     # Check out giveaways
-    for giveaway_href in giveaway_hrefs:
+    for i, giveaway_href in enumerate(giveaway_hrefs):
         if giveaway_href:
-            prinfo(f"Checking out: {giveaway_href}")
+            prinfo(f"Checking out: giveaway #{i+1} {giveaway_href}")
             driver.get(giveaway_href)
             time.sleep(1)
+            # Delay between giveaways after first one
+            if i > 0:
+                time.sleep(5)
             click_giveaway_join_button(driver)
         else:
             prwarn("No giveaway link found inside the box")
