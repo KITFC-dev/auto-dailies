@@ -26,10 +26,9 @@ def run_giveaway(driver):
             prinfo(f"Checking out: giveaway #{i+1} {giveaway_href}")
             driver.get(giveaway_href)
             time.sleep(1)
-            # Delay between giveaways after first one
-            if i > 0:
+            # Delay between giveaways if it was clicked
+            if click_giveaway_join_button(driver):
                 time.sleep(5)
-            click_giveaway_join_button(driver)
         else:
             prwarn("No giveaway link found inside the box")
             return False
