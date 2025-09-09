@@ -29,7 +29,7 @@ def login_and_run(cookie_file, headless, checkin, giveaway):
     save_cookies(driver, cookie_file)
     driver.quit()
 
-def main():
+def main(headless=False, checkin=False, giveaway=False):
     """
     Entry point of the program
 
@@ -47,7 +47,7 @@ def main():
     # Iterate over all accounts
     for name, cookie_file in ACCOUNTS.items():
         prinfo(f"Processing account: {name}")
-        login_and_run(cookie_file, args.headless, args.checkin, args.giveaway)
+        login_and_run(cookie_file, headless | args.headless, checkin | args.checkin, giveaway | args.giveaway)
         prsuccess(f"Account {name} done")
     
     prsuccess("All done!")
