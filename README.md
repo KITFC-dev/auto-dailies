@@ -29,9 +29,10 @@ A Python script to automate daily tasks on [GenshinDrop.io](https://genshindrop.
 ## Usage
 
 Run `main.py` with arguments:
-    -H, --headless: Starts the browser in headless mode.
-    -C, --checkin: Runs the daily check-in.
-    -G, --giveaway: Runs the giveaway.
+    -H, --headless (bool): Starts the browser in headless mode.
+    -c, --checkin (bool): Runs the daily check-in.
+    -g, --giveaway (bool): Runs the giveaway.
+    --accounts (array): Specify which accounts to process, if empty, all accounts will be processed.
 
 ## Todo list
 
