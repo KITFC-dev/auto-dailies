@@ -29,7 +29,7 @@ def login_and_run(cookie_file, headless, checkin, giveaway):
     save_cookies(driver, cookie_file)
     driver.quit()
 
-def main(headless=False, checkin=False, giveaway=False):
+def main(headless=False, checkin=False, giveaway=False, accounts=[]):
     """
     Entry point of the program
 
@@ -39,18 +39,25 @@ def main(headless=False, checkin=False, giveaway=False):
         -G, --giveaway: Runs the giveaway.
     """
     parser = argparse.ArgumentParser(description="AutoDailies")
-    parser.add_argument("-H", "--headless", action="store_true")
-    parser.add_argument("-c", "--checkin", action="store_true")
-    parser.add_argument("-g", "--giveaway", action="store_true")
+    parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
+    parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
+    parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
+    parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
     args = parser.parse_args()
 
     # Iterate over all accounts
     for name, cookie_file in ACCOUNTS.items():
+        if (name not in args.accounts if args.accounts else False) or (name not in accounts if accounts else False):
+            continue
         prinfo(f"Processing account: {name}")
-        login_and_run(cookie_file, headless | args.headless, checkin | args.checkin, giveaway | args.giveaway)
+        login_and_run(cookie_file, 
+                    headless | args.headless, 
+                    checkin | args.checkin, 
+                    giveaway | args.giveaway,
+                    )
         prsuccess(f"Account {name} done")
     
     prsuccess("All done!")
 
 if __name__ == "__main__":
-    main()
+    main(checkin=True, giveaway=True)
