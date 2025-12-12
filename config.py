@@ -34,4 +34,8 @@ ELEMENTS = {
 
     # Common
     "button_confirm": 'swal-button swal-button--confirm',
+
+    # Balance
+    "balance_label": 'user_mor_value',
+    "coins_label": 'user_coin_value',
 }
