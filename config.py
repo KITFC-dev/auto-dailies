@@ -4,6 +4,7 @@ import os
 BASE_URL = "https://genshindrop.io"
 CHECKIN_URL = f"{BASE_URL}/checkin"
 GIVEAWAY_URL = f"{BASE_URL}/give"
+PROFILE_URL = f"{BASE_URL}/profile"
 
 # Paths for browser binary and chromedriver
 CHROMIUM_PATH = "res/chromium/chrome.exe"
@@ -38,4 +39,14 @@ ELEMENTS = {
     # Balance
     "balance_label": 'user_mor_value',
     "coins_label": 'user_coin_value',
+
+    # Profile info
+    "profile_panel_box": 'profile-account-panel',
+    "name": "mainUsernameValue",
+
+    "profile_data_box": 'profile-user-data',
+    "id": "mr-1",
+    "avatar": "profile-avatar",
+    "is_verified": "profile-verified_icon true"
+
 }

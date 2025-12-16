@@ -6,13 +6,13 @@ from utils.logger import prsuccess, prwarn
 from config import ELEMENTS, BASE_URL
 
 def run_get_balance(driver):
-    res = {"balance": 0, "coins": 0}
+    res = {}
     wait = WebDriverWait(driver, 2)
     driver.get(BASE_URL)
 
     # Selectors
     balance_locator = (By.CSS_SELECTOR, f"span[data-key='{ELEMENTS['balance_label']}']")
-    coins_locator   = (By.CSS_SELECTOR, f"span[data-key='{ELEMENTS['coins_label']}']")
+    coins_locator = (By.CSS_SELECTOR, f"span[data-key='{ELEMENTS['coins_label']}']")
 
     try:
         # Wait until elements are present
@@ -30,4 +30,13 @@ def run_get_balance(driver):
     except Exception:
         prwarn("No balance or coins label detected.")
 
+    return res
+
+def run_get_inventory(driver):
+    # Will be implemented later
+    pass
+
+def get_profile(driver):
+    res = {"id": "", "avatar_url": "", "username": "", "is_verified": False}
+    # Will be implemented later
     return res

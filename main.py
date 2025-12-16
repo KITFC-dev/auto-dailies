@@ -20,8 +20,12 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
         return
     driver.refresh()
 
+    balance = run_get_balance(driver)
+    if balance == {}:
+        prerror(f"Failed to get balance, the login may have failed. Skipping {cookie_file}")
+        return
+
     # Run actions
-    run_get_balance(driver)
     if checkin:
         run_daily_checkin(driver)
     if giveaway:
@@ -71,4 +75,4 @@ def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=
     prsuccess("All done!")
 
 if __name__ == "__main__":
-    main(checkin=True, giveaway=True, wait_after=0)
+    main(checkin=True, giveaway=True, wait_after=60)
