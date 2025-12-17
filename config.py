@@ -15,6 +15,7 @@ CHROMEDRIVER_PATH = "res/chromedriver.exe"
 # it will join all giveaways with price 1 or less.
 PRICE_THRESHOLD = 0
 # Discord webhook url to send logs to
+# this one is not working btw, just an example
 WEBHOOK_URL = "https://discord.com/api/webhooks/1450972545346965615/hVxcPNnaf00UQAZllXXxh0ubbANi-V1vbpCInbiBad_pODmihYA5l8NSRzLvRCqzN4aU"
 
 # Paths for account pickle files with cookies

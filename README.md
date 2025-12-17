@@ -31,7 +31,7 @@ A Python script to automate daily tasks on [GenshinDrop.io](https://genshindrop.
 ## Usage
 
 ```text
-usage: main.py [-h] [-H] [-c] [-g] [--accounts [ACCOUNTS ...]] [-w WAIT_AFTER]
+usage: main.py [-h] [-H] [-c] [-g] [--accounts [ACCOUNTS ...]] [-w WAIT_AFTER] [--webhook_url WEBHOOK_URL]
 
 AutoDailies
 
@@ -44,6 +44,8 @@ options:
                         Specify which accounts to process. If empty, all accounts will be processed.
   -w WAIT_AFTER, --wait-after WAIT_AFTER
                         Number of seconds to wait before closing the browser.
+  --webhook_url WEBHOOK_URL
+                        Discord webhook URL to send logs to.
 ```
 
 ## Todo list
