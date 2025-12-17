@@ -1,6 +1,8 @@
 import argparse
 import time
 
+import config
+
 from config import ACCOUNTS, CHROMIUM_PATH, CHROMEDRIVER_PATH
 from browser import create_driver
 from utils.cookies import load_cookies, save_cookies
@@ -17,13 +19,14 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
     # Load cookies to browser
     if not load_cookies(driver, cookie_file):
         prerror(f"No cookie file: {cookie_file}")
-        return
+        return False
     driver.refresh()
 
+    # Verify if login was successful
     balance = run_get_balance(driver)
     if balance == {}:
         prerror(f"Failed to get balance, the login may have failed. Skipping {cookie_file}")
-        return
+        return False
 
     # Run actions
     if checkin:
@@ -39,6 +42,8 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
     # Cleanup
     save_cookies(driver, cookie_file)
     driver.quit()
+
+    return True
 
 def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=0):
     """
@@ -57,22 +62,35 @@ def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=
     parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
     parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
     parser.add_argument("-w", "--wait-after", type=int, default=0, help="Number of seconds to wait before closing the browser.")
+    parser.add_argument("--webhook_url", type=str, default=None, help="Discord webhook URL to send logs to.")
     args = parser.parse_args()
+
+    # Validate arguments
+    if args.webhook_url:
+        config.WEBHOOK_URL = args.webhook_url
+    prinfo(f"Loading Discord webhook: {config.WEBHOOK_URL}")
+
+    done_accounts = []
+    failed_accounts = []
 
     # Iterate over all accounts
     for name, cookie_file in ACCOUNTS.items():
         if (name not in args.accounts if args.accounts else False) or (name not in accounts if accounts else False):
             continue
         prinfo(f"Processing account: {name}")
-        login_and_run(cookie_file, 
+        if login_and_run(cookie_file, 
                     headless | args.headless, 
                     checkin | args.checkin, 
                     giveaway | args.giveaway,
                     wait_after=wait_after | args.wait_after
-                    )
-        prsuccess(f"Account {name} done")
+                    ):
+            done_accounts.append(name)
+            prsuccess(f"Account {name} done")
+        else:
+            failed_accounts.append(name)
+            prerror(f"Account {name} failed")
     
-    prsuccess("All done!")
+    prsuccess(f"All done!\n{len(done_accounts)} accounts done\n{len(failed_accounts)} accounts failed", webhook=True)
 
 if __name__ == "__main__":
-    main(checkin=True, giveaway=True, wait_after=60)
+    main(checkin=True, giveaway=True, wait_after=0)

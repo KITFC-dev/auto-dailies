@@ -14,6 +14,8 @@ CHROMEDRIVER_PATH = "res/chromedriver.exe"
 # Price threshold for joining giveaways, if threshold is 1, 
 # it will join all giveaways with price 1 or less.
 PRICE_THRESHOLD = 0
+# Discord webhook url to send logs to
+WEBHOOK_URL = "https://discord.com/api/webhooks/1450972545346965615/hVxcPNnaf00UQAZllXXxh0ubbANi-V1vbpCInbiBad_pODmihYA5l8NSRzLvRCqzN4aU"
 
 # Paths for account pickle files with cookies
 ACCOUNTS = {
