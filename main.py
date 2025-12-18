@@ -3,7 +3,7 @@ import time
 
 import config
 
-from config import ACCOUNTS, CHROMIUM_PATH, CHROMEDRIVER_PATH
+from config import BASE_URL, ACCOUNTS, CHROMIUM_PATH, CHROMEDRIVER_PATH
 from browser import create_driver
 from utils.cookies import load_cookies, save_cookies
 from utils.logger import prinfo, prsuccess, prerror
@@ -14,7 +14,7 @@ from actions.state import run_get_balance
 def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0):
     """Logs in to the website using the given cookie file and runs given actions """
     driver = create_driver(CHROMIUM_PATH, CHROMEDRIVER_PATH, headless)
-    driver.get("https://genshindrop.io")
+    driver.get(BASE_URL)
 
     # Load cookies to browser
     if not load_cookies(driver, cookie_file):
@@ -33,6 +33,11 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
         run_daily_checkin(driver)
     if giveaway:
         run_giveaway(driver)
+
+    # Calculate earned coins
+    balance_after = run_get_balance(driver)
+    earned_coins = balance_after["balance"] - balance["balance"]
+    earned_balance = balance_after["coins"] - balance["coins"]
     
     # Wait before closing
     if wait_after > 0:
@@ -43,7 +48,7 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
     save_cookies(driver, cookie_file)
     driver.quit()
 
-    return True
+    return {"earned_coins": earned_coins, "earned_balance": earned_balance}
 
 def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=0):
     """
@@ -70,27 +75,33 @@ def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=
         config.WEBHOOK_URL = args.webhook_url
     prinfo(f"Loading Discord webhook: {config.WEBHOOK_URL}")
 
+    # Variables
     done_accounts = []
     failed_accounts = []
+    earned_coins = 0
+    earned_balance = 0
 
     # Iterate over all accounts
     for name, cookie_file in ACCOUNTS.items():
         if (name not in args.accounts if args.accounts else False) or (name not in accounts if accounts else False):
             continue
         prinfo(f"Processing account: {name}")
-        if login_and_run(cookie_file, 
-                    headless | args.headless, 
-                    checkin | args.checkin, 
-                    giveaway | args.giveaway,
-                    wait_after=wait_after | args.wait_after
-                    ):
+        res = login_and_run(cookie_file, 
+            headless | args.headless, 
+            checkin | args.checkin, 
+            giveaway | args.giveaway,
+            wait_after=wait_after | args.wait_after
+        )
+        if res:
             done_accounts.append(name)
+            earned_coins += res["earned_coins"]
+            earned_balance += res["earned_balance"]
             prsuccess(f"Account {name} done")
         else:
             failed_accounts.append(name)
             prerror(f"Account {name} failed")
     
-    prsuccess(f"All done!\n{len(done_accounts)} accounts done\n{len(failed_accounts)} accounts failed", webhook=True)
+    prsuccess(f"All done!\n{len(done_accounts)} accounts done\n{len(failed_accounts)} accounts failed\n\nEarned coins: {earned_coins}\nEarned balance: {earned_balance}", webhook=True)
 
 if __name__ == "__main__":
     main(checkin=True, giveaway=True, wait_after=0)
