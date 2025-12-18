@@ -16,7 +16,7 @@ CHROMEDRIVER_PATH = "res/chromedriver.exe"
 PRICE_THRESHOLD = 0
 # Discord webhook url to send logs to
 # this one is not working btw, just an example
-WEBHOOK_URL = "https://discord.com/api/webhooks/1450972545346965615/hVxcPNnaf00UQAZllXXxh0ubbANi-V1vbpCInbiBad_pODmihYA5l8NSRzLvRCqzN4aU"
+WEBHOOK_URL = "https://discord.com/api/webhooks/1450977245433827330/Jj_iswT_Vv2ZQw9-pg1rLaRpwbY8ZWwbCNeQOZsjZ5LAZICBcAVUBgCfhNtINvf72AOg"
 
 # Paths for account pickle files with cookies
 ACCOUNTS = {

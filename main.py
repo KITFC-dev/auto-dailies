@@ -36,8 +36,8 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
 
     # Calculate earned coins
     balance_after = run_get_balance(driver)
-    earned_coins = balance_after["balance"] - balance["balance"]
-    earned_balance = balance_after["coins"] - balance["coins"]
+    earned_coins = balance_after["coins"] - balance["coins"]
+    earned_balance = balance_after["balance"] - balance["balance"]
     
     # Wait before closing
     if wait_after > 0:
