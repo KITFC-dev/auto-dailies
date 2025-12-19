@@ -3,10 +3,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils.logger import prsuccess, prwarn
-from config import ELEMENTS, CHECKIN_URL
+from config import ELEMENTS, CHECKIN_URL, WAIT_TIMEOUT
 
 def run_daily_checkin(driver):
-    wait = WebDriverWait(driver, 2)
+    wait = WebDriverWait(driver, WAIT_TIMEOUT)
     driver.get(CHECKIN_URL)
 
     try:

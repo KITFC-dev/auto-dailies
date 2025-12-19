@@ -1,22 +1,27 @@
 import os
 
 # URLs for pages on the website
-BASE_URL = "https://genshindrop.io"
-CHECKIN_URL = f"{BASE_URL}/checkin"
-GIVEAWAY_URL = f"{BASE_URL}/give"
-PROFILE_URL = f"{BASE_URL}/profile"
+BASE_URL: str = "https://genshindrop.io"
+CHECKIN_URL: str = f"{BASE_URL}/checkin"
+GIVEAWAY_URL: str = f"{BASE_URL}/give"
+PROFILE_URL: str = f"{BASE_URL}/profile"
 
 # Paths for browser binary and chromedriver
-CHROMIUM_PATH = "res/chromium/chrome.exe"
-CHROMEDRIVER_PATH = "res/chromedriver.exe"
+CHROMIUM_PATH: str = "res/chromium/chrome.exe"
+CHROMEDRIVER_PATH: str = "res/chromedriver.exe"
 
 # Settings
 # Price threshold for joining giveaways, if threshold is 1, 
 # it will join all giveaways with price 1 or less.
-PRICE_THRESHOLD = 0
+GIVEAWAY_PRICE_THRESHOLD: int = 0
+# Price threshold for opening cases, same logic as in giveaways
+CASE_PRICE_THRESHOLD: int = 0
 # Discord webhook url to send logs to
 # this one is not working btw, just an example
-WEBHOOK_URL = "https://discord.com/api/webhooks/1450977245433827330/Jj_iswT_Vv2ZQw9-pg1rLaRpwbY8ZWwbCNeQOZsjZ5LAZICBcAVUBgCfhNtINvf72AOg"
+WEBHOOK_URL: str = "https://discord.com/api/webhooks/1450977245433827330/Jj_iswT_Vv2ZQw9-pg1rLaRpwbY8ZWwbCNeQOZsjZ5LAZICBcAVUBgCfhNtINvf72AOg"
+# Element wait timeout
+WAIT_TIMEOUT: int = 2
+
 
 # Paths for account pickle files with cookies
 ACCOUNTS = {
@@ -49,6 +54,13 @@ ELEMENTS = {
     "case_image": "index-case_cover",
     "case_name": "index-case_name",
     "case_price": "index-case_price",
+
+    "case_requirements": "give-requirements-list",
+    "case_requirement": "give-requirements-list_item__text",
+    "case_coin_price_id": "чайник",
+
+    "case_card_list": "box-page-loot-cards",
+    "case_card": "box-page-loot-cards-card",
 
     # Profile info
     "profile_panel_box": 'profile-account-panel',

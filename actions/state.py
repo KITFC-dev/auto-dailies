@@ -3,11 +3,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils.logger import prinfo, prwarn
-from config import ELEMENTS, BASE_URL
+from config import ELEMENTS, BASE_URL, WAIT_TIMEOUT
 
 def run_get_balance(driver):
     res = {}
-    wait = WebDriverWait(driver, 2)
+    wait = WebDriverWait(driver, WAIT_TIMEOUT)
     driver.get(BASE_URL)
 
     # Selectors

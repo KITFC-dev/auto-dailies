@@ -9,9 +9,10 @@ from utils.cookies import load_cookies, save_cookies
 from utils.logger import prinfo, prsuccess, prerror
 from actions.checkin import run_daily_checkin
 from actions.giveaway import run_giveaway
+from actions.case import get_cases, open_case
 from actions.state import run_get_balance
 
-def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0):
+def login_and_run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     """Logs in to the website using the given cookie file and runs given actions """
     driver = create_driver(CHROMIUM_PATH, CHROMEDRIVER_PATH, headless)
     driver.get(BASE_URL)
@@ -29,6 +30,12 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
         return False
 
     # Run actions
+    if cases:
+        available_cases = get_cases(driver)
+        for case in available_cases:
+            if open_case(driver, case["link"]):
+                prsuccess(f"Opened case: {case['name']}")
+                time.sleep(5)
     if checkin:
         run_daily_checkin(driver)
     if giveaway:
@@ -50,7 +57,7 @@ def login_and_run(cookie_file, headless, checkin, giveaway, wait_after: int = 0)
 
     return {"earned_coins": earned_coins, "earned_balance": earned_balance}
 
-def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=0):
+def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
     """
     Entry point of the program
 
@@ -58,15 +65,18 @@ def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=
         -H, --headless: Starts the browser in headless mode.
         -C, --checkin: Runs the daily check-in.
         -G, --giveaway: Runs the giveaway.
+        -cs, --cases: Open cases.
         -w, --wait-after: Number of seconds to wait before closing the browser.
         --accounts: Specify which accounts to process.
+        --webhook_url: Discord webhook URL to send logs to.
     """
     parser = argparse.ArgumentParser(description="AutoDailies")
     parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
     parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
     parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
-    parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
+    parser.add_argument("-cs", "--cases", action="store_true", help="Open cases.")
     parser.add_argument("-w", "--wait-after", type=int, default=0, help="Number of seconds to wait before closing the browser.")
+    parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
     parser.add_argument("--webhook_url", type=str, default=None, help="Discord webhook URL to send logs to.")
     args = parser.parse_args()
 
@@ -90,6 +100,7 @@ def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=
             headless | args.headless, 
             checkin | args.checkin, 
             giveaway | args.giveaway,
+            cases | args.cases,
             wait_after=wait_after | args.wait_after
         )
         if res:
@@ -104,4 +115,4 @@ def main(headless=False, checkin=False, giveaway=False, accounts=[], wait_after=
     prsuccess(f"All done!\n{len(done_accounts)} accounts done\n{len(failed_accounts)} accounts failed\n\nEarned coins: {earned_coins}\nEarned balance: {earned_balance}", webhook=True)
 
 if __name__ == "__main__":
-    main(checkin=True, giveaway=True, wait_after=0)
+    main(checkin=True, giveaway=True, cases=True, wait_after=0)
