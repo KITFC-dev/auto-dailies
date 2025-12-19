@@ -31,7 +31,7 @@ A Python script to automate daily tasks on [GenshinDrop.io](https://genshindrop.
 ## Usage
 
 ```text
-usage: main.py [-h] [-H] [-c] [-g] [--accounts [ACCOUNTS ...]] [-w WAIT_AFTER] [--webhook_url WEBHOOK_URL]
+usage: main.py [-h] [-H] [-c] [-g] [-cs] [-w WAIT_AFTER] [--accounts [ACCOUNTS ...]] [--webhook_url WEBHOOK_URL]
 
 AutoDailies
 
@@ -40,10 +40,11 @@ options:
   -H, --headless        Starts the browser in headless mode.
   -c, --checkin         Runs the daily check-in.
   -g, --giveaway        Runs the giveaway.
-  --accounts [ACCOUNTS ...]
-                        Specify which accounts to process. If empty, all accounts will be processed.
+  -cs, --cases          Open cases.
   -w WAIT_AFTER, --wait-after WAIT_AFTER
                         Number of seconds to wait before closing the browser.
+  --accounts [ACCOUNTS ...]
+                        Specify which accounts to process. If empty, all accounts will be processed.
   --webhook_url WEBHOOK_URL
                         Discord webhook URL to send logs to.
 ```
