@@ -35,7 +35,7 @@ def login_and_run(cookie_file, headless, checkin, giveaway, cases, wait_after: i
         for case in available_cases:
             if open_case(driver, case["link"]):
                 prsuccess(f"Opened case: {case['name']}")
-                time.sleep(5)
+                time.sleep(7)
     if checkin:
         run_daily_checkin(driver)
     if giveaway:
