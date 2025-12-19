@@ -77,7 +77,7 @@ def open_case(driver, case_link, card_idx=None):
                             return False
 
         if coin_price is None:
-            prinfo("No coin/tea requirement found; opening case anyway.")
+            prinfo("No coin requirement found, opening the case anyway...")
 
         # Pick the card, but wait 3 seconds for the animation to finish
         time.sleep(3)
@@ -101,7 +101,6 @@ def open_case(driver, case_link, card_idx=None):
             driver.execute_script("arguments[0].scrollIntoView(true);", picked_card)
             picked_card.click()
 
-            prinfo(f"Opened case {case_link}")
             return True
     except Exception:
         prwarn(f"Couldn't find the case with link {case_link}.")
