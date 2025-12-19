@@ -66,13 +66,12 @@ def open_case(driver, case_link, card_idx=None):
                 text = req_text.text.strip()
                 # Check if the text contains coin price
                 if ELEMENTS['case_coin_price_id'].lower() in text.lower():
-                    print(f"Coin price found: {text}")
                     # Extract numbers using regex
                     match = re.search(r'\d+', text)
                     if match:
                         case_price = int(match.group())
-                        print(f"Case price found: {case_price}")
 
+                        # Check if the price is above the threshold
                         if case_price > CASE_PRICE_THRESHOLD:
                             prinfo(f"Case price ({case_price}) is higher than threshold ({CASE_PRICE_THRESHOLD}), skipping...")
                             return False
