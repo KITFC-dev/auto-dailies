@@ -18,7 +18,6 @@ GIVEAWAY_PRICE_THRESHOLD: int = 0
 # using 1 as threshold because weekly case usually costs 1 coin.
 CASE_PRICE_THRESHOLD: int = 1
 # Discord webhook url to send logs to
-# this one is not working btw, just an example
 WEBHOOK_URL: str = ""
 # Element wait timeout
 WAIT_TIMEOUT: int = 2
