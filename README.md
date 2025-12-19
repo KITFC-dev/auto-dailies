@@ -48,7 +48,3 @@ options:
   --webhook_url WEBHOOK_URL
                         Discord webhook URL to send logs to.
 ```
-
-## Todo list
-
-* Add automatic captcha solving/bypassing.
