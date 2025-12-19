@@ -15,7 +15,8 @@ CHROMEDRIVER_PATH: str = "res/chromedriver.exe"
 # it will join all giveaways with price 1 or less.
 GIVEAWAY_PRICE_THRESHOLD: int = 0
 # Price threshold for opening cases, same logic as in giveaways
-CASE_PRICE_THRESHOLD: int = 0
+# using 1 as threshold because weekly case usually costs 1 coin.
+CASE_PRICE_THRESHOLD: int = 1
 # Discord webhook url to send logs to
 # this one is not working btw, just an example
 WEBHOOK_URL: str = "https://discord.com/api/webhooks/1450977245433827330/Jj_iswT_Vv2ZQw9-pg1rLaRpwbY8ZWwbCNeQOZsjZ5LAZICBcAVUBgCfhNtINvf72AOg"
