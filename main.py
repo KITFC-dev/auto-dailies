@@ -1,9 +1,7 @@
 import argparse
 import time
 
-import config
-
-from config import BASE_URL, ACCOUNTS, CHROMIUM_PATH, CHROMEDRIVER_PATH
+from config import BASE_URL, ACCOUNTS, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES
 from browser import create_driver
 from utils.cookies import load_cookies, save_cookies
 from utils.logger import prinfo, prsuccess, prerror
@@ -33,9 +31,11 @@ def login_and_run(cookie_file, headless, checkin, giveaway, cases, wait_after: i
     if cases:
         available_cases = get_cases(driver)
         for case in available_cases:
-            if open_case(driver, case["link"]):
-                prsuccess(f"Opened case: {case['name']}")
-                time.sleep(7)
+            # Skip ignored cases
+            if case["link"].split("/")[-1] not in IGNORE_CASES:
+                if open_case(driver, case["link"]):
+                    prsuccess(f"Opened case: {case['name']}")
+                    time.sleep(7)
     if checkin:
         run_daily_checkin(driver)
     if giveaway:
@@ -82,6 +82,7 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
 
     # Validate arguments
     if args.webhook_url:
+        import config
         config.WEBHOOK_URL = args.webhook_url
     prinfo(f"Loading Discord webhook: {config.WEBHOOK_URL}")
 

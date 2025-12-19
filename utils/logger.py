@@ -1,11 +1,13 @@
 import requests
+
+import config
+
 from colorama import Fore, Style
-from config import WEBHOOK_URL
 
 def _send_webhook(msg, webhook_url=None):
     # Get webhook url
     if not webhook_url:
-        webhook_url = WEBHOOK_URL
+        webhook_url = config.WEBHOOK_URL
     # Discord webhook
     requests.post(webhook_url, json={"content": msg})
 

@@ -19,7 +19,7 @@ GIVEAWAY_PRICE_THRESHOLD: int = 0
 CASE_PRICE_THRESHOLD: int = 1
 # Discord webhook url to send logs to
 # this one is not working btw, just an example
-WEBHOOK_URL: str = "https://discord.com/api/webhooks/1450977245433827330/Jj_iswT_Vv2ZQw9-pg1rLaRpwbY8ZWwbCNeQOZsjZ5LAZICBcAVUBgCfhNtINvf72AOg"
+WEBHOOK_URL: str = ""
 # Element wait timeout
 WAIT_TIMEOUT: int = 2
 
@@ -72,3 +72,15 @@ ELEMENTS = {
     "avatar": "profile-avatar",
     "is_verified": "profile-verified_icon true"
 }
+
+IGNORE_CASES = [
+    "druzeskii-keis",
+    "nescatnaya-paimon",
+    "bednaya-mona",
+    "korobka-vezuncika",
+    "vse-ili-nicego",
+    "damaznaya-udaca",
+    "korobka-inadzumy",
+    "dar-arxontov",
+    "pokrovitelstvo-dilyuka"
+]
