@@ -2,7 +2,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.logger import prsuccess, prwarn
+from utils.logger import prinfo, prwarn
 from config import ELEMENTS, BASE_URL
 
 def run_get_balance(driver):
@@ -20,13 +20,13 @@ def run_get_balance(driver):
         coins_el = wait.until(EC.presence_of_element_located(coins_locator))
 
         # Parse the text, fallback to getAttribute if text is empty
-        balance_text = bal_el.text.strip() or bal_el.get_attribute("textContent").strip()
-        coins_text   = coins_el.text.strip() or coins_el.get_attribute("textContent").strip()
+        balance_text = bal_el.text.strip() or str(bal_el.get_attribute("textContent")).strip()
+        coins_text   = coins_el.text.strip() or str(coins_el.get_attribute("textContent")).strip()
         res["balance"] = int(balance_text.replace("\u00A0", "").replace(",", ""))
         res["coins"] = int(coins_text.replace("\u00A0", "").replace(",", ""))
 
         time.sleep(0.3)
-        prsuccess(f"Got balance ({res['balance']}) and coins ({res['coins']})")
+        prinfo(f"Got balance ({res['balance']}) and coins ({res['coins']})")
     except Exception:
         prwarn("No balance or coins label detected.")
 

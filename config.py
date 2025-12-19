@@ -43,6 +43,13 @@ ELEMENTS = {
     "balance_label": 'user_mor_value',
     "coins_label": 'user_coin_value',
 
+    # Cases
+    "case_box": "index-cat-container",
+    "case": "index-case",
+    "case_image": "index-case_cover",
+    "case_name": "index-case_name",
+    "case_price": "index-case_price",
+
     # Profile info
     "profile_panel_box": 'profile-account-panel',
     "name": "mainUsernameValue",
@@ -51,5 +58,4 @@ ELEMENTS = {
     "id": "mr-1",
     "avatar": "profile-avatar",
     "is_verified": "profile-verified_icon true"
-
 }
