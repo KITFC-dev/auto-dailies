@@ -1,7 +1,7 @@
 import time
 
 from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES
-from browser import create_driver
+from src.browser import create_driver
 from src.cookies import load_cookies, save_cookies
 from src.logger import prinfo, prsuccess, prerror
 from src.actions.checkin import run_daily_checkin
