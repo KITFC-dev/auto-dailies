@@ -1,5 +1,5 @@
 from inputimeout import inputimeout, TimeoutOccurred
-from utils.logger import prinfo
+from src.logger import prinfo
 
 def timed_input(prompt, timeout, timeout_message="Input timed out"):
     try:

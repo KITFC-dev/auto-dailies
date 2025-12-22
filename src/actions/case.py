@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from utils.logger import prinfo, prwarn
+from src.logger import prinfo, prwarn
 from config import ELEMENTS, BASE_URL, WAIT_TIMEOUT, CASE_PRICE_THRESHOLD
 
 def get_cases(driver):

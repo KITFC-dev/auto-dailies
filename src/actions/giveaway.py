@@ -2,7 +2,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from utils.logger import prsuccess, prwarn, prinfo
+from src.logger import prsuccess, prwarn, prinfo
 from config import ELEMENTS, GIVEAWAY_URL, GIVEAWAY_PRICE_THRESHOLD, WAIT_TIMEOUT
 
 def run_giveaway(driver):
