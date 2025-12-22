@@ -8,6 +8,11 @@ def _send_webhook(msg, webhook_url=None):
     # Get webhook url
     if not webhook_url:
         webhook_url = config.WEBHOOK_URL
+
+    # Skip if webhook url is empty
+    if not (webhook_url.strip()):
+        return
+    
     # Discord webhook
     requests.post(webhook_url, json={"content": msg})
 
