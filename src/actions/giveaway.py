@@ -1,8 +1,9 @@
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 from src.logger import prsuccess, prwarn, prinfo
+from src.common import random_sleep
 from config import ELEMENTS, GIVEAWAY_URL, GIVEAWAY_PRICE_THRESHOLD, WAIT_TIMEOUT
 
 def run_giveaway(driver):
@@ -25,10 +26,10 @@ def run_giveaway(driver):
         if giveaway_href:
             prinfo(f"Checking out: giveaway #{i+1} {giveaway_href}")
             driver.get(giveaway_href)
-            time.sleep(1)
+            random_sleep(1)
             # Delay between giveaways if it was clicked
             if click_giveaway_join_button(driver):
-                time.sleep(5)
+                random_sleep(5)
         else:
             prwarn("No giveaway link found inside the box")
             return False
@@ -67,7 +68,7 @@ def click_giveaway_join_button(driver):
             driver.execute_script("arguments[0].click();", join_button)
 
         prsuccess("Giveaway join button clicked")
-        time.sleep(0.5)
+        random_sleep(0.5)
     except Exception:
         prwarn("No giveaway join button detected. Seems like you already joined this giveaway")
         return False

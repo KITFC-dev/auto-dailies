@@ -1,6 +1,3 @@
-import time
-
-from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES
 from src.browser import create_driver
 from src.cookies import load_cookies, save_cookies
 from src.logger import prinfo, prsuccess, prerror
@@ -8,6 +5,8 @@ from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance
+from src.common import random_sleep
+from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES
 
 def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     """Logs in to the website using the given cookie file and runs given actions """
@@ -34,7 +33,7 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
             if case["link"].split("/")[-1] not in IGNORE_CASES:
                 if open_case(driver, case["link"]):
                     prsuccess(f"Opened case: {case['name']}")
-                    time.sleep(7)
+                    random_sleep(7)
     if checkin:
         run_daily_checkin(driver)
     if giveaway:
@@ -48,7 +47,7 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     # Wait before closing
     if wait_after > 0:
         prinfo(f"Waiting {wait_after} seconds before closing the browser...")
-        time.sleep(wait_after)
+        random_sleep(wait_after, 0)
 
     # Cleanup
     save_cookies(driver, cookie_file)

@@ -1,7 +1,5 @@
 import requests
-
 import config
-
 from colorama import Fore, Style
 
 def _send_webhook(msg, webhook_url=None):

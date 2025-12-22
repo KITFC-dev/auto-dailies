@@ -1,4 +1,3 @@
-import time
 import re
 import random
 
@@ -7,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prinfo, prwarn
+from src.common import random_sleep
 from config import ELEMENTS, BASE_URL, WAIT_TIMEOUT, CASE_PRICE_THRESHOLD
 
 def get_cases(driver):
@@ -48,7 +48,7 @@ def open_case(driver, case_link, card_idx=None):
     try:
         # Wait until case cards are present
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, ELEMENTS["case_card_list"])))
-        time.sleep(1)
+        random_sleep(1)
         
         # Extract requirements for the case, this is needed
         # to check if the price is above the threshold.
@@ -80,7 +80,7 @@ def open_case(driver, case_link, card_idx=None):
             prinfo("No coin requirement found, opening the case anyway...")
 
         # Pick the card, but wait 3 seconds for the animation to finish
-        time.sleep(3)
+        random_sleep(3)
         cards = driver.find_elements(By.CLASS_NAME, ELEMENTS["case_card_list"])
         if cards:
             card_el = cards[0]

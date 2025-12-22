@@ -1,8 +1,9 @@
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 from src.logger import prinfo, prwarn
+from src.common import random_sleep
 from config import ELEMENTS, BASE_URL, WAIT_TIMEOUT
 
 def run_get_balance(driver):
@@ -25,7 +26,7 @@ def run_get_balance(driver):
         res["balance"] = int(balance_text.replace("\u00A0", "").replace(",", ""))
         res["coins"] = int(coins_text.replace("\u00A0", "").replace(",", ""))
 
-        time.sleep(0.3)
+        random_sleep(0.3)
         prinfo(f"Got balance ({res['balance']}) and coins ({res['coins']})")
     except Exception:
         prwarn("No balance or coins label detected.")
