@@ -7,8 +7,8 @@ GIVEAWAY_URL: str = f"{BASE_URL}/give"
 PROFILE_URL: str = f"{BASE_URL}/profile"
 
 # Paths for browser binary and chromedriver
-CHROMIUM_PATH: str = "res/chromium/chrome.exe"
-CHROMEDRIVER_PATH: str = "res/chromedriver.exe"
+CHROMIUM_PATH: str = "res/chromium/chrome"
+CHROMEDRIVER_PATH: str = "res/chromedriver"
 
 # Settings
 # Price threshold for joining giveaways, if threshold is 1, 
