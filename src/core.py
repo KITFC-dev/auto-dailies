@@ -24,10 +24,11 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     # Verify if login was successful
     balance = run_get_balance(driver)
     if balance == {}:
-        res["initial_coins"] = 0
-        res["initial_balance"] = 0
         prerror(f"Failed to get balance, the login may have failed. Skipping {cookie_file}")
         return False
+    
+    res["initial_coins"] = balance["coins"]
+    res["initial_balance"] = balance["balance"]
 
     # Run actions
     if cases:

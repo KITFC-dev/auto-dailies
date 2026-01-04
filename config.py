@@ -11,16 +11,21 @@ CHROMIUM_PATH: str = "res/chromium/chrome"
 CHROMEDRIVER_PATH: str = "res/chromedriver"
 
 # Settings
+# Amount of time to wait for the elements to load
+WAIT_TIMEOUT: int = 2
 # Price threshold for joining giveaways, if threshold is 1, 
 # it will join all giveaways with price 1 or less.
 GIVEAWAY_PRICE_THRESHOLD: int = 0
 # Price threshold for opening cases, same logic as in giveaways
 # using 1 as threshold because weekly case usually costs 1 coin.
 CASE_PRICE_THRESHOLD: int = 1
-# Discord webhook url to send logs to
+
+# Discord Webhook Settings
+# URL to send logs to
 WEBHOOK_URL: str = ""
-# Element wait timeout
-WAIT_TIMEOUT: int = 2
+# Profile name and avatar for webhook messages
+WEBHOOK_PROFILE_NAME: str = ""
+WEBHOOK_PROFILE_AVATAR: str = ""
 
 
 # Paths for account pickle files with cookies

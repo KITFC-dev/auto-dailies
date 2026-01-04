@@ -27,7 +27,6 @@ def run_get_balance(driver):
         res["coins"] = int(coins_text.replace("\u00A0", "").replace(",", ""))
 
         random_sleep(0.3)
-        prinfo(f"Got balance ({res['balance']}) and coins ({res['coins']})")
     except Exception:
         prwarn("No balance or coins label detected.")
 

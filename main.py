@@ -1,7 +1,7 @@
 import argparse
 import config
 from config import ACCOUNTS
-from src.logger import prinfo, prsuccess, prerror
+from src.logger import prinfo, prsuccess, prerror, prwebhook
 from src.core import run
 
 def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
@@ -50,6 +50,7 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
             wait_after=wait_after | args.wait_after
         )
         if res:
+            res["name"] = name
             done_accounts.append(name)
             account_results.append(res)
             prsuccess(f"Account {name} done")
@@ -58,9 +59,20 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
             prerror(f"Account {name} failed")
 
     # Send summary webhook
-    earned_coins = sum([i.get("coins", 0) for i in account_results])
-    earned_balance = sum([i.get("balance", 0) for i in account_results])
-    prsuccess(f"All done!\n{len(done_accounts)} accounts done\n{len(failed_accounts)} accounts failed\n\nEarned coins: {earned_coins}\nEarned balance: {earned_balance}", webhook=True)
+    earned_coins = sum(i.get("coins", 0) - i.get("initial_coins", 0) for i in account_results)
+    earned_balance = sum(i.get("balance", 0) - i.get("initial_balance", 0) for i in account_results)
+    prwebhook(
+        title="Tasks completed!",
+        description=f"Accounts Done: {len(done_accounts)}\nAccounts Failed: {len(failed_accounts)}\n\nEarned Coins: {earned_coins}\nEarned Balance: {earned_balance}",
+        color=2818303,
+        fields=[{
+            "name": res["name"], 
+            "value": f"Coins: {res.get('coins', 0)}\nBalance: {res.get('balance', 0)}", 
+            "inline": False}
+            for res in account_results],
+    )
+
+    prsuccess("All done!")
 
 if __name__ == "__main__":
-    main(checkin=True, giveaway=True, cases=True, wait_after=0)
+    main(checkin=False, giveaway=False, cases=False, wait_after=0)
