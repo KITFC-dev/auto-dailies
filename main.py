@@ -35,8 +35,7 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
     # Variables
     done_accounts = []
     failed_accounts = []
-    earned_coins = 0
-    earned_balance = 0
+    account_results = []
 
     # Iterate over all accounts
     for name, cookie_file in ACCOUNTS.items():
@@ -52,13 +51,15 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         )
         if res:
             done_accounts.append(name)
-            earned_coins += res["earned_coins"]
-            earned_balance += res["earned_balance"]
+            account_results.append(res)
             prsuccess(f"Account {name} done")
         else:
             failed_accounts.append(name)
             prerror(f"Account {name} failed")
-    
+
+    # Send summary webhook
+    earned_coins = sum([i.get("coins", 0) for i in account_results])
+    earned_balance = sum([i.get("balance", 0) for i in account_results])
     prsuccess(f"All done!\n{len(done_accounts)} accounts done\n{len(failed_accounts)} accounts failed\n\nEarned coins: {earned_coins}\nEarned balance: {earned_balance}", webhook=True)
 
 if __name__ == "__main__":
