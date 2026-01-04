@@ -75,4 +75,4 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
     prsuccess("All done!")
 
 if __name__ == "__main__":
-    main(checkin=False, giveaway=False, cases=False, wait_after=0)
+    main(checkin=True, giveaway=True, cases=True, wait_after=0)
