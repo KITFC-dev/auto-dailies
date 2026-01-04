@@ -13,6 +13,8 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     driver = create_driver(CHROMIUM_PATH, CHROMEDRIVER_PATH, headless)
     driver.get(BASE_URL)
 
+    res = {}
+
     # Load cookies to browser
     if not load_cookies(driver, cookie_file):
         prerror(f"No cookie file: {cookie_file}")
@@ -22,17 +24,22 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     # Verify if login was successful
     balance = run_get_balance(driver)
     if balance == {}:
+        res["initial_coins"] = 0
+        res["initial_balance"] = 0
         prerror(f"Failed to get balance, the login may have failed. Skipping {cookie_file}")
         return False
 
     # Run actions
     if cases:
         available_cases = get_cases(driver)
+        res["available_cases"] = len(available_cases)
+        res["opened_cases"] = 0
         for case in available_cases:
             # Skip ignored cases
             if case["link"].split("/")[-1] not in IGNORE_CASES:
                 if open_case(driver, case["link"]):
                     prsuccess(f"Opened case: {case['name']}")
+                    res["opened_cases"] += 1
                     random_sleep(7)
     if checkin:
         run_daily_checkin(driver)
@@ -41,9 +48,9 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
 
     # Calculate earned coins
     balance_after = run_get_balance(driver)
-    earned_coins = balance_after["coins"] - balance["coins"]
-    earned_balance = balance_after["balance"] - balance["balance"]
-    
+    res["coins"] = balance_after["coins"]
+    res["balance"] = balance_after["balance"]
+
     # Wait before closing
     if wait_after > 0:
         prinfo(f"Waiting {wait_after} seconds before closing the browser...")
@@ -53,4 +60,4 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     save_cookies(driver, cookie_file)
     driver.quit()
 
-    return {"earned_coins": earned_coins, "earned_balance": earned_balance}
+    return res
