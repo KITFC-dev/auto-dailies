@@ -67,7 +67,7 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         color=2818303,
         fields=[{
             "name": res["name"], 
-            "value": f"Coins: {res.get('coins', 0)}\nBalance: {res.get('balance', 0)}", 
+            "value": f"Coins: {res.get('initial_coins', 0)} -> {res.get('coins', 0)}\nBalance: {res.get('initial_balance', 0)} -> {res.get('balance', 0)}", 
             "inline": False}
             for res in account_results],
     )
