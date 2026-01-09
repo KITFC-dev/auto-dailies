@@ -1,12 +1,11 @@
 import argparse
 import config
-from config import ACCOUNTS
-from src.logger import prinfo, prsuccess, prerror, prwebhook
-from src.core import run
+from src.logger import prinfo, prsuccess
+from src.core import run_multiple
 
 def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
     """
-    Entry point of the program
+    Entry point of AutoDailies.
 
     Args:
         -H, --headless: Starts the browser in headless mode.
@@ -32,47 +31,17 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         config.WEBHOOK_URL = args.webhook_url
     prinfo(f"Loading Discord webhook: {config.WEBHOOK_URL}")
 
-    # Variables
-    done_accounts = []
-    failed_accounts = []
-    account_results = []
-
-    # Iterate over all accounts
-    for name, cookie_file in ACCOUNTS.items():
-        if (name not in args.accounts if args.accounts else False) or (name not in accounts if accounts else False):
-            continue
-        prinfo(f"Processing account: {name}")
-        res = run(cookie_file, 
-            headless | args.headless, 
-            checkin | args.checkin, 
-            giveaway | args.giveaway,
-            cases | args.cases,
-            wait_after=wait_after | args.wait_after
-        )
-        if res:
-            res["name"] = name
-            done_accounts.append(name)
-            account_results.append(res)
-            prsuccess(f"Account {name} done")
-        else:
-            failed_accounts.append(name)
-            prerror(f"Account {name} failed")
-
-    # Send summary webhook
-    earned_coins = sum(i.get("coins", 0) - i.get("initial_coins", 0) for i in account_results)
-    earned_balance = sum(i.get("balance", 0) - i.get("initial_balance", 0) for i in account_results)
-    prwebhook(
-        title="Tasks completed!",
-        description=f"Accounts Done: {len(done_accounts)}\nAccounts Failed: {len(failed_accounts)}\n\nEarned Coins: {earned_coins}\nEarned Balance: {earned_balance}",
-        color=2818303,
-        fields=[{
-            "name": res["name"], 
-            "value": f"Coins: {res.get('initial_coins', 0)} -> {res.get('coins', 0)}\nBalance: {res.get('initial_balance', 0)} -> {res.get('balance', 0)}", 
-            "inline": False}
-            for res in account_results],
-    )
-
-    prsuccess("All done!")
+    # Run for multiple accounts
+    if run_multiple(
+        args=args,
+        headless=args.headless,
+        checkin=args.checkin,
+        giveaway=args.giveaway,
+        cases=args.cases,
+        accounts=args.accounts if args.accounts else config.ACCOUNTS,
+        wait_after=args.wait_after
+    ):
+        prsuccess("All done!")
 
 if __name__ == "__main__":
     main(checkin=True, giveaway=True, cases=True, wait_after=0)

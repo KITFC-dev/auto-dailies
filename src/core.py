@@ -1,12 +1,12 @@
 from src.browser import create_driver
 from src.cookies import load_cookies, save_cookies
-from src.logger import prinfo, prsuccess, prerror
+from src.logger import prinfo, prsuccess, prerror, prwebhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance
 from src.common import random_sleep
-from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES
+from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES, ACCOUNTS
 
 def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     """Logs in to the website using the given cookie file and runs given actions """
@@ -62,3 +62,46 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     driver.quit()
 
     return res
+
+def run_multiple(args=None, headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
+    # Variables
+    done_accounts = []
+    failed_accounts = []
+    account_results = []
+
+    # Iterate over all accounts
+    for name, cookie_file in ACCOUNTS.items():
+        if (name not in args.accounts if args.accounts else False) or (name not in accounts if accounts else False):
+            continue
+        prinfo(f"Processing account: {name}")
+        res = run(cookie_file, 
+            headless | args.headless, 
+            checkin | args.checkin, 
+            giveaway | args.giveaway,
+            cases | args.cases,
+            wait_after=wait_after | args.wait_after
+        )
+        if res:
+            res["name"] = name
+            done_accounts.append(name)
+            account_results.append(res)
+            prsuccess(f"Account {name} done")
+        else:
+            failed_accounts.append(name)
+            prerror(f"Account {name} failed")
+
+    # Send summary webhook
+    earned_coins = sum(i.get("coins", 0) - i.get("initial_coins", 0) for i in account_results)
+    earned_balance = sum(i.get("balance", 0) - i.get("initial_balance", 0) for i in account_results)
+    prwebhook(
+        title="Tasks completed!",
+        description=f"Accounts Done: {len(done_accounts)}\nAccounts Failed: {len(failed_accounts)}\n\nEarned Coins: {earned_coins}\nEarned Balance: {earned_balance}",
+        color=2818303,
+        fields=[{
+            "name": res["name"], 
+            "value": f"Coins: {res.get('initial_coins', 0)} -> {res.get('coins', 0)}\nBalance: {res.get('initial_balance', 0)} -> {res.get('balance', 0)}", 
+            "inline": False}
+            for res in account_results],
+    )
+
+    return True
