@@ -1,4 +1,3 @@
-import config
 from src.logger import prsuccess
 from src.common import parse_args
 from src.core import run_multiple
@@ -18,16 +17,8 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
     """
     args = parse_args()
 
-    # Run for multiple accounts
-    if run_multiple(
-        args=args,
-        headless=args.headless,
-        checkin=args.checkin,
-        giveaway=args.giveaway,
-        cases=args.cases,
-        accounts=args.accounts if args.accounts else config.ACCOUNTS,
-        wait_after=args.wait_after
-    ):
+    # Run tasks for multiple accounts with given arguments
+    if run_multiple(args):
         prsuccess("All done!")
 
 if __name__ == "__main__":

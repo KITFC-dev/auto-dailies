@@ -8,9 +8,9 @@ from src.actions.state import run_get_balance
 from src.common import random_sleep
 from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES, ACCOUNTS
 
-def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
+def run(cookie_file, args):
     """Logs in to the website using the given cookie file and runs given actions """
-    driver = create_driver(CHROMIUM_PATH, CHROMEDRIVER_PATH, headless)
+    driver = create_driver(CHROMIUM_PATH, CHROMEDRIVER_PATH, args.headless)
     driver.get(BASE_URL)
 
     res = {}
@@ -31,7 +31,7 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     res["initial_balance"] = balance["balance"]
 
     # Run actions
-    if cases:
+    if args.cases:
         available_cases = get_cases(driver)
         res["available_cases"] = len(available_cases)
         res["opened_cases"] = 0
@@ -42,9 +42,9 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
                     prsuccess(f"Opened case: {case['name']}")
                     res["opened_cases"] += 1
                     random_sleep(7)
-    if checkin:
+    if args.checkin:
         run_daily_checkin(driver)
-    if giveaway:
+    if args.giveaway:
         run_giveaway(driver)
 
     # Calculate earned coins
@@ -53,9 +53,9 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
     res["balance"] = balance_after["balance"]
 
     # Wait before closing
-    if wait_after > 0:
-        prinfo(f"Waiting {wait_after} seconds before closing the browser...")
-        random_sleep(wait_after, 0)
+    if args.wait_after > 0:
+        prinfo(f"Waiting {args.wait_after} seconds before closing the browser...")
+        random_sleep(args.wait_after, 0)
 
     # Cleanup
     save_cookies(driver, cookie_file)
@@ -63,7 +63,7 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
 
     return res
 
-def run_multiple(args, headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
+def run_multiple(args):
     # Variables
     done_accounts = []
     failed_accounts = []
@@ -71,16 +71,10 @@ def run_multiple(args, headless=False, checkin=False, giveaway=False, cases=Fals
 
     # Iterate over all accounts
     for name, cookie_file in ACCOUNTS.items():
-        if (name not in args.accounts if args.accounts else False) or (name not in accounts if accounts else False):
+        if (name not in args.accounts if args.accounts else False):
             continue
         prinfo(f"Processing account: {name}")
-        res = run(cookie_file, 
-            headless | args.headless, 
-            checkin | args.checkin, 
-            giveaway | args.giveaway,
-            cases | args.cases,
-            wait_after=wait_after | args.wait_after
-        )
+        res = run(cookie_file, args)
         if res:
             res["name"] = name
             done_accounts.append(name)
