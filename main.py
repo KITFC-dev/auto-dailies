@@ -1,4 +1,3 @@
-from requests.api import head
 from src.logger import prsuccess
 from src.common import parse_args
 from src.core import run_multiple
@@ -23,4 +22,4 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         prsuccess("All done!")
 
 if __name__ == "__main__":
-    main(checkin=True, giveaway=True, cases=True, wait_after=0)
+    main(wait_after=0)
