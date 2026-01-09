@@ -4,7 +4,18 @@ import argparse
 import config
 
 
-def parse_args():
+def parse_args(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
+    """
+    Parse command line arguments for AutoDailies.
+
+    Arguments priority:
+        1. CLI Arguments
+        2. Function Arguments
+        3. Config Defaults
+
+    Returns:
+        argparse.Namespace: Parsed arguments.
+    """
     parser = argparse.ArgumentParser(description="AutoDailies")
     parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
     parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
@@ -15,6 +26,14 @@ def parse_args():
     parser.add_argument("--webhook_url", type=str, default=None, help="Discord webhook URL to send logs to.")
 
     args = parser.parse_args()
+
+    # Prioritize cli arguments
+    args.headless = args.headless or headless
+    args.checkin = args.checkin or checkin
+    args.giveaway = args.giveaway or giveaway
+    args.cases = args.cases or cases
+    args.wait_after = args.wait_after if args.wait_after != 0 else wait_after
+    args.accounts = args.accounts if args.accounts else accounts
 
     # Validate arguments
     if args.webhook_url:
