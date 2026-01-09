@@ -1,6 +1,7 @@
 import time
 import random
 import argparse
+import config
 
 
 def parse_args():
@@ -12,7 +13,17 @@ def parse_args():
     parser.add_argument("-w", "--wait-after", type=int, default=0, help="Number of seconds to wait before closing the browser.")
     parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
     parser.add_argument("--webhook_url", type=str, default=None, help="Discord webhook URL to send logs to.")
-    return parser.parse_args()
+
+    args = parser.parse_args()
+
+    # Validate arguments
+    if args.webhook_url:
+        config.WEBHOOK_URL = args.webhook_url
+    
+    if not args.accounts:
+        args.accounts = config.ACCOUNTS    
+    
+    return args
 
 def random_sleep(amount: float = 2.0, r: float = 0.5):
     time.sleep(max(0.0, amount + random.uniform(-r, r)))

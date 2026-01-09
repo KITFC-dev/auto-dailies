@@ -63,7 +63,7 @@ def run(cookie_file, headless, checkin, giveaway, cases, wait_after: int = 0):
 
     return res
 
-def run_multiple(args=None, headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
+def run_multiple(args, headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
     # Variables
     done_accounts = []
     failed_accounts = []

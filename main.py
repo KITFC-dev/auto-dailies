@@ -1,5 +1,5 @@
 import config
-from src.logger import prinfo, prsuccess
+from src.logger import prsuccess
 from src.common import parse_args
 from src.core import run_multiple
 
@@ -17,11 +17,6 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         --webhook_url: Discord webhook URL to send logs to.
     """
     args = parse_args()
-
-    # Validate arguments
-    if args.webhook_url:
-        config.WEBHOOK_URL = args.webhook_url
-    prinfo(f"Loading Discord webhook: {config.WEBHOOK_URL}")
 
     # Run for multiple accounts
     if run_multiple(
