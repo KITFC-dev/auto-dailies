@@ -1,3 +1,4 @@
+from requests.api import head
 from src.logger import prsuccess
 from src.common import parse_args
 from src.core import run_multiple
@@ -15,7 +16,7 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         --accounts: Specify which accounts to process.
         --webhook_url: Discord webhook URL to send logs to.
     """
-    args = parse_args()
+    args = parse_args(headless, checkin, giveaway, cases, accounts, wait_after)
 
     # Run tasks for multiple accounts with given arguments
     if run_multiple(args):
