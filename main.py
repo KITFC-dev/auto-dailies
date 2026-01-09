@@ -1,6 +1,6 @@
-import argparse
 import config
 from src.logger import prinfo, prsuccess
+from src.common import parse_args
 from src.core import run_multiple
 
 def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
@@ -16,15 +16,7 @@ def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[]
         --accounts: Specify which accounts to process.
         --webhook_url: Discord webhook URL to send logs to.
     """
-    parser = argparse.ArgumentParser(description="AutoDailies")
-    parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
-    parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
-    parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
-    parser.add_argument("-cs", "--cases", action="store_true", help="Open cases.")
-    parser.add_argument("-w", "--wait-after", type=int, default=0, help="Number of seconds to wait before closing the browser.")
-    parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
-    parser.add_argument("--webhook_url", type=str, default=None, help="Discord webhook URL to send logs to.")
-    args = parser.parse_args()
+    args = parse_args()
 
     # Validate arguments
     if args.webhook_url:
