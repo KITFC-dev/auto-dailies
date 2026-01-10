@@ -31,6 +31,10 @@ def run(cookie_file, args):
     res["initial_balance"] = balance["balance"]
 
     # Run actions
+    if args.checkin:
+        run_daily_checkin(driver)
+    if args.giveaway:
+        run_giveaway(driver)
     if args.cases:
         available_cases = get_cases(driver)
         res["available_cases"] = len(available_cases)
@@ -42,10 +46,6 @@ def run(cookie_file, args):
                     prsuccess(f"Opened case: {case['name']}")
                     res["opened_cases"] += 1
                     random_sleep(7)
-    if args.checkin:
-        run_daily_checkin(driver)
-    if args.giveaway:
-        run_giveaway(driver)
 
     # Calculate earned coins
     balance_after = run_get_balance(driver)
