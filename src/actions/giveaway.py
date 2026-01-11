@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prsuccess, prwarn, prinfo
 from src.common import random_sleep
-from config import ELEMENTS, GIVEAWAY_URL, CONFIG
+from src.config import ELEMENTS, GIVEAWAY_URL, CONFIG
 
 def run_giveaway(driver):
     """Checks out all giveaways on the giveaways main page """

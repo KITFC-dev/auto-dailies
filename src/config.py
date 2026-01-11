@@ -14,7 +14,7 @@ class Config:
         self.cases = args.cases or flags.get("cases", False)
 
         general = raw.get("general", {})
-        self.wait_timeout = args.wait_timeout if args.wait_timeout is not None else general.get("wait_timeout", 2)
+        self.wait_timeout = general.get("wait_timeout", 2)
         self.wait_after = args.wait_after if args.wait_after is not None else general.get("wait_timeout", 2)
         self.giveaway_price_threshold = general.get("giveaway_price_threshold", 0)
         self.case_price_threshold = general.get("case_price_threshold", 0)

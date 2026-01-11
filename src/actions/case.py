@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
-from config import ELEMENTS, BASE_URL, CONFIG
+from src.config import ELEMENTS, BASE_URL, CONFIG
 
 def get_cases(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)

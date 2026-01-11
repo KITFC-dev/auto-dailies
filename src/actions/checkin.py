@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prsuccess, prwarn
 from src.common import random_sleep
-from config import ELEMENTS, CHECKIN_URL, CONFIG
+from src.config import ELEMENTS, CHECKIN_URL, CONFIG
 
 def run_daily_checkin(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)

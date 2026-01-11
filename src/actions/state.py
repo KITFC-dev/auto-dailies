@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prwarn
 from src.common import random_sleep
-from config import ELEMENTS, BASE_URL, CONFIG
+from src.config import ELEMENTS, BASE_URL, CONFIG
 
 def run_get_balance(driver):
     res = {}

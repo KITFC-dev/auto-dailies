@@ -1,10 +1,10 @@
 import requests
-from src.config import Config
+from src.config import CONFIG
 from colorama import Fore, Style
 
 def _send_webhook(msg=None, embeds=None):
     # Skip if webhook url is empty
-    if not (Config.webhook_url.strip()):
+    if not (CONFIG.webhook_url.strip()):
         return
     
     # Discord webhook
@@ -13,13 +13,13 @@ def _send_webhook(msg=None, embeds=None):
         payload["content"] = msg
     if embeds:
         payload["embeds"] = embeds
-    if Config.webhook_name:
-        payload["username"] = Config.webhook_name
-    if Config.webhook_avatar:
-        payload["avatar_url"] = Config.webhook_avatar
+    if CONFIG.webhook_name:
+        payload["username"] = CONFIG.webhook_name
+    if CONFIG.webhook_avatar:
+        payload["avatar_url"] = CONFIG.webhook_avatar
 
     # Send webhook
-    r = requests.post(Config.webhook_url, json=payload, timeout=5)
+    r = requests.post(CONFIG.webhook_url, json=payload, timeout=5)
 
     if not r.ok:
         prerror(f"Failed to send webhook: {r.status_code} {r.text}")
