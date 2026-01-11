@@ -5,7 +5,7 @@ import argparse
 class Config:
     def __init__(self, config_path: str = "config.toml"):
         args = self.parse_args()
-        raw = self.load_toml(config_path)
+        raw = self.load_toml(args.config_path or config_path)
 
         flags = raw.get("flags", {})
         self.headless = args.headless or flags.get("headless", False)
@@ -46,18 +46,33 @@ class Config:
             if name.endswith(".pkl")
         }
 
+    def validate_paths(self):
+        if not os.path.exists(self.chromium_path):
+            raise FileNotFoundError(f"Chromium binary not found: {self.chromium_path}")
+
+        if not os.path.exists(self.chromedriver_path):
+            raise FileNotFoundError(f"Chromedriver not found: {self.chromedriver_path}")
+
     def parse_args(self) -> argparse.Namespace:
         """ Parse config options for AutoDailies. """
         parser = argparse.ArgumentParser(description="AutoDailies")
 
+        # Flags
         parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
         parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
         parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
         parser.add_argument("-cs", "--cases", action="store_true", help="Opens the cases.")
+
+        # General
         parser.add_argument("-w", "--wait-after", type=int, help="Number of seconds to wait before closing the browser.")
+
+        # Discord
         parser.add_argument("--webhook_url", type=str, help="Discord webhook URL to send logs to.")
+
+        # Paths
         parser.add_argument("--chromium_path", type=str, help="Path to the browser binary.")
         parser.add_argument("--chromedriver_path", type=str, help="Path to the Chromedriver.")
+        parser.add_argument("--config_path", type=str, help="Path to the config file.")
         
         return parser.parse_args()
 
