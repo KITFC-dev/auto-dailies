@@ -7,8 +7,8 @@ GIVEAWAY_URL: str = f"{BASE_URL}/give"
 PROFILE_URL: str = f"{BASE_URL}/profile"
 
 # Paths for browser binary and chromedriver
-CHROMIUM_PATH: str = "res/chromium/chrome"
-CHROMEDRIVER_PATH: str = "res/chromedriver"
+CHROMIUM_PATH: str = "res/chromium/chrome.exe"
+CHROMEDRIVER_PATH: str = "res/chromedriver.exe"
 
 # Settings
 # Amount of time to wait for the elements to load

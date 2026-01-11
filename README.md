@@ -40,7 +40,7 @@ options:
   -H, --headless        Starts the browser in headless mode.
   -c, --checkin         Runs the daily check-in.
   -g, --giveaway        Runs the giveaway.
-  -cs, --cases          Open cases.
+  -cs, --cases          Opens the cases.
   -w WAIT_AFTER, --wait-after WAIT_AFTER
                         Number of seconds to wait before closing the browser.
   --accounts [ACCOUNTS ...]

@@ -2,24 +2,24 @@ from src.logger import prsuccess
 from src.common import parse_args
 from src.core import run_multiple
 
-def main(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
+def main(*args, **kwargs):
     """
     Entry point of AutoDailies.
 
     Args:
-        -H, --headless: Starts the browser in headless mode.
-        -C, --checkin: Runs the daily check-in.
-        -G, --giveaway: Runs the giveaway.
-        -cs, --cases: Open cases.
-        -w, --wait-after: Number of seconds to wait before closing the browser.
-        --accounts: Specify which accounts to process.
-        --webhook_url: Discord webhook URL to send logs to.
+        headless (bool): Starts the browser in headless mode.
+        checkin (bool): Runs the daily check-in.
+        giveaway (bool): Runs the giveaway.
+        cases (bool): Opens the cases.
+        wait_after (int): Number of seconds to wait before closing the browser.
+        accounts (list): Specify which accounts to process. If empty, all accounts will be processed.
+        webhook_url (str): Discord webhook URL to send logs to.
     """
-    args = parse_args(headless, checkin, giveaway, cases, accounts, wait_after)
+    args = parse_args(*args, **kwargs)
 
     # Run tasks for multiple accounts with given arguments
     if run_multiple(args):
         prsuccess("All done!")
 
 if __name__ == "__main__":
-    main(wait_after=0)
+    main(checkin=True, wait_after=3)

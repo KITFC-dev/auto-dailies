@@ -3,8 +3,10 @@ import random
 import argparse
 import config
 
-
-def parse_args(headless=False, checkin=False, giveaway=False, cases=False, accounts=[], wait_after=0):
+def parse_args(
+    *args,
+    **kwargs,
+) -> argparse.Namespace:
     """
     Parse command line arguments for AutoDailies.
 
@@ -16,11 +18,21 @@ def parse_args(headless=False, checkin=False, giveaway=False, cases=False, accou
     Returns:
         argparse.Namespace: Parsed arguments.
     """
+    # Extract function arguments
+    headless = kwargs.get("headless", False)
+    checkin = kwargs.get("checkin", False)
+    giveaway = kwargs.get("giveaway", False)
+    cases = kwargs.get("cases", False)
+    wait_after = kwargs.get("wait_after", 0)
+    accounts = kwargs.get("accounts", [])
+    webhook_url = kwargs.get("webhook_url", None)
+
+    # Parse CLI arguments
     parser = argparse.ArgumentParser(description="AutoDailies")
     parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
     parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
     parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
-    parser.add_argument("-cs", "--cases", action="store_true", help="Open cases.")
+    parser.add_argument("-cs", "--cases", action="store_true", help="Opens the cases.")
     parser.add_argument("-w", "--wait-after", type=int, default=0, help="Number of seconds to wait before closing the browser.")
     parser.add_argument("--accounts", nargs='*', help="Specify which accounts to process. If empty, all accounts will be processed.")
     parser.add_argument("--webhook_url", type=str, default=None, help="Discord webhook URL to send logs to.")
@@ -34,6 +46,7 @@ def parse_args(headless=False, checkin=False, giveaway=False, cases=False, accou
     args.cases = args.cases or cases
     args.wait_after = args.wait_after if args.wait_after != 0 else wait_after
     args.accounts = args.accounts if args.accounts else accounts
+    args.webhook_url = args.webhook_url if args.webhook_url else webhook_url
 
     # Validate arguments
     if args.webhook_url:
