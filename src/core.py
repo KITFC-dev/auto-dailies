@@ -10,15 +10,21 @@ from src.config import BASE_URL, IGNORE_CASES, CONFIG
 
 def run_once(cookie_file):
     """Logs in to the website using the given cookie file and runs given actions """
-    driver = create_driver(CONFIG.chromium_path, CONFIG.chromedriver_path, CONFIG.headless)
+    driver = create_driver(CONFIG.chromium_path, CONFIG.chromedriver_path, CONFIG.headless if not CONFIG.new_account else False)
     driver.get(BASE_URL)
 
     res = {}
 
     # Load cookies to browser
-    if not load_cookies(driver, cookie_file):
-        prerror(f"No cookie file: {cookie_file}")
-        return False
+    if cookie_file.split("/")[-1] != CONFIG.new_account:
+        if not load_cookies(driver, cookie_file):
+            prerror(f"No cookie file: {cookie_file}")
+            return False
+    else:
+        prinfo(f"New account: {cookie_file}, waiting 90 seconds for user to log in...")
+        random_sleep(90, 0)
+        save_cookies(driver, cookie_file)
+
     driver.refresh()
 
     # Verify if login was successful

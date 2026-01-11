@@ -30,6 +30,13 @@ class Config:
         self.webhook_name = discord.get("profile_name", "")
         self.webhook_avatar = discord.get("profile_avatar", "")
 
+        # For new pkl files
+        self.new_account = args.new_account
+        if self.new_account:
+            self.accounts[self.new_account] = f"{self.accounts_dir}/{self.new_account}"
+
+        self.validate_paths()
+
     def load_toml(self, user_config: str) -> dict:
         # Check if config file exists
         if not os.path.exists(user_config):
@@ -74,6 +81,9 @@ class Config:
         parser.add_argument("--chromedriver_path", type=str, help="Path to the Chromedriver.")
         parser.add_argument("--config_path", type=str, help="Path to the config file.")
         
+        # For new pkl files
+        parser.add_argument("--new_account", type=str, help="Name of the new account's pkl file with extension (e.g. 'name.pkl').")
+
         return parser.parse_args()
 
 CONFIG: Config = Config()
