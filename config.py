@@ -7,8 +7,8 @@ GIVEAWAY_URL: str = f"{BASE_URL}/give"
 PROFILE_URL: str = f"{BASE_URL}/profile"
 
 # Paths for browser binary and chromedriver
-CHROMIUM_PATH: str = "res/chromium/chrome.exe"
-CHROMEDRIVER_PATH: str = "res/chromedriver.exe"
+CHROMIUM_PATH: str = "res/chromium/chrome"
+CHROMEDRIVER_PATH: str = "res/chromedriver"
 
 # Settings
 # Amount of time to wait for the elements to load
@@ -22,7 +22,7 @@ CASE_PRICE_THRESHOLD: int = 1
 
 # Discord Webhook Settings
 # URL to send logs to
-WEBHOOK_URL: str = ""
+webhook_url: str = ""
 # Profile name and avatar for webhook messages
 WEBHOOK_PROFILE_NAME: str = ""
 WEBHOOK_PROFILE_AVATAR: str = ""

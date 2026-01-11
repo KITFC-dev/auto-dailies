@@ -1,8 +1,8 @@
 from src.logger import prsuccess
-from src.common import parse_args
+from src.args import parse_config
 from src.core import run_multiple
 
-def main(*args, **kwargs):
+def main(**args):
     """
     Entry point of AutoDailies.
 
@@ -14,11 +14,11 @@ def main(*args, **kwargs):
         wait_after (int): Number of seconds to wait before closing the browser.
         accounts (list): Specify which accounts to process. If empty, all accounts will be processed.
         webhook_url (str): Discord webhook URL to send logs to.
+        chromium_path (str): Path to the browser binary.
+        chromedriver_path (str): Path to the Chromedriver.
     """
-    args = parse_args(*args, **kwargs)
-
     # Run tasks for multiple accounts with given arguments
-    if run_multiple(args):
+    if run_multiple(parse_config(**args)):
         prsuccess("All done!")
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ A Python script to automate daily tasks on [GenshinDrop.io](https://genshindrop.
 ## Usage
 
 ```text
-usage: main.py [-h] [-H] [-c] [-g] [-cs] [-w WAIT_AFTER] [--accounts [ACCOUNTS ...]] [--webhook_url WEBHOOK_URL]
+usage: main.py [-h] [-H] [-c] [-g] [-cs] [-w WAIT_AFTER] [--accounts [ACCOUNTS ...]] [--webhook_url WEBHOOK_URL] [--chromium_path CHROMIUM_PATH] [--chromedriver_path CHROMEDRIVER_PATH]
 
 AutoDailies
 
@@ -47,4 +47,8 @@ options:
                         Specify which accounts to process. If empty, all accounts will be processed.
   --webhook_url WEBHOOK_URL
                         Discord webhook URL to send logs to.
+  --chromium_path CHROMIUM_PATH
+                        Path to the browser binary.
+  --chromedriver_path CHROMEDRIVER_PATH
+                        Path to the Chromedriver.
 ```

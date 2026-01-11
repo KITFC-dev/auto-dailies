@@ -6,11 +6,11 @@ from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance
 from src.common import random_sleep
-from config import BASE_URL, CHROMIUM_PATH, CHROMEDRIVER_PATH, IGNORE_CASES, ACCOUNTS
+from config import BASE_URL, IGNORE_CASES, ACCOUNTS
 
 def run(cookie_file, args):
     """Logs in to the website using the given cookie file and runs given actions """
-    driver = create_driver(CHROMIUM_PATH, CHROMEDRIVER_PATH, args.headless)
+    driver = create_driver(args.chromium_path, args.chromedriver_path, args.headless)
     driver.get(BASE_URL)
 
     res = {}
