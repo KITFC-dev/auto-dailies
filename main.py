@@ -22,4 +22,4 @@ def main(*args, **kwargs):
         prsuccess("All done!")
 
 if __name__ == "__main__":
-    main(checkin=True, wait_after=3)
+    main()
