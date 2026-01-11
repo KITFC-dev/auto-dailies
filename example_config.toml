@@ -1,0 +1,36 @@
+[flags]
+# Headless mode
+headless = false
+# Run daily check-in
+checkin = true
+# Run giveaways
+giveaway = true
+# Open cases
+cases = true
+
+[general]
+# Amount of time to wait for the elements to load
+wait_timeout = 2
+# Amount of time to wait before closing the browser
+wait_after = 0
+# Price threshold for joining giveaways, if threshold is 1, 
+# it will join all giveaways with price 1 or less.
+giveaway_price_threshold = 0
+# Price threshold for joining giveaways, if threshold is 1, 
+# it will join all giveaways with price 1 or less.
+case_price_threshold = 1
+
+[discord]
+# URL to send logs to
+webhook_url = ""
+# Profile name and avatar for webhook messages
+profile_name = ""
+profile_avatar = ""
+
+[paths]
+# Path to Chromium browser
+chromium_path = "res/chromium/chrome"
+# Path to Chromedriver
+chromedriver_path = "res/chromedriver/chromedriver"
+# Path to accounts file
+accounts_file = "accounts"

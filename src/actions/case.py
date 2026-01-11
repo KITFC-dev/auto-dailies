@@ -7,10 +7,10 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
-from config import ELEMENTS, BASE_URL, WAIT_TIMEOUT, CASE_PRICE_THRESHOLD
+from config import ELEMENTS, BASE_URL, CONFIG
 
 def get_cases(driver):
-    wait = WebDriverWait(driver, WAIT_TIMEOUT)
+    wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(BASE_URL)
 
     try:
@@ -42,7 +42,7 @@ def get_cases(driver):
     return []
 
 def open_case(driver, case_link, card_idx=None):
-    wait = WebDriverWait(driver, WAIT_TIMEOUT)
+    wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(case_link)
 
     try:
@@ -72,8 +72,8 @@ def open_case(driver, case_link, card_idx=None):
                         case_price = int(match.group())
 
                         # Check if the price is above the threshold
-                        if case_price > CASE_PRICE_THRESHOLD:
-                            prinfo(f"Case price ({case_price}) is higher than threshold ({CASE_PRICE_THRESHOLD}), skipping...")
+                        if case_price > CONFIG.case_price_threshold:
+                            prinfo(f"Case price ({case_price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
                             return False
 
         if coin_price is None:

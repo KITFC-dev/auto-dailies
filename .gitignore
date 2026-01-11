@@ -160,6 +160,9 @@ accounts/
 # Resources folder
 res/
 
+# Config file
+config.toml
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

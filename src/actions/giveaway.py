@@ -4,11 +4,11 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prsuccess, prwarn, prinfo
 from src.common import random_sleep
-from config import ELEMENTS, GIVEAWAY_URL, GIVEAWAY_PRICE_THRESHOLD, WAIT_TIMEOUT
+from config import ELEMENTS, GIVEAWAY_URL, CONFIG
 
 def run_giveaway(driver):
     """Checks out all giveaways on the giveaways main page """
-    wait = WebDriverWait(driver, WAIT_TIMEOUT+1)
+    wait = WebDriverWait(driver, CONFIG.wait_timeout+1)
     driver.get(GIVEAWAY_URL)
 
     # Get all giveaways links
@@ -36,7 +36,7 @@ def run_giveaway(driver):
 
 def click_giveaway_join_button(driver):
     try:
-        join_button = WebDriverWait(driver, WAIT_TIMEOUT).until(
+        join_button = WebDriverWait(driver, CONFIG.wait_timeout).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Участвовать')]"))
         )
         # Scroll into view
@@ -52,8 +52,8 @@ def click_giveaway_join_button(driver):
                 # Check if price is above threshold
                 try:
                     price_value = float(price_text)
-                    if price_value > GIVEAWAY_PRICE_THRESHOLD:
-                        prwarn(f"Giveaway price ({price_value}) is above {GIVEAWAY_PRICE_THRESHOLD}. Skipping.")
+                    if price_value > CONFIG.giveaway_price_threshold:
+                        prwarn(f"Giveaway price ({price_value}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
                         return False
                 except ValueError:
                     prwarn(f"Value of PRICE_THRESHOLD is not a number: '{price_text}'. Skipping.")

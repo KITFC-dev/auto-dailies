@@ -6,11 +6,11 @@ from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance
 from src.common import random_sleep
-from config import BASE_URL, IGNORE_CASES, ACCOUNTS
+from config import BASE_URL, IGNORE_CASES, CONFIG
 
-def run(cookie_file, args):
+def run_once(cookie_file):
     """Logs in to the website using the given cookie file and runs given actions """
-    driver = create_driver(args.chromium_path, args.chromedriver_path, args.headless)
+    driver = create_driver(CONFIG.chromium_path, CONFIG.chromedriver_path, CONFIG.headless)
     driver.get(BASE_URL)
 
     res = {}
@@ -31,11 +31,11 @@ def run(cookie_file, args):
     res["initial_balance"] = balance["balance"]
 
     # Run actions
-    if args.checkin:
+    if CONFIG.checkin:
         run_daily_checkin(driver)
-    if args.giveaway:
+    if CONFIG.giveaway:
         run_giveaway(driver)
-    if args.cases:
+    if CONFIG.cases:
         available_cases = get_cases(driver)
         res["available_cases"] = len(available_cases)
         res["opened_cases"] = 0
@@ -53,9 +53,9 @@ def run(cookie_file, args):
     res["balance"] = balance_after["balance"]
 
     # Wait before closing
-    if args.wait_after > 0:
-        prinfo(f"Waiting {args.wait_after} seconds before closing the browser...")
-        random_sleep(args.wait_after, 0)
+    if CONFIG.wait_after > 0:
+        prinfo(f"Waiting {CONFIG.wait_after} seconds before closing the browser...")
+        random_sleep(CONFIG.wait_after, 0)
 
     # Cleanup
     save_cookies(driver, cookie_file)
@@ -63,18 +63,18 @@ def run(cookie_file, args):
 
     return res
 
-def run_multiple(args):
+def run():
     # Variables
     done_accounts = []
     failed_accounts = []
     account_results = []
 
     # Iterate over all accounts
-    for name, cookie_file in ACCOUNTS.items():
-        if (name not in args.accounts if args.accounts else False):
+    for name, cookie_file in CONFIG.accounts.items():
+        if (name not in CONFIG.accounts if CONFIG.accounts else False):
             continue
         prinfo(f"Processing account: {name}")
-        res = run(cookie_file, args)
+        res = run_once(cookie_file)
         if res:
             res["name"] = name
             done_accounts.append(name)
@@ -98,4 +98,5 @@ def run_multiple(args):
             for res in account_results],
     )
 
+    prsuccess("All Done!")
     return True

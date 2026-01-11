@@ -1,14 +1,10 @@
 import requests
-import config
+from src.config import Config
 from colorama import Fore, Style
 
-def _send_webhook(msg=None, embeds=None, webhook_url=None):
-    # Get webhook url
-    if not webhook_url:
-        webhook_url = config.WEBHOOK_URL
-
+def _send_webhook(msg=None, embeds=None):
     # Skip if webhook url is empty
-    if not (webhook_url.strip()):
+    if not (Config.webhook_url.strip()):
         return
     
     # Discord webhook
@@ -17,13 +13,13 @@ def _send_webhook(msg=None, embeds=None, webhook_url=None):
         payload["content"] = msg
     if embeds:
         payload["embeds"] = embeds
-    if config.WEBHOOK_PROFILE_NAME:
-        payload["username"] = config.WEBHOOK_PROFILE_NAME
-    if config.WEBHOOK_PROFILE_AVATAR:
-        payload["avatar_url"] = config.WEBHOOK_PROFILE_AVATAR
-    
+    if Config.webhook_name:
+        payload["username"] = Config.webhook_name
+    if Config.webhook_avatar:
+        payload["avatar_url"] = Config.webhook_avatar
+
     # Send webhook
-    r = requests.post(webhook_url, json=payload, timeout=5)
+    r = requests.post(Config.webhook_url, json=payload, timeout=5)
 
     if not r.ok:
         prerror(f"Failed to send webhook: {r.status_code} {r.text}")
@@ -41,9 +37,8 @@ def prwebhook(
     title=None, 
     color=None, 
     description=None, 
-    fields=None, 
-    webhook_url=None
-    ):
+    fields=None
+):
     _send_webhook(msg, embeds=[
         {
             "title": title, 
@@ -51,9 +46,9 @@ def prwebhook(
             "description": description, 
             "fields": fields
         }
-    ], webhook_url=webhook_url)
+    ])
 
-def prinfo(msg, webhook=False): _print_log(msg, webhook=webhook)
-def prsuccess(msg, webhook=False): _print_log(msg, color = Fore.GREEN, type = "success", webhook=webhook)
-def prwarn(msg, webhook=False): _print_log(msg, color = Fore.YELLOW, type = "warning", webhook=webhook)
-def prerror(msg, webhook=False): _print_log(msg, color = Fore.RED, type = "error", webhook=webhook)
+def prinfo(msg): _print_log(msg)
+def prsuccess(msg): _print_log(msg, color = Fore.GREEN, type = "success")
+def prwarn(msg): _print_log(msg, color = Fore.YELLOW, type = "warning")
+def prerror(msg): _print_log(msg, color = Fore.RED, type = "error")
