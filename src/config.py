@@ -35,30 +35,7 @@ class Config:
         if self.new_account:
             self.accounts[self.new_account] = f"{self.accounts_dir}/{self.new_account}"
 
-        self.validate_paths()
-
-    def load_toml(self, user_config: str) -> dict:
-        # Check if config file exists
-        if not os.path.exists(user_config):
-            raise FileNotFoundError(f"Config file not found: {user_config}")
-
-        # Read config file
-        with open(os.path.abspath(user_config), "rb") as f:
-            return tomllib.load(f)
-
-    def load_accounts(self) -> dict[str, str]:
-        return {
-            name: f"{self.accounts_dir}/{name}"
-            for name in os.listdir("accounts")
-            if name.endswith(".pkl")
-        }
-
-    def validate_paths(self):
-        if not os.path.exists(self.chromium_path):
-            raise FileNotFoundError(f"Chromium binary not found: {self.chromium_path}")
-
-        if not os.path.exists(self.chromedriver_path):
-            raise FileNotFoundError(f"Chromedriver not found: {self.chromedriver_path}")
+        self.validate()
 
     def parse_args(self) -> argparse.Namespace:
         """ Parse config options for AutoDailies. """
@@ -86,66 +63,40 @@ class Config:
 
         return parser.parse_args()
 
-CONFIG: Config = Config()
+    def load_toml(self, user_config: str) -> dict:
+        # Check if config file exists
+        if not os.path.exists(user_config):
+            raise FileNotFoundError(f"Config file not found: {user_config}")
 
-# URLs for pages on the website
-BASE_URL: str = "https://genshindrop.io"
-CHECKIN_URL: str = f"{BASE_URL}/checkin"
-GIVEAWAY_URL: str = f"{BASE_URL}/give"
-PROFILE_URL: str = f"{BASE_URL}/profile"
+        # Read config file
+        with open(os.path.abspath(user_config), "rb") as f:
+            return tomllib.load(f)
 
-# HTML elements
-ELEMENTS = {
-    # Checkin
-    "daily_checkin_button": 'checkin-day-today-label-check',
+    def load_accounts(self) -> dict[str, str]:
+        return {
+            name: f"{self.accounts_dir}/{name}"
+            for name in os.listdir("accounts")
+            if name.endswith(".pkl")
+        }
     
-    # Giveaway
-    "giveaway_box": 'panel give-box col-12 --genshin',
-    "giveaway_free_label": 'give-free',
-    "giveaway_paid_label": 'give-pay',
-    "giveaway_price": 'give-pay_price__value',
-    "giveaway_join_button": 'btn btn-gen btn-md w-100',
+    def validate(self):
+        self._validate_paths()
+        self._validate_values()
+    
+    def _validate_paths(self):
+        # Check if paths exist
+        for path in [self.chromium_path, self.chromedriver_path]:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"Path not found: {path}")
 
-    # Common
-    "button_confirm": 'swal-button swal-button--confirm',
+    def _validate_values(self):
+        # Check for negative values
+        for value in [self.giveaway_price_threshold, self.case_price_threshold, self.wait_after, self.wait_timeout]:
+            if value < 0:
+                raise ValueError(f"{value} cannot be negative.")
 
-    # Balance
-    "balance_label": 'user_mor_value',
-    "coins_label": 'user_coin_value',
+        # Check for valid URLs
+        if self.webhook_url and not self.webhook_url.startswith("https://discord.com/api/webhooks/"):
+            raise ValueError(f"Invalid webhook URL: {self.webhook_url}")
 
-    # Cases
-    "case_box": "index-cat-container",
-    "case": "index-case",
-    "case_image": "index-case_cover",
-    "case_name": "index-case_name",
-    "case_price": "index-case_price",
-
-    "case_requirements": "give-requirements-list",
-    "case_requirement": "give-requirements-list_item__text",
-    "case_coin_price_id": "чайник",
-
-    "case_card_list": "box-page-loot-cards",
-    "case_card": "box-page-loot-cards-card",
-
-    # Profile info
-    "profile_panel_box": 'profile-account-panel',
-    "name": "mainUsernameValue",
-
-    "profile_data_box": 'profile-user-data',
-    "id": "mr-1",
-    "avatar": "profile-avatar",
-    "is_verified": "profile-verified_icon true"
-}
-
-# Cases to ignore when opening cases
-IGNORE_CASES = [
-    "druzeskii-keis",
-    "nescatnaya-paimon",
-    "bednaya-mona",
-    "korobka-vezuncika",
-    "vse-ili-nicego",
-    "damaznaya-udaca",
-    "korobka-inadzumy",
-    "dar-arxontov",
-    "pokrovitelstvo-dilyuka"
-]
+CONFIG: Config = Config()
