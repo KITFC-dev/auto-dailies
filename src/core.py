@@ -1,5 +1,4 @@
-from src.browser import create_driver
-from src.cookies import load_cookies, save_cookies
+from src.browser import create_driver, load_cookies, save_cookies
 from src.logger import prinfo, prsuccess, prerror, prwebhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
