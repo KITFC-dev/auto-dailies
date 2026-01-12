@@ -77,6 +77,7 @@ class Config:
             name: f"{self.accounts_dir}/{name}"
             for name in os.listdir("accounts")
             if name.endswith(".pkl")
+            and not self.new_account
         }
     
     def validate(self):
