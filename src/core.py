@@ -6,7 +6,8 @@ from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance
 from src.common import random_sleep
-from src.config import BASE_URL, IGNORE_CASES, CONFIG
+from src.config import CONFIG
+from src.constants import BASE_URL, IGNORE_CASES
 
 def run_once(cookie_file):
     """Logs in to the website using the given cookie file and runs given actions """
