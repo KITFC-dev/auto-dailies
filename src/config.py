@@ -23,17 +23,18 @@ class Config:
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
         self.accounts_dir = paths.get("accounts_file", "accounts")
+        self.new_account = args.new_account
         self.accounts = self.load_accounts()
+        
+        # For new pkl files
+        if self.new_account:
+            self.new_account = f"{self.new_account}.pkl"
+            self.accounts[self.new_account] = f"{self.accounts_dir}/{self.new_account}"
 
         discord = raw.get("discord", {})
         self.webhook_url = args.webhook_url or discord.get("webhook_url", "")
         self.webhook_name = discord.get("profile_name", "")
         self.webhook_avatar = discord.get("profile_avatar", "")
-
-        # For new pkl files
-        self.new_account = args.new_account
-        if self.new_account:
-            self.accounts[self.new_account] = f"{self.accounts_dir}/{self.new_account}"
 
         self.validate()
 
