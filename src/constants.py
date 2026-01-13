@@ -22,6 +22,11 @@ S = tuple[str, str]
 
 class SelEnum(tuple, Enum):
     """Base class for selector enums"""
+    @property
+    def by(self) -> str: return self._value_[0]
+
+    @property
+    def val(self) -> str: return self._value_[1]
 
     def __new__(cls, value: S):
         obj = tuple.__new__(cls, value)
@@ -51,14 +56,13 @@ class GiveawaySelectors(SelEnum):
 class CaseSelectors(SelEnum):
     """Selectors for cases"""
     BOX: S = (By.CLASS_NAME, 'index-cat-container')
-    CASE: S = (By.CLASS_NAME, 'index-case')
+    CASE = (By.CLASS_NAME , 'index-case')
     IMAGE: S = (By.CLASS_NAME, 'index-case_cover')
     NAME: S = (By.CLASS_NAME, 'index-case_name')
     PRICE: S = (By.CLASS_NAME, 'index-case_price')
     
     REQUIREMENTS: S = (By.CLASS_NAME, 'give-requirements-list')
     REQUIREMENT: S = (By.CLASS_NAME, 'give-requirements-list_item__text')
-    COIN_PRICE_ID: str = 'чайник'
     
     CARD_LIST: S = (By.CLASS_NAME, 'box-page-loot-cards')
     CARD: S = (By.CLASS_NAME, 'box-page-loot-cards-card')

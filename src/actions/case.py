@@ -1,6 +1,7 @@
 import re
 import random
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -14,19 +15,20 @@ def get_cases(driver):
     driver.get(BASE_URL)
 
     try:
+
         # Wait until cases box is present
         container = wait.until(EC.presence_of_element_located(CaseSelectors.BOX))
 
         # Get cases box's elements
-        cases_elements = container.find_elements(CaseSelectors.CASE)
+        cases_elements = container.find_elements(*CaseSelectors.CASE)
         cases_data = []
 
         # Parse the data
         for case in cases_elements:
             link = case.get_attribute("href")
-            img = case.find_element(CaseSelectors.IMAGE).get_attribute("src")
-            name = case.find_element(CaseSelectors.NAME).text
-            price = case.find_element(CaseSelectors.PRICE).text
+            img = case.find_element(*CaseSelectors.IMAGE).get_attribute("src")
+            name = case.find_element(*CaseSelectors.NAME).text
+            price = case.find_element(*CaseSelectors.PRICE).text
 
             cases_data.append({
                 "name": name,
@@ -36,7 +38,7 @@ def get_cases(driver):
             })
 
         return cases_data
-    except Exception:
+    except TimeoutException:
         prwarn("Couldn't find cases box element.")
 
     return []
@@ -55,17 +57,17 @@ def open_case(driver, case_link, card_idx=None):
         # NOTE: use find_elements to avoid exceptions. If not present,
         # we open the case anyway (there's no requirements).
         coin_price = None
-        req_containers = driver.find_elements(CaseSelectors.REQUIREMENTS)
+        req_containers = driver.find_elements(*CaseSelectors.REQUIREMENTS)
         if req_containers:
             # Pick the first container with reqs
             req_container = req_containers[0]
 
             # Find all elements that have requirement text
-            req_texts = req_container.find_elements(CaseSelectors.REQUIREMENT)
+            req_texts = req_container.find_elements(*CaseSelectors.REQUIREMENT)
             for req_text in req_texts:
                 text = req_text.text.strip()
-                # Check if the text contains coin price
-                if CaseSelectors.COIN_PRICE_ID.lower() in text.lower():
+                # Check if the text contains coin price text which is 'чайник'
+                if 'чайник' in text.lower():
                     # Extract numbers using regex
                     match = re.search(r'\d+', text)
                     if match:
@@ -81,7 +83,7 @@ def open_case(driver, case_link, card_idx=None):
 
         # Pick the card, but wait 3 seconds for the animation to finish
         random_sleep(3)
-        cards = driver.find_elements(CaseSelectors.CARD_LIST)
+        cards = driver.find_elements(*CaseSelectors.CARD_LIST)
         if cards:
             card_el = cards[0]
 
@@ -89,7 +91,7 @@ def open_case(driver, case_link, card_idx=None):
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_el)
 
             # Find available cards
-            available_cards = card_el.find_elements(CaseSelectors.CARD)
+            available_cards = card_el.find_elements(*CaseSelectors.CARD)
 
             # Pick random card or the one specified
             if card_idx:
@@ -102,7 +104,7 @@ def open_case(driver, case_link, card_idx=None):
             picked_card.click()
 
             return True
-    except Exception:
+    except TimeoutException:
         prwarn(f"Couldn't find the case with link {case_link}.")
 
     return False
