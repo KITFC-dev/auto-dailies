@@ -31,6 +31,7 @@ def run_once(cookie_file):
     balance = run_get_balance(driver)
     if balance == {}:
         prerror(f"Failed to get balance, the login may have failed. Skipping {cookie_file}")
+        driver.quit()
         return False
     
     res["initial_coins"] = balance["coins"]

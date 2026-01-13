@@ -31,6 +31,6 @@ profile_avatar = ""
 # Path to Chromium browser
 chromium_path = "res/chromium/chrome"
 # Path to Chromedriver
-chromedriver_path = "res/chromedriver/chromedriver"
+chromedriver_path = "res/chromedriver"
 # Path to accounts file
 accounts_file = "accounts"

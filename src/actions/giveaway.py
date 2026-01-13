@@ -1,3 +1,4 @@
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -5,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from src.logger import prsuccess, prwarn, prinfo
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import GIVEAWAY_URL, ELEMENTS
+from src.constants import GIVEAWAY_URL, GiveawaySelectors
 
 def run_giveaway(driver):
     """Checks out all giveaways on the giveaways main page """
@@ -36,6 +37,7 @@ def run_giveaway(driver):
             return False
 
 def click_giveaway_join_button(driver):
+    wait = WebDriverWait(driver, CONFIG.wait_timeout)
     try:
         join_button = WebDriverWait(driver, CONFIG.wait_timeout).until(
             EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Участвовать')]"))
@@ -45,11 +47,11 @@ def click_giveaway_join_button(driver):
         
         # Check giveaway's price
         try:
-            price_element = driver.find_element(By.CLASS_NAME, ELEMENTS["giveaway_price"])
+            price_element = wait.until(
+                EC.presence_of_element_located(GiveawaySelectors.PRICE)
+            )
             price_text = price_element.text.strip()
-            if price_text not in ["0", "Бесплатно", "Free"]:
-                prwarn(f"Giveaway's price is: {price_text}")
-                
+            if price_text not in ["0", "Бесплатно", "Free"]:                
                 # Check if price is above threshold
                 try:
                     price_value = float(price_text)
@@ -70,7 +72,7 @@ def click_giveaway_join_button(driver):
 
         prsuccess("Giveaway join button clicked")
         random_sleep(0.5)
-    except Exception:
+    except TimeoutException:
         prwarn("No giveaway join button detected. Seems like you already joined this giveaway")
         return False
 

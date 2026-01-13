@@ -1,51 +1,82 @@
-# URLs for pages on the website
+from enum import Enum
+from selenium.webdriver.common.by import By
+
+__all__ = [
+    "BASE_URL",
+    "CHECKIN_URL",
+    "GIVEAWAY_URL",
+    "PROFILE_URL",
+    "CommonSelectors",
+    "CheckinSelectors",
+    "GiveawaySelectors",
+    "CaseSelectors",
+    "StateSelectors"
+]
+
 BASE_URL: str = "https://genshindrop.io"
 CHECKIN_URL: str = f"{BASE_URL}/checkin"
 GIVEAWAY_URL: str = f"{BASE_URL}/give"
 PROFILE_URL: str = f"{BASE_URL}/profile"
 
-# HTML elements
-ELEMENTS = {
-    # Checkin
-    "daily_checkin_button": 'checkin-day-today-label-check',
+S = tuple[str, str]
+
+class SelEnum(tuple, Enum):
+    """Base class for selector enums"""
+
+    def __new__(cls, value: S):
+        obj = tuple.__new__(cls, value)
+        obj._value_ = value
+        return obj
+
+    def __str__(self):
+        return f"{self.value[0]}={self.value[1]}"
+
+class CommonSelectors(SelEnum):
+    """Selectors for common elements"""
+    CONFIRM_BUTTON: S = (By.CLASS_NAME, 'swal-button swal-button--confirm')
+
+class CheckinSelectors(SelEnum):
+    """Selectors for check in page"""
+    BUTTON: S = (By.CLASS_NAME, 'checkin-day-today-label-check')
+
+class GiveawaySelectors(SelEnum):
+    """Selectors for giveaway page"""
+    LINKS: S = (By.CLASS_NAME, 'give-box__link')
+    BOX: S = (By.CLASS_NAME, 'panel give-box col-12 --genshin')
+    FREE_LABEL: S = (By.CLASS_NAME, 'give-free')
+    PAID_LABEL: S = (By.CLASS_NAME, 'give-pay')
+    PRICE: S = (By.CLASS_NAME, 'give-pay_price__value')
+    JOIN_BUTTON: S = (By.CLASS_NAME, 'btn btn-gen btn-md w-100')
+
+class CaseSelectors(SelEnum):
+    """Selectors for cases"""
+    BOX: S = (By.CLASS_NAME, 'index-cat-container')
+    CASE: S = (By.CLASS_NAME, 'index-case')
+    IMAGE: S = (By.CLASS_NAME, 'index-case_cover')
+    NAME: S = (By.CLASS_NAME, 'index-case_name')
+    PRICE: S = (By.CLASS_NAME, 'index-case_price')
     
-    # Giveaway
-    "giveaway_box": 'panel give-box col-12 --genshin',
-    "giveaway_free_label": 'give-free',
-    "giveaway_paid_label": 'give-pay',
-    "giveaway_price": 'give-pay_price__value',
-    "giveaway_join_button": 'btn btn-gen btn-md w-100',
+    REQUIREMENTS: S = (By.CLASS_NAME, 'give-requirements-list')
+    REQUIREMENT: S = (By.CLASS_NAME, 'give-requirements-list_item__text')
+    COIN_PRICE_ID: str = 'чайник'
+    
+    CARD_LIST: S = (By.CLASS_NAME, 'box-page-loot-cards')
+    CARD: S = (By.CLASS_NAME, 'box-page-loot-cards-card')
 
-    # Common
-    "button_confirm": 'swal-button swal-button--confirm',
+class StateSelectors(SelEnum):
+    """Selectors for state information"""
+    BALANCE: S = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
+    COINS: S = (By.CSS_SELECTOR, "span[data-key='user_coin_value']")
 
-    # Balance
-    "balance_label": 'user_mor_value',
-    "coins_label": 'user_coin_value',
-
-    # Cases
-    "case_box": "index-cat-container",
-    "case": "index-case",
-    "case_image": "index-case_cover",
-    "case_name": "index-case_name",
-    "case_price": "index-case_price",
-
-    "case_requirements": "give-requirements-list",
-    "case_requirement": "give-requirements-list_item__text",
-    "case_coin_price_id": "чайник",
-
-    "case_card_list": "box-page-loot-cards",
-    "case_card": "box-page-loot-cards-card",
-
-    # Profile info
-    "profile_panel_box": 'profile-account-panel',
-    "name": "mainUsernameValue",
-
-    "profile_data_box": 'profile-user-data',
-    "id": "mr-1",
-    "avatar": "profile-avatar",
-    "is_verified": "profile-verified_icon true"
-}
+    class Profile(SelEnum):
+        """Profile page selectors"""
+        PANEL_BOX: S = (By.CLASS_NAME, 'profile-account-panel')
+        NAME: S = (By.CLASS_NAME, 'mainUsernameValue')
+        
+        DATA_BOX: S = (By.CLASS_NAME, 'profile-user-data')
+        ID: S = (By.CLASS_NAME, 'mr-1')
+        AVATAR: S = (By.CLASS_NAME, 'profile-avatar')
+        IS_VERIFIED: S = (By.CLASS_NAME, 'profile-verified_icon true')
 
 # Cases to ignore when opening cases
 IGNORE_CASES = [

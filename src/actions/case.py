@@ -1,14 +1,13 @@
 import re
 import random
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, ELEMENTS
+from src.constants import BASE_URL, CaseSelectors
 
 def get_cases(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -16,18 +15,18 @@ def get_cases(driver):
 
     try:
         # Wait until cases box is present
-        container = wait.until(EC.presence_of_element_located((By.CLASS_NAME, ELEMENTS["case_box"])))
+        container = wait.until(EC.presence_of_element_located(CaseSelectors.BOX))
 
         # Get cases box's elements
-        cases_elements = container.find_elements(By.CLASS_NAME, ELEMENTS["case"])
+        cases_elements = container.find_elements(CaseSelectors.CASE)
         cases_data = []
 
         # Parse the data
         for case in cases_elements:
             link = case.get_attribute("href")
-            img = case.find_element(By.CLASS_NAME, ELEMENTS["case_image"]).get_attribute("src")
-            name = case.find_element(By.CLASS_NAME, ELEMENTS["case_name"]).text
-            price = case.find_element(By.CLASS_NAME, ELEMENTS["case_price"]).text
+            img = case.find_element(CaseSelectors.IMAGE).get_attribute("src")
+            name = case.find_element(CaseSelectors.NAME).text
+            price = case.find_element(CaseSelectors.PRICE).text
 
             cases_data.append({
                 "name": name,
@@ -48,7 +47,7 @@ def open_case(driver, case_link, card_idx=None):
 
     try:
         # Wait until case cards are present
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, ELEMENTS["case_card_list"])))
+        wait.until(EC.presence_of_element_located(CaseSelectors.CARD_LIST))
         random_sleep(1)
         
         # Extract requirements for the case, this is needed
@@ -56,17 +55,17 @@ def open_case(driver, case_link, card_idx=None):
         # NOTE: use find_elements to avoid exceptions. If not present,
         # we open the case anyway (there's no requirements).
         coin_price = None
-        req_containers = driver.find_elements(By.CLASS_NAME, ELEMENTS["case_requirements"])
+        req_containers = driver.find_elements(CaseSelectors.REQUIREMENTS)
         if req_containers:
             # Pick the first container with reqs
             req_container = req_containers[0]
 
             # Find all elements that have requirement text
-            req_texts = req_container.find_elements(By.CLASS_NAME, ELEMENTS["case_requirement"])
+            req_texts = req_container.find_elements(CaseSelectors.REQUIREMENT)
             for req_text in req_texts:
                 text = req_text.text.strip()
                 # Check if the text contains coin price
-                if ELEMENTS['case_coin_price_id'].lower() in text.lower():
+                if CaseSelectors.COIN_PRICE_ID.lower() in text.lower():
                     # Extract numbers using regex
                     match = re.search(r'\d+', text)
                     if match:
@@ -82,7 +81,7 @@ def open_case(driver, case_link, card_idx=None):
 
         # Pick the card, but wait 3 seconds for the animation to finish
         random_sleep(3)
-        cards = driver.find_elements(By.CLASS_NAME, ELEMENTS["case_card_list"])
+        cards = driver.find_elements(CaseSelectors.CARD_LIST)
         if cards:
             card_el = cards[0]
 
@@ -90,7 +89,7 @@ def open_case(driver, case_link, card_idx=None):
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_el)
 
             # Find available cards
-            available_cards = card_el.find_elements(By.CLASS_NAME, ELEMENTS["case_card"])
+            available_cards = card_el.find_elements(CaseSelectors.CARD)
 
             # Pick random card or the one specified
             if card_idx:
