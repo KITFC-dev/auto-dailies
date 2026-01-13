@@ -15,7 +15,6 @@ def get_cases(driver):
     driver.get(BASE_URL)
 
     try:
-
         # Wait until cases box is present
         container = wait.until(EC.presence_of_element_located(CaseSelectors.BOX))
 

@@ -1,5 +1,8 @@
-from enum import Enum
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+
+from functools import partial
+from enum import Enum
 
 __all__ = [
     "BASE_URL",
@@ -10,7 +13,21 @@ __all__ = [
     "CheckinSelectors",
     "GiveawaySelectors",
     "CaseSelectors",
-    "StateSelectors"
+    "StateSelectors",
+    "LocatorEnum"
+]
+
+# Cases to ignore when opening cases
+IGNORE_CASES = [
+    "druzeskii-keis",
+    "nescatnaya-paimon",
+    "bednaya-mona",
+    "korobka-vezuncika",
+    "vse-ili-nicego",
+    "damaznaya-udaca",
+    "korobka-inadzumy",
+    "dar-arxontov",
+    "pokrovitelstvo-dilyuka"
 ]
 
 BASE_URL: str = "https://genshindrop.io"
@@ -69,8 +86,8 @@ class CaseSelectors(SelEnum):
 
 class StateSelectors(SelEnum):
     """Selectors for state information"""
-    BALANCE: S = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
-    COINS: S = (By.CSS_SELECTOR, "span[data-key='user_coin_value']")
+    BALANCE = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
+    COINS = (By.CSS_SELECTOR, "span[data-key='user_coin_value']")
 
     class Profile(SelEnum):
         """Profile page selectors"""
@@ -82,15 +99,7 @@ class StateSelectors(SelEnum):
         AVATAR: S = (By.CLASS_NAME, 'profile-avatar')
         IS_VERIFIED: S = (By.CLASS_NAME, 'profile-verified_icon true')
 
-# Cases to ignore when opening cases
-IGNORE_CASES = [
-    "druzeskii-keis",
-    "nescatnaya-paimon",
-    "bednaya-mona",
-    "korobka-vezuncika",
-    "vse-ili-nicego",
-    "damaznaya-udaca",
-    "korobka-inadzumy",
-    "dar-arxontov",
-    "pokrovitelstvo-dilyuka"
-]
+class LocatorEnum(Enum):
+    PRESENCE = partial(EC.presence_of_element_located)
+    CLICKABLE = partial(EC.element_to_be_clickable)
+    VISIBLE = partial(EC.visibility_of_element_located)
