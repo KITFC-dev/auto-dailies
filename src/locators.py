@@ -2,10 +2,10 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.constants import SelEnum, LocatorEnum
+from src.constants import SelEnum, Condition
 from src.logger import prwarn, prerror
 
-def wait_for(condition: LocatorEnum, wait: WebDriverWait, selector: SelEnum) -> WebElement | None:
+def wait_for(c: Condition, wait: WebDriverWait, sel: SelEnum) -> WebElement | None:
     """
     Wait for a selector to satisfy the given condition and return the WebElement.
 
@@ -18,12 +18,12 @@ def wait_for(condition: LocatorEnum, wait: WebDriverWait, selector: SelEnum) -> 
         WebElement if found, otherwise None
     """
     try:
-        return wait.until(condition.value(selector))
+        return wait.until(c.value(sel))
     except TimeoutException:
-        prwarn(f"Timeout while waiting for {selector}")
+        prwarn(f"Timeout while waiting for {sel}")
         return None
     except Exception as e:
-        prerror(f"Error while waiting for {selector}: {e}")
+        prerror(f"Error while waiting for {sel}: {e}")
         return None
 
 def find(driver, selector: SelEnum, multiple=False) -> WebElement | list[WebElement] | None:

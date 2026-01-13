@@ -1,6 +1,7 @@
+from constants import Condition
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
+from src.locators import wait_for
 from src.logger import prsuccess, prwarn
 from src.common import random_sleep
 from src.config import CONFIG
@@ -12,15 +13,15 @@ def run_daily_checkin(driver):
 
     try:
         # Find and click checkin button
-        button = driver.find_element(CheckinSelectors.BUTTON)
-        wait.until(EC.presence_of_element_located(button))
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
-        random_sleep(0.3)
-        button.click()
-        prsuccess("Daily check-in button clicked")
+        button = wait_for(Condition.CLICKABLE, wait, CheckinSelectors.BUTTON)
+        if button:
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+            random_sleep(0.3)
+            button.click()
+            prsuccess("Daily check-in button clicked")
+            return True
     except Exception:
         prwarn("No daily check-in button detected. Seems like you already checked in today")
         random_sleep(1)
-        return False
 
-    return True
+    return False

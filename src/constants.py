@@ -14,7 +14,7 @@ __all__ = [
     "GiveawaySelectors",
     "CaseSelectors",
     "StateSelectors",
-    "LocatorEnum"
+    "Condition"
 ]
 
 # Cases to ignore when opening cases
@@ -59,7 +59,7 @@ class CommonSelectors(SelEnum):
 
 class CheckinSelectors(SelEnum):
     """Selectors for check in page"""
-    BUTTON: S = (By.CLASS_NAME, 'checkin-day-today-label-check')
+    BUTTON = (By.CLASS_NAME, 'checkin-day-today-label-check')
 
 class GiveawaySelectors(SelEnum):
     """Selectors for giveaway page"""
@@ -99,7 +99,7 @@ class StateSelectors(SelEnum):
         AVATAR: S = (By.CLASS_NAME, 'profile-avatar')
         IS_VERIFIED: S = (By.CLASS_NAME, 'profile-verified_icon true')
 
-class LocatorEnum(Enum):
+class Condition(Enum):
     PRESENCE = partial(EC.presence_of_element_located)
     CLICKABLE = partial(EC.element_to_be_clickable)
     VISIBLE = partial(EC.visibility_of_element_located)
