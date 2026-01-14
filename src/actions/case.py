@@ -5,38 +5,36 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from locators import wait_for, find
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, CaseSelectors
+from src.constants import BASE_URL, CaseSelectors, Condition
 
 def get_cases(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(BASE_URL)
 
     try:
-        # Wait until cases box is present
-        container = wait.until(EC.presence_of_element_located(CaseSelectors.BOX))
-
-        # Get cases box's elements
-        cases_elements = container.find_elements(*CaseSelectors.CASE)
-        cases_data = []
+        # Get cases box's elements in a container
+        container = wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
+        cases = find(container, CaseSelectors.CASE, multiple=True)
 
         # Parse the data
-        for case in cases_elements:
-            link = case.get_attribute("href")
-            img = case.find_element(*CaseSelectors.IMAGE).get_attribute("src")
-            name = case.find_element(*CaseSelectors.NAME).text
-            price = case.find_element(*CaseSelectors.PRICE).text
+        for case in cases:
+            res = {}
+            res["link"] = case.get_attribute("href")
+            img = find(case, CaseSelectors.IMAGE)
+            if img: 
+                res["image"] = img.get_attribute("src")
+            name = find(case, CaseSelectors.NAME)
+            if name: 
+                res["name"] = name.text
+            price = find(case, CaseSelectors.PRICE)
+            if price: 
+                res["price"] = price.text
 
-            cases_data.append({
-                "name": name,
-                "price": price,
-                "link": link,
-                "image": img
-            })
-
-        return cases_data
+        return res
     except TimeoutException:
         prwarn("Couldn't find cases box element.")
 

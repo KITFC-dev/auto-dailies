@@ -72,11 +72,11 @@ class GiveawaySelectors(SelEnum):
 
 class CaseSelectors(SelEnum):
     """Selectors for cases"""
-    BOX: S = (By.CLASS_NAME, 'index-cat-container')
+    BOX = (By.CLASS_NAME, 'index-cat-container')
     CASE = (By.CLASS_NAME, 'index-case')
-    IMAGE: S = (By.CLASS_NAME, 'index-case_cover')
-    NAME: S = (By.CLASS_NAME, 'index-case_name')
-    PRICE: S = (By.CLASS_NAME, 'index-case_price')
+    IMAGE = (By.CLASS_NAME, 'index-case_cover')
+    NAME = (By.CLASS_NAME, 'index-case_name')
+    PRICE = (By.CLASS_NAME, 'index-case_price')
     
     REQUIREMENTS: S = (By.CLASS_NAME, 'give-requirements-list')
     REQUIREMENT: S = (By.CLASS_NAME, 'give-requirements-list_item__text')

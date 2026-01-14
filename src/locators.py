@@ -1,13 +1,22 @@
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, \
+    NoSuchElementException, WebDriverException, StaleElementReferenceException
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
+
+from typing import List, Literal, overload
 
 from src.constants import SelEnum, Condition
 from src.logger import prwarn, prerror
 
-def wait_for(c: Condition, wait: WebDriverWait, sel: SelEnum) -> WebElement | None:
+def wait_for(
+    c: Condition, 
+    wait: WebDriverWait, 
+    sel: SelEnum
+) -> WebElement | None:
     """
-    Wait for a selector to satisfy the given condition and return the WebElement.
+    Wait for a selector to satisfy the given condition 
+    and return the WebElement.
 
     Args:
         condition: LocatorEnum type
@@ -21,21 +30,52 @@ def wait_for(c: Condition, wait: WebDriverWait, sel: SelEnum) -> WebElement | No
         return wait.until(c.value(sel))
     except TimeoutException:
         prwarn(f"Timeout while waiting for {sel}")
-        return None
-    except Exception as e:
-        prerror(f"Error while waiting for {sel}: {e}")
-        return None
+    except WebDriverException as e:
+        prerror(f"Driver error while waiting for {sel}: {e}")
+    
+    return None
 
-def find(driver, selector: SelEnum, multiple=False) -> WebElement | list[WebElement] | None:
+@overload
+def find(
+    driver,
+    sel: SelEnum,
+    *,
+    multiple: Literal[True]
+) -> List[WebElement]: ...
+@overload
+def find(
+    driver,
+    sel: SelEnum,
+    *,
+    multiple: Literal[False] = False
+) -> WebElement | None: ...
+def find(
+    driver: WebDriver | WebElement,
+    sel: SelEnum,
+    *,
+    multiple: bool = False
+) -> WebElement | None | List[WebElement]:
     """
-    Find an element and return it. 
+    Find an element and return it.
+    Also supports finding multiple elements. 
+
+    Args:
+        driver: WebDriver or WebElement instance
+        sel: SelEnum element
+        multiple: bool
     
     Returns:
-        WebElement | list[WebElement] or None if not found
+        Optional[WebElement] | List[WebElement]
     """
     try:
         if multiple:
-            return driver.find_elements(*selector)
-        return driver.find_element(*selector)
-    except NoSuchElementException:
-        return None
+            return driver.find_elements(*sel)
+        return driver.find_element(*sel)
+
+    except (NoSuchElementException, StaleElementReferenceException):
+        prwarn(f"Element not found: {sel}")
+        
+    except WebDriverException as e:
+        prerror(f"Driver error while finding element {sel}: {e}")
+    
+    return [] if multiple else None
