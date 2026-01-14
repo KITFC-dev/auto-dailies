@@ -78,11 +78,11 @@ class CaseSelectors(SelEnum):
     NAME = (By.CLASS_NAME, 'index-case_name')
     PRICE = (By.CLASS_NAME, 'index-case_price')
     
-    REQUIREMENTS: S = (By.CLASS_NAME, 'give-requirements-list')
-    REQUIREMENT: S = (By.CLASS_NAME, 'give-requirements-list_item__text')
+    REQUIREMENTS = (By.CLASS_NAME, 'give-requirements-list')
+    REQUIREMENT = (By.CLASS_NAME, 'give-requirements-list_item__text')
     
-    CARD_LIST: S = (By.CLASS_NAME, 'box-page-loot-cards')
-    CARD: S = (By.CLASS_NAME, 'box-page-loot-cards-card')
+    CARD_LIST = (By.CLASS_NAME, 'box-page-loot-cards')
+    CARD = (By.CLASS_NAME, 'box-page-loot-cards-card')
 
 class StateSelectors(SelEnum):
     """Selectors for state information"""
