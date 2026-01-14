@@ -27,7 +27,7 @@ class Config:
         self.accounts = self.load_accounts()
         
         # For new pkl files
-        if self.new_account:
+        if self.new_account and self.new_account not in self.accounts:
             self.new_account = f"{self.new_account}.pkl"
             self.accounts[self.new_account] = f"{self.accounts_dir}/{self.new_account}"
 
