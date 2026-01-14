@@ -63,12 +63,12 @@ class CheckinSelectors(SelEnum):
 
 class GiveawaySelectors(SelEnum):
     """Selectors for giveaway page"""
-    LINKS: S = (By.CLASS_NAME, 'give-box__link')
-    BOX: S = (By.CLASS_NAME, 'panel give-box col-12 --genshin')
+    LINK = (By.CLASS_NAME, 'give-box__link')
+    GIVEAWAY = (By.CSS_SELECTOR, ".panel.give-box.col-12:not(.--history)")
     FREE_LABEL: S = (By.CLASS_NAME, 'give-free')
     PAID_LABEL: S = (By.CLASS_NAME, 'give-pay')
-    PRICE: S = (By.CLASS_NAME, 'give-pay_price__value')
-    JOIN_BUTTON: S = (By.CLASS_NAME, 'btn btn-gen btn-md w-100')
+    PRICE = (By.CLASS_NAME, 'give-pay_price__value')
+    JOIN_BUTTON = (By.XPATH, "//button[contains(text(), 'Участвовать')]")
 
 class CaseSelectors(SelEnum):
     """Selectors for cases"""
