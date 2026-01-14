@@ -1,6 +1,6 @@
 # AutoDailies
 
-A Python script to automate daily tasks on [GenshinDrop.io](https://genshindrop.io)
+![AutoDailies Thumbnail](https://10ku.net/autodailies/auto-dailies-thumbnail.png)
 
 ## Requirements
 
