@@ -1,8 +1,7 @@
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
-from src.logger import prsuccess, prwarn, prinfo
+from src.logger import prsuccess, prwarn, prinfo, prerror
 from src.common import random_sleep
 from src.config import CONFIG
 from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
@@ -24,8 +23,8 @@ def run_giveaway(driver):
             if link:
                 hrefs.append(link.get_attribute("href"))
     
-    except TimeoutException:
-        prwarn("No giveaway box detected")
+    except Exception as e:
+        prerror(f"Error while getting giveaway links: {e}")
         return False
 
     # Join all giveaways
@@ -42,7 +41,11 @@ def click_giveaway_join_button(driver, href):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
 
     try:
+        # Check if join button is present
         join_button = wait_for(Condition.CLICKABLE, wait, GiveawaySelectors.JOIN_BUTTON)
+        if not join_button:
+            prwarn("No giveaway join button detected. Seems like you already joined this giveaway")
+            return False
         
         # Scroll into view
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", join_button)
@@ -76,8 +79,8 @@ def click_giveaway_join_button(driver, href):
 
         prsuccess("Giveaway join button clicked")
         random_sleep(0.5)
-    except TimeoutException:
-        prwarn("No giveaway join button detected. Seems like you already joined this giveaway")
+    except Exception as e:
+        prerror(f"Error while joining giveaway: {e}")
         return False
 
     return True

@@ -4,11 +4,11 @@ import random
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
-from locators import wait_for, find
+from src.locators import wait_for, find
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, CaseSelectors, Condition
+from src.constants import BASE_URL, IGNORE_CASES, CaseSelectors, Condition
 
 def get_cases(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -18,20 +18,31 @@ def get_cases(driver):
         # Get cases box's elements in a container
         container = wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
         cases = find(container, CaseSelectors.CASE, multiple=True)
+        res = []
 
         # Parse the data
         for case in cases:
-            res = {}
-            res["link"] = case.get_attribute("href")
+            case_data = {}
+            # Link
+            href = case.get_attribute("href")
+            if href: 
+                case_data["link"] = href
+            # Image
             img = find(case, CaseSelectors.IMAGE)
             if img: 
-                res["image"] = img.get_attribute("src")
+                case_data["image"] = img.get_attribute("src")
+            # Name
             name = find(case, CaseSelectors.NAME)
             if name: 
-                res["name"] = name.text
+                case_data["name"] = name.text
+            # Price
             price = find(case, CaseSelectors.PRICE)
             if price: 
-                res["price"] = price.text
+                case_data["price"] = price.text
+            # Check if the case is ignored
+            case_data["is_ignored"] = case_data["link"].split("/")[-1] in IGNORE_CASES
+
+            res.append(case_data)
 
         return res
     except TimeoutException:

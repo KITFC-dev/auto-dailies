@@ -6,7 +6,7 @@ from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, IGNORE_CASES
+from src.constants import BASE_URL
 
 def run_once(cookie_file):
     """Logs in to the website using the given cookie file and runs given actions """
@@ -48,7 +48,7 @@ def run_once(cookie_file):
         res["opened_cases"] = 0
         for case in available_cases:
             # Skip ignored cases
-            if case["link"].split("/")[-1] not in IGNORE_CASES:
+            if not case["is_ignored"]:
                 if open_case(driver, case["link"]):
                     prsuccess(f"Opened case: {case['name']}")
                     res["opened_cases"] += 1
