@@ -4,6 +4,9 @@ import argparse
 
 class Config:
     def __init__(self, config_path: str = "config.toml"):
+        """
+        Initialize the Config object, optionally with a config path.
+        """
         args = self.parse_args()
         raw = self.load_toml(args.config_path or config_path)
 
@@ -23,13 +26,8 @@ class Config:
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
         self.accounts_dir = paths.get("accounts_file", "accounts")
-        self.new_account = args.new_account
+        self.new_account = f"{args.new_account}.pkl" if args.new_account else None
         self.accounts = self.load_accounts()
-        
-        # For new pkl files
-        if self.new_account and self.new_account not in self.accounts:
-            self.new_account = f"{self.new_account}.pkl"
-            self.accounts[self.new_account] = f"{self.accounts_dir}/{self.new_account}"
 
         discord = raw.get("discord", {})
         self.webhook_url = args.webhook_url or discord.get("webhook_url", "")
@@ -39,7 +37,7 @@ class Config:
         self.validate()
 
     def parse_args(self) -> argparse.Namespace:
-        """ Parse config options for AutoDailies. """
+        """Parse config options for AutoDailies. """
         parser = argparse.ArgumentParser(description="AutoDailies")
 
         # Flags
@@ -74,12 +72,21 @@ class Config:
             return tomllib.load(f)
 
     def load_accounts(self) -> dict[str, str]:
-        return {
+        # Get accounts pkl file paths
+        acs =  {
             name: f"{self.accounts_dir}/{name}"
             for name in os.listdir("accounts")
             if name.endswith(".pkl")
-            and not self.new_account
         }
+
+        # Handle new account
+        if self.new_account:
+            if self.new_account not in acs.keys():
+                return {self.new_account: f"{self.accounts_dir}/{self.new_account}"}
+            else:
+                raise FileExistsError(f"Account already exists: {self.new_account}")
+
+        return acs
     
     def validate(self):
         self._validate_paths()
