@@ -10,7 +10,7 @@ from src.constants import BASE_URL
 
 def run_once(cookie_file):
     """Logs in to the website using the given cookie file and runs given actions """
-    driver = create_driver(CONFIG.chromium_path, CONFIG.chromedriver_path, CONFIG.headless if not CONFIG.new_account else False)
+    driver = create_driver()
     driver.get(BASE_URL)
 
     res = {}

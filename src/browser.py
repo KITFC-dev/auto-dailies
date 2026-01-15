@@ -4,13 +4,20 @@ import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-def create_driver(chrome_binary, chromedriver_path, headless=False):
-    options = webdriver.ChromeOptions()
-    options.binary_location = chrome_binary
-    if headless:
-        options.add_argument("--headless=new")
+from src.config import CONFIG
+from src.common import is_docker
 
-    service = Service(executable_path=chromedriver_path)
+def create_driver():
+    options = webdriver.ChromeOptions()
+    options.binary_location = CONFIG.chromium_path
+    if (CONFIG.headless if not CONFIG.new_account else False):
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
+    if is_docker():
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+
+    service = Service(executable_path=CONFIG.chromedriver_path)
     return webdriver.Chrome(service=service, options=options)
 
 def load_cookies(driver, cookie_file):
