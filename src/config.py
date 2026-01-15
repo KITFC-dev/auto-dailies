@@ -65,7 +65,7 @@ class Config:
     def load_toml(self, user_config: str) -> dict:
         # Check if config file exists
         if not os.path.exists(user_config):
-            raise FileNotFoundError(f"Config file not found: {user_config}")
+            raise FileNotFoundError(f"Config file not found: {user_config}. Please create a config file (you can find an example in the repo).")
 
         # Read config file
         with open(os.path.abspath(user_config), "rb") as f:

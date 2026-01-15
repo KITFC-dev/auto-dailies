@@ -1,0 +1,8 @@
+services:
+  main:
+    build: .
+    container_name: auto-dailies
+    restart: on-failure
+    volumes:
+      - ./accounts:/app/accounts
+      # - ./config.toml:/app/config.toml:ro
