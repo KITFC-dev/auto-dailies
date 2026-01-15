@@ -8,7 +8,7 @@ def create_driver(chrome_binary, chromedriver_path, headless=False):
     options = webdriver.ChromeOptions()
     options.binary_location = chrome_binary
     if headless:
-        options.add_argument("--headless")
+        options.add_argument("--headless=new")
 
     service = Service(executable_path=chromedriver_path)
     return webdriver.Chrome(service=service, options=options)
