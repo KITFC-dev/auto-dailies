@@ -42,6 +42,22 @@
 
 5. `.pkl` file will be automatically added to the `accounts` directory.
 
+### Running in Docker
+
+1. Clone the repository using:
+
+    ```bash
+    git clone https://github.com/kitfc-dev/autodailies.git
+    ```
+
+2. Add account `.pkl` files to the `accounts` or directory you choose, that contain pickle files needed to login to the website.
+
+3. Rename the `example_config.toml` to `config.yaml` and edit it to your needs.
+
+4. Build the docker image using: `docker compose build`
+
+5. Run docker: `docker compose run --rm main`
+
 ## Usage
 
 ```text

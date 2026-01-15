@@ -5,4 +5,4 @@ services:
     restart: on-failure
     volumes:
       - ./accounts:/app/accounts
-      # - ./config.toml:/app/config.toml:ro
+      - ./config.toml:/app/config.toml:ro
