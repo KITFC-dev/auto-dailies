@@ -26,7 +26,7 @@
 
 4. Add account `.pkl` files to the `accounts` or directory you choose, that contain pickle files needed to login to the website.
 
-5. Rename the `example_config.toml` to `config.yaml` and edit it to your needs.
+5. Rename the `example_config.toml` to `config.toml` and edit it to your needs.
 
 6. Run the script using `python main.py`
 
@@ -52,7 +52,7 @@
 
 2. Add account `.pkl` files to the `accounts` or directory you choose, that contain pickle files needed to login to the website.
 
-3. Rename the `example_config.toml` to `config.yaml` and edit it to your needs.
+3. Rename the `example_config.toml` to `config.toml` and edit it to your needs.
 
 4. Build the docker image using: `docker compose build`
 
