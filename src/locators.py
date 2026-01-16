@@ -38,20 +38,20 @@ def wait_for(
 @overload
 def find(
     driver,
-    sel: SelEnum,
+    sel: SelEnum | tuple[str, str],
     *,
     multiple: Literal[True]
 ) -> List[WebElement]: ...
 @overload
 def find(
     driver,
-    sel: SelEnum,
+    sel: SelEnum | tuple[str, str],
     *,
     multiple: Literal[False] = False
 ) -> WebElement | None: ...
 def find(
     driver: WebDriver | WebElement,
-    sel: SelEnum,
+    sel: SelEnum | tuple[str, str],
     *,
     multiple: bool = False
 ) -> WebElement | None | List[WebElement]:
@@ -61,7 +61,7 @@ def find(
 
     Args:
         driver: WebDriver or WebElement instance
-        sel: SelEnum element
+        sel: SelEnum element or tuple
         multiple: bool
     
     Returns:
