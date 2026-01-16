@@ -47,6 +47,19 @@ def run_get_balance(driver) -> dict:
     return res
 
 def run_get_inventory(driver):
+    """
+    Get user's inventory
+
+    Returns:
+        list: [
+            {
+                "image": str,
+                "name": str,
+                "price": int,
+                "currency_type": str
+            }
+        ]
+    """
     res = []
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(PROFILE_URL)
