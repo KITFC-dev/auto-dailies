@@ -1,5 +1,5 @@
-import re
 import random
+import re
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,7 +8,8 @@ from src.locators import wait_for, find
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, IGNORE_CASES, CaseSelectors, Condition
+from src.constants import BASE_URL, IGNORE_CASES, \
+    CaseSelectors, Condition
 
 def get_cases(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)

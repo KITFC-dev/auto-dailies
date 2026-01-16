@@ -14,7 +14,7 @@ __all__ = [
     "GiveawaySelectors",
     "CaseSelectors",
     "StateSelectors",
-    "Condition"
+    "Condition",
 ]
 
 # Cases to ignore when opening cases
@@ -38,7 +38,7 @@ PROFILE_URL: str = f"{BASE_URL}/profile"
 S = tuple[str, str]
 
 class SelEnum(tuple, Enum):
-    """Base class for selector enums"""
+    """Base class for selector enums. """
     @property
     def by(self) -> str: return self._value_[0]
 
@@ -54,15 +54,16 @@ class SelEnum(tuple, Enum):
         return f"{self.value[0]}={self.value[1]}"
 
 class CommonSelectors(SelEnum):
-    """Selectors for common elements"""
+    """Selectors for common elements. """
     CONFIRM_BUTTON: S = (By.CLASS_NAME, 'swal-button swal-button--confirm')
+    LINK = (By.TAG_NAME, 'a')
 
 class CheckinSelectors(SelEnum):
-    """Selectors for check in page"""
+    """Selectors for check in page. """
     BUTTON = (By.CLASS_NAME, 'checkin-day-today-label-check')
 
 class GiveawaySelectors(SelEnum):
-    """Selectors for giveaway page"""
+    """Selectors for giveaway page. """
     LINK = (By.CLASS_NAME, 'give-box__link')
     GIVEAWAY = (By.CSS_SELECTOR, ".panel.give-box.col-12:not(.--history)")
     FREE_LABEL: S = (By.CLASS_NAME, 'give-free')
@@ -71,7 +72,7 @@ class GiveawaySelectors(SelEnum):
     JOIN_BUTTON = (By.XPATH, "//button[contains(text(), 'Участвовать')]")
 
 class CaseSelectors(SelEnum):
-    """Selectors for cases"""
+    """Selectors for cases. """
     BOX = (By.CLASS_NAME, 'index-cat-container')
     CASE = (By.CLASS_NAME, 'index-case')
     IMAGE = (By.CLASS_NAME, 'index-case_cover')
@@ -85,12 +86,12 @@ class CaseSelectors(SelEnum):
     CARD = (By.CLASS_NAME, 'box-page-loot-cards-card')
 
 class StateSelectors(SelEnum):
-    """Selectors for state information"""
+    """Selectors for state information. """
     BALANCE = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
     COINS = (By.CSS_SELECTOR, "span[data-key='user_coin_value']")
 
     class Profile(SelEnum):
-        """Profile page selectors"""
+        """Profile page selectors. """
         PANEL_BOX: S = (By.CLASS_NAME, 'profile-account-panel')
         NAME: S = (By.CLASS_NAME, 'mainUsernameValue')
         
@@ -100,6 +101,9 @@ class StateSelectors(SelEnum):
         IS_VERIFIED: S = (By.CLASS_NAME, 'profile-verified_icon true')
 
 class Condition(Enum):
+    """
+    Conditions for finding the element. 
+    """
     PRESENCE = partial(EC.presence_of_element_located)
     CLICKABLE = partial(EC.element_to_be_clickable)
     VISIBLE = partial(EC.visibility_of_element_located)
