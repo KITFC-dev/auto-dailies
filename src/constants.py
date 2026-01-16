@@ -90,15 +90,16 @@ class StateSelectors(SelEnum):
     BALANCE = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
     COINS = (By.CSS_SELECTOR, "span[data-key='user_coin_value']")
 
-    class Profile(SelEnum):
-        """Profile page selectors. """
-        PANEL_BOX: S = (By.CLASS_NAME, 'profile-account-panel')
-        NAME: S = (By.CLASS_NAME, 'mainUsernameValue')
+class ProfileSelectors(SelEnum):
+    """Profile page selectors"""
+    PANEL_BOX = (By.CLASS_NAME, 'profile-account-panel')
+    USERNAME = (By.CLASS_NAME, 'profile-username')
         
-        DATA_BOX: S = (By.CLASS_NAME, 'profile-user-data')
-        ID: S = (By.CLASS_NAME, 'mr-1')
-        AVATAR: S = (By.CLASS_NAME, 'profile-avatar')
-        IS_VERIFIED: S = (By.CLASS_NAME, 'profile-verified_icon true')
+    DATA_BOX = (By.CLASS_NAME, 'profile-user-data')
+    ID = (By.XPATH, '//span[contains(text(), "ID")]')
+    AVATAR = (By.CSS_SELECTOR, 'div.profile-avatar img')
+    RICE = (By.CSS_SELECTOR, 'div.profile-balance_value.rice span.icur-container > span')
+    IS_VERIFIED = (By.CSS_SELECTOR, 'div.profile-verified_icon')
 
 class Condition(Enum):
     """
