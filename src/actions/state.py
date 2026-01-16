@@ -103,7 +103,7 @@ def get_profile(driver) -> dict:
             # ID
             id = find(box, ProfileSelectors.ID)
             if id is not None:
-                res["id"] = id.text.strip()
+                res["id"] = id.text.strip().split("ID")[-1]
             
             # Avatar
             avatar = find(box, ProfileSelectors.AVATAR)
