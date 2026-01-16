@@ -3,13 +3,13 @@ from src.logger import prinfo, prsuccess, prerror, prwebhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
-from src.actions.state import run_get_balance
+from src.actions.state import run_get_balance, get_profile, run_get_inventory
 from src.common import random_sleep
 from src.config import CONFIG
 from src.constants import BASE_URL
 
 def run_once(cookie_file):
-    """Logs in to the website using the given cookie file and runs given actions """
+    """Logs in to the website using the given cookie file and runs given actions. """
     driver = create_driver()
     driver.get(BASE_URL)
 
@@ -38,6 +38,8 @@ def run_once(cookie_file):
     res["initial_balance"] = balance["balance"]
 
     # Run actions
+    res["profile"] = get_profile(driver)
+    res["inventory"] = run_get_inventory(driver)
     if CONFIG.checkin:
         run_daily_checkin(driver)
     if CONFIG.giveaway:
@@ -71,6 +73,9 @@ def run_once(cookie_file):
     return res
 
 def run():
+    """
+    Runs the main script
+    """
     # Variables
     done_accounts = []
     failed_accounts = []
@@ -83,7 +88,6 @@ def run():
         prinfo(f"Processing account: {name}")
         res = run_once(cookie_file)
         if res:
-            res["name"] = name
             done_accounts.append(name)
             account_results.append(res)
             prsuccess(f"Account {name} done")
@@ -99,7 +103,7 @@ def run():
         description=f"Accounts Done: {len(done_accounts)}\nAccounts Failed: {len(failed_accounts)}\n\nEarned Coins: {earned_coins}\nEarned Balance: {earned_balance}",
         color=2818303,
         fields=[{
-            "name": res["name"], 
+            "name": f"{res["profile"]["username"]} ({res['profile']['id']})",
             "value": f"Coins: {res.get('initial_coins', 0)} -> {res.get('coins', 0)}\nBalance: {res.get('initial_balance', 0)} -> {res.get('balance', 0)}", 
             "inline": False}
             for res in account_results],
