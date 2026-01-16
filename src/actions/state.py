@@ -5,7 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from src.logger import prwarn
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, PROFILE_URL, StateSelectors, ProfileSelectors, Condition
+from src.constants import BASE_URL, PROFILE_URL, StateSelectors, \
+    ProfileSelectors, InventorySelectors, Condition
 from src.locators import wait_for, find
 
 def run_get_balance(driver) -> dict:
@@ -46,8 +47,25 @@ def run_get_balance(driver) -> dict:
     return res
 
 def run_get_inventory(driver):
-    # Will be implemented later
-    pass
+    res = []
+    wait = WebDriverWait(driver, CONFIG.wait_timeout)
+    driver.get(PROFILE_URL)
+
+    try:
+        wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
+        items = find(driver, InventorySelectors.ITEM_BOX, multiple=True)
+        for item in items:
+            res.append({
+                # ignore warnings because im lazy
+                "image": find(item, InventorySelectors.IMAGE).get_attribute("src"),  # ty:ignore[possibly-missing-attribute]
+                "name": find(item, InventorySelectors.NAME).text.strip(),  # ty:ignore[possibly-missing-attribute]
+                "price": find(item, InventorySelectors.PRICE).text.strip(),  # ty:ignore[possibly-missing-attribute]
+                "currency_type": find(item, InventorySelectors.CURRENCY_TYPE).get_attribute("class")  # ty:ignore[possibly-missing-attribute]
+            })
+    except Exception as e:
+        prwarn(f"Error while getting inventory: {e}")
+
+    return res
 
 def get_profile(driver) -> dict:
     """
