@@ -29,15 +29,15 @@ def run_once(cookie_file):
 
     # Verify if login was successful
     balance = run_get_balance(driver)
-    if balance == {}:
+    if balance is None:
         prerror(f"Failed to get balance, the login may have failed. Skipping {cookie_file}")
         driver.quit()
         return False
     
     # Save initial state
     res["initial"] = {}
-    res["initial"]["coins"] = balance["coins"]
-    res["initial"]["balance"] = balance["balance"]
+    res["initial"]["coins"] = balance.coins
+    res["initial"]["balance"] = balance.balance
     res["initial"]["profile"] = run_get_profile(driver)
 
     # Run actions
@@ -61,9 +61,10 @@ def run_once(cookie_file):
                 res["ignored_cases"] += 1
 
     # Build result
-    balance_after = run_get_balance(driver)
-    res["coins"] = balance_after["coins"]
-    res["balance"] = balance_after["balance"]
+    balance = run_get_balance(driver)
+    if balance:
+        res["coins"] = balance.coins
+        res["balance"] = balance.balance
     res["profile"] = run_get_profile(driver)
 
     # Wait before closing

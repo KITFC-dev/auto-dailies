@@ -7,3 +7,8 @@ class Case:
     image: str | None = None
     name: str | None = None
     price: str | int | None = None
+
+@dataclass
+class Balance:
+    balance: int
+    coins: int

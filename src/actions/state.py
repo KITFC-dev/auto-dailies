@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prwarn
@@ -8,43 +6,26 @@ from src.config import CONFIG
 from src.constants import BASE_URL, PROFILE_URL, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition
 from src.locators import wait_for, find
+from src.models import Balance
 
-def run_get_balance(driver) -> dict:
+def run_get_balance(driver) -> Balance | None:
     """
-    Get user's balance and coins on the website
-
-    Returns:
-        dict: {
-            "balance": int,
-            "coins": int
-        }
+    Get user's balance and coins on the website.
     """
-    res = {}
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(BASE_URL)
 
     try:
-        # Elements to fetch
-        elements: List[Tuple[StateSelectors, str]] = [
-            (StateSelectors.BALANCE, "balance"),
-            (StateSelectors.COINS, "coins")
-        ]
+        balance = wait_for(Condition.PRESENCE, wait, StateSelectors.BALANCE)
+        coins = wait_for(Condition.PRESENCE, wait, StateSelectors.COINS)
+        if not balance or not coins:
+            raise Exception("Balance or coins not found")
 
-        # Get elements
-        for sel, name in elements:
-            e = wait_for(Condition.PRESENCE, wait, sel)
-            if not e:
-                prwarn(f"Couldn't find {name} element")
-                continue
-
-            e = e.text.strip() or str(e.get_attribute("textContent")).strip()
-            res[name] = int(e.replace("\u00A0", "").replace(",", ""))
-
+        return Balance(balance=int(balance.text.strip()), coins=int(coins.text.strip()))
         random_sleep(0.3)
     except Exception as e:
         prwarn(f"Error while getting balance: {e}")
-
-    return res
+        return None
 
 def run_get_profile(driver) -> dict:
     """

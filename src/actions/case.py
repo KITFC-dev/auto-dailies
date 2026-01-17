@@ -13,7 +13,7 @@ from src.models import Case
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 
-def get_cases(driver):
+def get_cases(driver) -> List[Case]:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(BASE_URL)
 
