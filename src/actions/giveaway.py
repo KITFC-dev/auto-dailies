@@ -7,7 +7,7 @@ from src.config import CONFIG
 from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
 
 def run_giveaway(driver):
-    """Checks out all giveaways on the giveaways main page """
+    """Checks out all giveaways on the giveaways main page. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout+1)
     driver.get(GIVEAWAY_URL)
 
@@ -15,23 +15,23 @@ def run_giveaway(driver):
         # Wait for at least one giveaway to load, then get all giveaways
         wait_for(Condition.VISIBLE, wait, GiveawaySelectors.GIVEAWAY)
         giveaways = find(driver, GiveawaySelectors.GIVEAWAY, multiple=True)
-        hrefs = []
+        links = []
 
         # Get all links to giveaways
         for giveaway in giveaways:
             link = find(giveaway, GiveawaySelectors.LINK)
             if link:
-                hrefs.append(link.get_attribute("href"))
+                links.append(link.get_attribute("href"))
     
     except Exception as e:
         prerror(f"Error while getting giveaway links: {e}")
         return False
 
     # Join all giveaways
-    for href in hrefs:
-        prinfo(f"Checking out giveaway: {href}")
+    for link in links:
+        prinfo(f"Checking out giveaway: {link}")
         random_sleep(1)
-        if click_giveaway_join_button(driver, href):
+        if click_giveaway_join_button(driver, link):
             random_sleep(5)
 
     return True
