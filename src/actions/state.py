@@ -46,19 +46,28 @@ def run_get_balance(driver) -> dict:
 
     return res
 
-def run_get_inventory(driver):
+def run_get_profile(driver) -> dict:
     """
-    Get user's inventory
+    Get whole profile data, including inventory, 
+    profile info and other metadata. 
+    """
+    inventory = get_profile_inventory(driver)
+    data = get_profile_data(driver)
 
-    Returns:
-        list: [
-            {
-                "image": str,
-                "name": str,
-                "price": int,
-                "currency_type": str
-            }
-        ]
+    meta = {
+        "all_coins": sum(i["price"] for i in inventory if i["currency_type"] == "coin"),
+        "all_balance": sum(i["price"] for i in inventory if i["currency_type"] == "mor"),
+    }
+
+    return {
+        **data,
+        "inventory": inventory,
+        "inventory_meta": meta
+    }
+
+def get_profile_inventory(driver):
+    """
+    Get user's inventory. 
     """
     res = []
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -67,31 +76,50 @@ def run_get_inventory(driver):
     try:
         wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
         items = find(driver, InventorySelectors.ITEM_BOX, multiple=True)
+
         for item in items:
+            # Image
+            img_loc = find(item, InventorySelectors.IMAGE)
+            image = ""
+            if img_loc is not None:
+                image = img_loc.get_attribute("src")
+
+            # Name
+            name_loc = find(item, InventorySelectors.NAME)
+            name = ""
+            if name_loc is not None:
+                name = name_loc.text.strip()
+            
+            # Price
+            price_loc = find(item, InventorySelectors.PRICE)
+            price = 0
+            if price_loc is not None:
+                price = int(price_loc.text.strip())
+
+            # Currency type
+            ctype_loc = find(item, InventorySelectors.CURRENCY_TYPE)
+            currency_type = "unknown"
+            if ctype_loc is not None:
+                c_type = str(ctype_loc.get_attribute("class"))
+                if "coin" in c_type:
+                    currency_type = "coin"
+                elif "mor" in c_type:
+                    currency_type = "mor"
+
             res.append({
-                # ignore warnings because im lazy
-                "image": find(item, InventorySelectors.IMAGE).get_attribute("src"),  # ty:ignore[possibly-missing-attribute]
-                "name": find(item, InventorySelectors.NAME).text.strip(),  # ty:ignore[possibly-missing-attribute]
-                "price": find(item, InventorySelectors.PRICE).text.strip(),  # ty:ignore[possibly-missing-attribute]
-                "currency_type": find(item, InventorySelectors.CURRENCY_TYPE).get_attribute("class")  # ty:ignore[possibly-missing-attribute]
+                "image": image,
+                "name": name,
+                "price": price,
+                "currency_type": currency_type
             })
     except Exception as e:
         prwarn(f"Error while getting inventory: {e}")
 
     return res
 
-def get_profile(driver) -> dict:
+def get_profile_data(driver) -> dict:
     """
-    Get user's profile information
-
-    Returns:
-        dict: {
-            "id": str,
-            "avatar_url": str,
-            "username": str,
-            "rice": int,
-            "is_verified": bool
-        }
+    Get user's profile information. 
     """
     res = {"id": "", "avatar_url": "", "username": "", "rice": 0, "is_verified": False}
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -103,7 +131,7 @@ def get_profile(driver) -> dict:
             # ID
             id = find(box, ProfileSelectors.ID)
             if id is not None:
-                res["id"] = id.text.strip().split("ID")[-1]
+                res["id"] = id.text.split("ID")[-1].strip()
             
             # Avatar
             avatar = find(box, ProfileSelectors.AVATAR)

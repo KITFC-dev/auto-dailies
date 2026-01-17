@@ -3,7 +3,7 @@ from src.logger import prinfo, prsuccess, prerror, prwebhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
-from src.actions.state import run_get_balance, get_profile, run_get_inventory
+from src.actions.state import run_get_balance, run_get_profile
 from src.common import random_sleep
 from src.config import CONFIG
 from src.constants import BASE_URL
@@ -34,12 +34,13 @@ def run_once(cookie_file):
         driver.quit()
         return False
     
-    res["initial_coins"] = balance["coins"]
-    res["initial_balance"] = balance["balance"]
+    # Save initial state
+    res["initial"] = {}
+    res["initial"]["coins"] = balance["coins"]
+    res["initial"]["balance"] = balance["balance"]
+    res["initial"]["profile"] = run_get_profile(driver)
 
     # Run actions
-    res["profile"] = get_profile(driver)
-    res["inventory"] = run_get_inventory(driver)
     if CONFIG.checkin:
         run_daily_checkin(driver)
     if CONFIG.giveaway:
@@ -56,10 +57,11 @@ def run_once(cookie_file):
                     res["opened_cases"] += 1
                     random_sleep(7)
 
-    # Calculate earned coins
+    # Build result
     balance_after = run_get_balance(driver)
     res["coins"] = balance_after["coins"]
     res["balance"] = balance_after["balance"]
+    res["profile"] = run_get_profile(driver)
 
     # Wait before closing
     if CONFIG.wait_after > 0:
@@ -96,17 +98,30 @@ def run():
             prerror(f"Account {name} failed")
 
     # Send summary webhook
-    earned_coins = sum(i.get("coins", 0) - i.get("initial_coins", 0) for i in account_results)
-    earned_balance = sum(i.get("balance", 0) - i.get("initial_balance", 0) for i in account_results)
     prwebhook(
         title="Tasks completed!",
-        description=f"Accounts Done: {len(done_accounts)}\nAccounts Failed: {len(failed_accounts)}\n\nEarned Coins: {earned_coins}\nEarned Balance: {earned_balance}",
+        description=(
+            f"Accounts Done: {len(done_accounts)}\n"
+            f"Accounts Failed: {len(failed_accounts)}\n\n"
+            f"Earned Coins: {sum(i.get('coins', 0) - i['initial'].get('coins', 0) for i in account_results)}\n"
+            f"Earned Balance: {sum(i.get('balance', 0) - i['initial'].get('balance', 0) for i in account_results)}"
+        ),
         color=2818303,
-        fields=[{
-            "name": f"{res["profile"]["username"]} ({res['profile']['id']})",
-            "value": f"Coins: {res.get('initial_coins', 0)} -> {res.get('coins', 0)}\nBalance: {res.get('initial_balance', 0)} -> {res.get('balance', 0)}", 
-            "inline": False}
-            for res in account_results],
+        fields=[
+            {
+                "name": f"{res['profile']['username']} ({res['profile']['id']})",
+                "value": (
+                    f"Inventory value: {res['initial']['profile']['inventory_meta']['all_coins']} "
+                    f"-> {res['profile']['inventory_meta']['all_coins']} Coins, "
+                    f"{res['initial']['profile']['inventory_meta']['all_balance']} "
+                    f"-> {res['profile']['inventory_meta']['all_balance']} Balance\n"
+                    f"Coins: {res['initial'].get('coins', 0)} -> {res.get('coins', 0)}\n"
+                    f"Balance: {res['initial'].get('balance', 0)} -> {res.get('balance', 0)}"
+                ),
+                "inline": False,
+            }
+            for res in account_results
+        ],
     )
 
     prsuccess("All Done!")
