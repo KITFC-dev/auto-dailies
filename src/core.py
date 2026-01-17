@@ -113,12 +113,12 @@ def run():
         color=2818303,
         fields=[
             {
-                "name": f"{res['profile']['username']} ({res['profile']['id']})",
+                "name": f"{res['profile'].username} ({res['profile'].id})",
                 "value": (
-                    f"Inventory value: {res['initial']['profile']['inventory_meta']['all_coins']} "
-                    f"-> {res['profile']['inventory_meta']['all_coins']} Coins, "
-                    f"{res['initial']['profile']['inventory_meta']['all_balance']} "
-                    f"-> {res['profile']['inventory_meta']['all_balance']} Balance\n"
+                    f"Inventory value: {res['initial']['profile'].inventory_meta.all_coins} "
+                    f"-> {res['profile'].inventory_meta.all_coins} Coins, "
+                    f"{res['initial']['profile'].inventory_meta.all_balance} "
+                    f"-> {res['profile'].inventory_meta.all_balance} Balance\n"
                     f"Coins: {res['initial'].get('coins', 0)} -> {res.get('coins', 0)}\n"
                     f"Balance: {res['initial'].get('balance', 0)} -> {res.get('balance', 0)}\n"
                     f"Cases opened: {res.get('opened_cases', 0)}/{res.get('available_cases', 0)} ({res.get('ignored_cases', 0)} ignored)"
