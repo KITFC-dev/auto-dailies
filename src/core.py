@@ -51,9 +51,9 @@ def run_once(cookie_file):
         res["opened_cases"] = 0
         for case in available_cases:
             # Skip ignored cases
-            if not case["is_ignored"]:
-                if open_case(driver, case["link"]):
-                    prsuccess(f"Opened case: {case['name']}")
+            if not case.is_ignored:
+                if open_case(driver, case.link):
+                    prsuccess(f"Opened case: {case.name}")
                     res["opened_cases"] += 1
                     random_sleep(7)
 

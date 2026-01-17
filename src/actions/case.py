@@ -3,11 +3,13 @@ import re
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
+from typing import List
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn
 from src.common import random_sleep
 from src.config import CONFIG
+from src.models import Case
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 
@@ -19,31 +21,28 @@ def get_cases(driver):
         # Get cases box's elements in a container
         container = wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
         cases = find(container, CaseSelectors.CASE, multiple=True)
-        res = []
+        res: List[Case] = []
 
         # Parse the data
         for case in cases:
-            case_data = {}
             # Link
             href = case.get_attribute("href")
-            if href: 
-                case_data["link"] = href
-            # Image
-            img = find(case, CaseSelectors.IMAGE)
-            if img: 
-                case_data["image"] = img.get_attribute("src")
-            # Name
-            name = find(case, CaseSelectors.NAME)
-            if name: 
-                case_data["name"] = name.text
-            # Price
-            price = find(case, CaseSelectors.PRICE)
-            if price: 
-                case_data["price"] = price.text
-            # Check if the case is ignored
-            case_data["is_ignored"] = case_data["link"].split("/")[-1] in IGNORE_CASES
+            if not href:
+                continue
 
-            res.append(case_data)
+            img = find(case, CaseSelectors.IMAGE)
+            name = find(case, CaseSelectors.NAME)
+            price = find(case, CaseSelectors.PRICE)
+
+            res.append(
+                Case(
+                    link=href,
+                    image=img.get_attribute("src") if img else None,
+                    name=name.text if name else None,
+                    price=price.text if price else None,
+                    is_ignored=href.split("/")[-1] in IGNORE_CASES
+                )
+            )
 
         return res
     except TimeoutException:
