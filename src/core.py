@@ -49,6 +49,7 @@ def run_once(cookie_file):
         available_cases = get_cases(driver)
         res["available_cases"] = len(available_cases)
         res["opened_cases"] = 0
+        res["ignored_cases"] = 0
         for case in available_cases:
             # Skip ignored cases
             if not case.is_ignored:
@@ -56,6 +57,8 @@ def run_once(cookie_file):
                     prsuccess(f"Opened case: {case.name}")
                     res["opened_cases"] += 1
                     random_sleep(7)
+            else:
+                res["ignored_cases"] += 1
 
     # Build result
     balance_after = run_get_balance(driver)
@@ -116,7 +119,8 @@ def run():
                     f"{res['initial']['profile']['inventory_meta']['all_balance']} "
                     f"-> {res['profile']['inventory_meta']['all_balance']} Balance\n"
                     f"Coins: {res['initial'].get('coins', 0)} -> {res.get('coins', 0)}\n"
-                    f"Balance: {res['initial'].get('balance', 0)} -> {res.get('balance', 0)}"
+                    f"Balance: {res['initial'].get('balance', 0)} -> {res.get('balance', 0)}\n"
+                    f"Cases opened: {res.get('opened_cases', 0)}/{res.get('available_cases', 0)} ({res.get('ignored_cases', 0)} ignored)"
                 ),
                 "inline": False,
             }
