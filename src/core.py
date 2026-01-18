@@ -4,7 +4,7 @@ from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
 from src.actions.state import run_get_balance, run_get_profile
-from src.common import random_sleep
+from src.common import random_sleep, diff_text
 from src.config import CONFIG
 from src.constants import BASE_URL
 
@@ -115,13 +115,19 @@ def run():
             {
                 "name": f"{res['profile'].username} ({res['profile'].id})",
                 "value": (
+                    f"```diff\n"
+
                     f"Inventory value: {res['initial']['profile'].inventory_meta.all_coins} "
                     f"-> {res['profile'].inventory_meta.all_coins} Coins, "
                     f"{res['initial']['profile'].inventory_meta.all_gold} "
                     f"-> {res['profile'].inventory_meta.all_gold} Gold\n"
-                    f"Coins: {res['initial'].get('coins', 0)} -> {res.get('coins', 0)}\n"
-                    f"Bold: {res['initial'].get('gold', 0)} -> {res.get('gold', 0)}\n"
+
+                    f"{diff_text('coins', res)}"
+                    f"{diff_text('gold', res)}"
+
                     f"Cases opened: {res.get('opened_cases', 0)}/{res.get('available_cases', 0)} ({res.get('ignored_cases', 0)} ignored)"
+
+                    f"```\n"
                 ),
                 "inline": False,
             }
