@@ -7,11 +7,8 @@ def random_sleep(amount: float = 2.0, r: float = 0.5):
     """Sleep for certain amount of time with a random jitter. """
     time.sleep(max(0.0, amount + random.uniform(-r, r)))
 
-def diff_text(key, obj: dict) -> str:
+def diff_text(label: str, init_val: int, curr_val: int) -> str:
     """Generates a diff stylized text from id. """
-    init_val = int(obj['initial'].get(key, 0))
-    curr_val = int(obj.get(key, 0))
-
     if init_val < curr_val:
         diff = '+'
     elif init_val > curr_val:
@@ -19,7 +16,7 @@ def diff_text(key, obj: dict) -> str:
     else:
         diff = ' '
 
-    return f"{diff} {key.title()}: {init_val} -> {curr_val}\n"
+    return f"{diff} {label.title()}: {init_val} -> {curr_val}\n"
 
 def is_docker():
     """Check if running in a Docker container. """

@@ -4,17 +4,17 @@ from typing import List
 from src.logger import prwarn, prerror
 from src.common import random_sleep
 from src.config import CONFIG
-from src.constants import BASE_URL, PROFILE_URL, StateSelectors, \
+from src.constants import PROFILE_URL, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType
 from src.locators import wait_for, find
 from src.models import Balance, InventoryItem, Profile
 
-def run_get_balance(driver) -> Balance | None:
+def get_profile_balance(driver) -> Balance | None:
     """
     Get user's balance and coins on the website.
     """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(BASE_URL)
+    driver.get(PROFILE_URL)
 
     try:
         gold = wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD)
@@ -90,6 +90,7 @@ def run_get_profile(driver) -> Profile | None:
             rice = int(rice_el.text.strip()) if rice_el and rice_el.text.strip().isdigit() else None
             is_verified = "true" in str(verified_el.get_attribute("class")) if verified_el else None
 
+            balance = get_profile_balance(driver)
             inventory = get_profile_inventory(driver)
 
             return Profile(
@@ -98,8 +99,10 @@ def run_get_profile(driver) -> Profile | None:
                 username=username,
                 rice=rice,
                 is_verified=is_verified,
-                inventory=inventory
+                balance=balance if balance else Balance(0, 0),
+                inventory=inventory,
             )
+
     except Exception as e:
         prerror(f"Error while getting profile data: {e}")
 
