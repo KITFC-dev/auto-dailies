@@ -3,7 +3,6 @@ import re
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
-from typing import List
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn
@@ -13,7 +12,7 @@ from src.models import Case
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 
-def get_cases(driver) -> List[Case]:
+def get_cases(driver) -> list[Case]:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     driver.get(BASE_URL)
 
@@ -21,7 +20,7 @@ def get_cases(driver) -> List[Case]:
         # Get cases box's elements in a container
         container = wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
         cases = find(container, CaseSelectors.CASE, multiple=True)
-        res: List[Case] = []
+        res: list[Case] = []
 
         # Parse the data
         for case in cases:

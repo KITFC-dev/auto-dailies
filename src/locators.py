@@ -4,7 +4,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from typing import List, Literal, overload
+from typing import Literal, overload
 
 from src.constants import SelEnum, Condition
 from src.logger import prwarn, prerror
@@ -41,7 +41,7 @@ def find(
     sel: SelEnum | tuple[str, str],
     *,
     multiple: Literal[True]
-) -> List[WebElement]: ...
+) -> list[WebElement]: ...
 @overload
 def find(
     driver,
@@ -54,7 +54,7 @@ def find(
     sel: SelEnum | tuple[str, str],
     *,
     multiple: bool = False
-) -> WebElement | None | List[WebElement]:
+) -> WebElement | None | list[WebElement]:
     """
     Find an element and return it.
     Also supports finding multiple elements. 

@@ -1,5 +1,4 @@
 from selenium.webdriver.support.ui import WebDriverWait
-from typing import List
 
 from src.logger import prwarn, prerror
 from src.common import random_sleep
@@ -28,7 +27,7 @@ def get_profile_balance(driver) -> Balance | None:
         prwarn(f"Error while getting balance: {e}")
         return None
 
-def get_profile_inventory(driver) -> List[InventoryItem]:
+def get_profile_inventory(driver) -> list[InventoryItem]:
     """
     Get user's inventory. 
     """
