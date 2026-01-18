@@ -115,17 +115,15 @@ def run():
                 "name": f"{r.p.username} ({r.p.id})",
                 "value": (
                     f"```diff\n"
+                    f"Inventory value:\n"
+                    f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
+                    f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
 
-                    f"Inventory value: {r.ip.inventory_meta.all_coins} "
-                    f"-> {r.p.inventory_meta.all_coins} Coins, "
-                    f"{r.ip.inventory_meta.all_gold} "
-                    f"-> {r.p.inventory_meta.all_gold} Gold\n"
-
+                    f"Balance:\n"
                     f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
                     f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
 
                     f"Cases opened: {r.opened_cases}/{r.available_cases_len} ({r.ignored_cases} ignored)"
-
                     f"```\n"
                 ),
                 "inline": False,
