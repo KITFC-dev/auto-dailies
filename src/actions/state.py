@@ -5,10 +5,9 @@ from src.logger import prwarn, prerror
 from src.common import random_sleep
 from src.config import CONFIG
 from src.constants import BASE_URL, PROFILE_URL, StateSelectors, \
-    ProfileSelectors, InventorySelectors, Condition
+    ProfileSelectors, InventorySelectors, Condition, CurrencyType
 from src.locators import wait_for, find
-from src.models import Balance, InventoryItem, InventoryMeta, \
-    Profile
+from src.models import Balance, InventoryItem, Profile
 
 def run_get_balance(driver) -> Balance | None:
     """
@@ -47,13 +46,12 @@ def get_profile_inventory(driver) -> List[InventoryItem]:
             price_loc = find(item, InventorySelectors.PRICE)
             ctype_loc = find(item, InventorySelectors.CURRENCY_TYPE)
             
-            currency_type = "unknown"
             if ctype_loc is not None:
                 c_type = str(ctype_loc.get_attribute("class"))
                 if "coin" in c_type:
-                    currency_type = "coin"
+                    currency_type = CurrencyType.COIN
                 elif "mor" in c_type:
-                    currency_type = "mor"
+                    currency_type = CurrencyType.GOLD
 
             res.append(InventoryItem(
                     image=img_loc.get_attribute("src") if img_loc else None, 
@@ -93,10 +91,6 @@ def run_get_profile(driver) -> Profile | None:
             is_verified = "true" in str(verified_el.get_attribute("class")) if verified_el else None
 
             inventory = get_profile_inventory(driver)
-            inventory_meta = InventoryMeta(
-                all_coins = sum(i.price for i in inventory if i.currency_type == "coin"),
-                all_balance = sum(i.price for i in inventory if i.currency_type == "mor"),
-            )
 
             return Profile(
                 id=id,
@@ -104,8 +98,7 @@ def run_get_profile(driver) -> Profile | None:
                 username=username,
                 rice=rice,
                 is_verified=is_verified,
-                inventory=inventory,
-                inventory_meta=inventory_meta
+                inventory=inventory
             )
     except Exception as e:
         prerror(f"Error while getting profile data: {e}")

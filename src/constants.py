@@ -118,3 +118,8 @@ class Condition(Enum):
     PRESENCE = partial(EC.presence_of_element_located)
     CLICKABLE = partial(EC.element_to_be_clickable)
     VISIBLE = partial(EC.visibility_of_element_located)
+
+class CurrencyType(str, Enum):
+    COIN = "coin"
+    GOLD = "mor"
+    UNKNOWN = "unknown"
