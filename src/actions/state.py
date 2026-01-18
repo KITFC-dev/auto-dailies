@@ -17,12 +17,12 @@ def run_get_balance(driver) -> Balance | None:
     driver.get(BASE_URL)
 
     try:
-        balance = wait_for(Condition.PRESENCE, wait, StateSelectors.BALANCE)
+        gold = wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD)
         coins = wait_for(Condition.PRESENCE, wait, StateSelectors.COINS)
-        if not balance or not coins:
+        if not gold or not coins:
             raise Exception("Balance or coins not found")
 
-        return Balance(balance=int(balance.text.strip()), coins=int(coins.text.strip()))
+        return Balance(gold=int(gold.text.strip()), coins=int(coins.text.strip()))
         random_sleep(0.3)
     except Exception as e:
         prwarn(f"Error while getting balance: {e}")

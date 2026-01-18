@@ -37,7 +37,7 @@ def run_once(cookie_file):
     # Save initial state
     res["initial"] = {}
     res["initial"]["coins"] = balance.coins
-    res["initial"]["balance"] = balance.balance
+    res["initial"]["gold"] = balance.gold
     res["initial"]["profile"] = run_get_profile(driver)
 
     # Run actions
@@ -64,7 +64,7 @@ def run_once(cookie_file):
     balance = run_get_balance(driver)
     if balance:
         res["coins"] = balance.coins
-        res["balance"] = balance.balance
+        res["gold"] = balance.gold
     res["profile"] = run_get_profile(driver)
 
     # Wait before closing
@@ -108,7 +108,7 @@ def run():
             f"Accounts Done: {len(done_accounts)}\n"
             f"Accounts Failed: {len(failed_accounts)}\n\n"
             f"Earned Coins: {sum(i.get('coins', 0) - i['initial'].get('coins', 0) for i in account_results)}\n"
-            f"Earned Balance: {sum(i.get('balance', 0) - i['initial'].get('balance', 0) for i in account_results)}"
+            f"Earned Gold: {sum(i.get('gold', 0) - i['initial'].get('gold', 0) for i in account_results)}"
         ),
         color=2818303,
         fields=[
@@ -117,10 +117,10 @@ def run():
                 "value": (
                     f"Inventory value: {res['initial']['profile'].inventory_meta.all_coins} "
                     f"-> {res['profile'].inventory_meta.all_coins} Coins, "
-                    f"{res['initial']['profile'].inventory_meta.all_balance} "
-                    f"-> {res['profile'].inventory_meta.all_balance} Balance\n"
+                    f"{res['initial']['profile'].inventory_meta.all_gold} "
+                    f"-> {res['profile'].inventory_meta.all_gold} Gold\n"
                     f"Coins: {res['initial'].get('coins', 0)} -> {res.get('coins', 0)}\n"
-                    f"Balance: {res['initial'].get('balance', 0)} -> {res.get('balance', 0)}\n"
+                    f"Bold: {res['initial'].get('gold', 0)} -> {res.get('gold', 0)}\n"
                     f"Cases opened: {res.get('opened_cases', 0)}/{res.get('available_cases', 0)} ({res.get('ignored_cases', 0)} ignored)"
                 ),
                 "inline": False,

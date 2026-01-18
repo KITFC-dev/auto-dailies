@@ -4,19 +4,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from functools import partial
 from enum import Enum
 
-__all__ = [
-    "BASE_URL",
-    "CHECKIN_URL",
-    "GIVEAWAY_URL",
-    "PROFILE_URL",
-    "CommonSelectors",
-    "CheckinSelectors",
-    "GiveawaySelectors",
-    "CaseSelectors",
-    "StateSelectors",
-    "Condition",
-]
-
 # Cases to ignore when opening cases
 IGNORE_CASES = [
     "druzeskii-keis",
@@ -87,7 +74,7 @@ class CaseSelectors(SelEnum):
 
 class StateSelectors(SelEnum):
     """Selectors for state information. """
-    BALANCE = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
+    GOLD = (By.CSS_SELECTOR, "span[data-key='user_mor_value']")
     COINS = (By.CSS_SELECTOR, "span[data-key='user_coin_value']")
 
 class ProfileSelectors(SelEnum):

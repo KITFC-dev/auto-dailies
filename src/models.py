@@ -13,7 +13,7 @@ class Case:
 
 @dataclass(slots=True)
 class Balance:
-    balance: int
+    gold: int
     coins: int
 
 @dataclass(slots=True)
@@ -26,7 +26,7 @@ class InventoryItem:
 @dataclass(slots=True)
 class InventoryMeta:
     all_coins: int = 0
-    all_balance: int = 0
+    all_gold: int = 0
 
 @dataclass(slots=True)
 class Profile:
@@ -41,5 +41,5 @@ class Profile:
     @property
     def inventory_meta(self) -> InventoryMeta:
         coins = sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.COIN)
-        balance = sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.GOLD)
-        return InventoryMeta(coins, balance)
+        gold = sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.GOLD)
+        return InventoryMeta(coins, gold)
