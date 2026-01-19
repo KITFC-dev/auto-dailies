@@ -72,6 +72,10 @@ class Config:
             return tomllib.load(f)
 
     def load_accounts(self) -> dict[str, str]:
+        # Check if account directory exists
+        if not os.path.exists(self.accounts_dir):
+            raise FileNotFoundError(f"Specified account directory not found: {os.path.abspath(self.accounts_dir)}")
+        
         # Get accounts pkl file paths
         acs =  {
             name: f"{self.accounts_dir}/{name}"
@@ -110,6 +114,6 @@ class Config:
 
         # Check if accounts are not empty
         if not self.accounts or len(self.accounts) == 0:
-            raise ValueError(f"No accounts are specified. Please ensure there are .pkl files in the accounts directory ({self.accounts_dir}).")
+            raise ValueError(f"No accounts are specified. Please ensure there are .pkl files in the accounts directory ({os.path.abspath(self.accounts_dir)}).")
 
 CONFIG: Config = Config()
