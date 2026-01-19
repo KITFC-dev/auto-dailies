@@ -2,6 +2,7 @@ import time
 import random
 
 from selenium.webdriver.support.ui import WebDriverWait
+from difflib import SequenceMatcher
 from pathlib import Path
 
 from src.constants import SwalSelectors, Condition
@@ -9,6 +10,9 @@ from src.locators import wait_for, find
 from src.logger import prerror
 from src.models import Swal
 from src.config import CONFIG
+
+def similarity(a: str, b: str) -> float:
+    return SequenceMatcher(None, a, b).ratio()
 
 def random_sleep(amount: float = 2.0, r: float = 0.5):
     """Sleep for certain amount of time with a random jitter. """

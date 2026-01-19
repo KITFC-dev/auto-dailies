@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn
-from src.common import random_sleep, get_swal
+from src.common import random_sleep, get_swal, similarity
 from src.config import CONFIG
 from src.models import Case
 from src.constants import BASE_URL, IGNORE_CASES, \
@@ -109,8 +109,10 @@ def open_case(driver, case_link, card_idx=None):
 
             case_swal = get_swal(driver)
 
-            if case_swal.text not in [CaseResultType.COOLDOWN_FAILURE, CaseResultType.PAYMENTS_FAILURE] \
-                or case_swal is None:
+            if any(similarity(text, failure) >= 0.8 
+            for failure in [CaseResultType.COOLDOWN_FAILURE, CaseResultType.PAYMENTS_FAILURE]
+            ) \
+            or case_swal is None:
                 return True
     except TimeoutException:
         prwarn(f"Couldn't find the case with link {case_link}.")
