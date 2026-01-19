@@ -108,4 +108,8 @@ class Config:
         if self.webhook_url and not self.webhook_url.startswith("https://discord.com/api/webhooks/"):
             raise ValueError(f"Invalid webhook URL: {self.webhook_url}")
 
+        # Check if accounts are not empty
+        if not self.accounts or len(self.accounts) == 0:
+            raise ValueError(f"No accounts are specified. Please ensure there are .pkl files in the accounts directory ({self.accounts_dir}).")
+
 CONFIG: Config = Config()
