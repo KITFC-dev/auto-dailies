@@ -9,7 +9,8 @@ from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
 def run_giveaway(driver):
     """Checks out all giveaways on the giveaways main page. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout+1)
-    driver.get(GIVEAWAY_URL)
+    if driver.current_url != GIVEAWAY_URL:
+        driver.get(GIVEAWAY_URL)
 
     try:
         # Wait for at least one giveaway to load, then get all giveaways
@@ -37,8 +38,9 @@ def run_giveaway(driver):
     return True
 
 def click_giveaway_join_button(driver, href):
-    driver.get(href)
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
+    if driver.current_url != href:
+        driver.get(href)
 
     try:
         # Check if join button is present

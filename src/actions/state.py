@@ -13,7 +13,8 @@ def get_profile_balance(driver) -> Balance | None:
     Get user's balance and coins on the website.
     """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(PROFILE_URL)
+    if driver.current_url != PROFILE_URL:
+        driver.get(PROFILE_URL)
 
     try:
         gold = wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD)
@@ -33,7 +34,8 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
     """
     res = []
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(PROFILE_URL)
+    if driver.current_url != PROFILE_URL:
+        driver.get(PROFILE_URL)
 
     try:
         wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
@@ -69,7 +71,8 @@ def run_get_profile(driver) -> Profile | None:
     Get user's profile information. 
     """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(PROFILE_URL)
+    if driver.current_url != PROFILE_URL:
+        driver.get(PROFILE_URL)
 
     try:
         box = wait_for(Condition.PRESENCE, wait, ProfileSelectors.PANEL_BOX)

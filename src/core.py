@@ -12,7 +12,8 @@ from src.constants import BASE_URL
 def run_once(cookie_file) -> RunResult:
     """Logs in to the website using the given cookie file and runs given actions. """
     driver = create_driver()
-    driver.get(BASE_URL)
+    if driver.current_url != BASE_URL:
+        driver.get(BASE_URL)
 
     # Load cookies to browser
     if cookie_file.split("/")[-1] != CONFIG.new_account:

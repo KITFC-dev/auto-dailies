@@ -14,7 +14,8 @@ from src.constants import BASE_URL, IGNORE_CASES, \
 
 def get_cases(driver) -> list[Case]:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(BASE_URL)
+    if driver.current_url != BASE_URL:
+        driver.get(BASE_URL)
 
     try:
         # Get cases box's elements in a container
@@ -51,7 +52,8 @@ def get_cases(driver) -> list[Case]:
 
 def open_case(driver, case_link, card_idx=None):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(case_link)
+    if driver.current_url != case_link:
+        driver.get(case_link)
 
     try:
         # Wait until case cards are present

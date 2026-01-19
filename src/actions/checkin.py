@@ -8,7 +8,8 @@ from src.constants import CHECKIN_URL, CheckinSelectors, Condition
 
 def run_daily_checkin(driver):
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    driver.get(CHECKIN_URL)
+    if driver.current_url != CHECKIN_URL:
+        driver.get(CHECKIN_URL)
 
     try:
         # Find and click checkin button
