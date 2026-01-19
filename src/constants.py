@@ -126,6 +126,19 @@ class CurrencyType(str, Enum):
     UNKNOWN = "unknown"
 
 class CaseResultType(str, Enum):
+    """
+    Result types for cases.
+
+    Use text in swal for comparing.
+    """
     COOLDOWN_FAILURE = "С момента последнего открытия коробки еще не прошло достаточно времени"
     PAYMENTS_FAILURE = "Выводы и покупки за указанное время не найдены 😔 Необходимо иметь хотя бы один вывод или покупку"
     SUCCESS = "" # not known yet
+
+class GiveawayResultType(str, Enum):
+    """
+    Result messages for giveaways.
+
+    Use title in swal for comparing.
+    """
+    SUCCESS = "Вы в раздаче"

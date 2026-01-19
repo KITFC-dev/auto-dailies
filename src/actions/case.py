@@ -109,7 +109,8 @@ def open_case(driver, case_link, card_idx=None):
 
             case_swal = get_swal(driver)
 
-            if case_swal.text not in [CaseResultType.COOLDOWN_FAILURE, CaseResultType.PAYMENTS_FAILURE]:
+            if case_swal.text not in [CaseResultType.COOLDOWN_FAILURE, CaseResultType.PAYMENTS_FAILURE] \
+                or case_swal is None:
                 return True
     except TimeoutException:
         prwarn(f"Couldn't find the case with link {case_link}.")
