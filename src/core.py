@@ -38,11 +38,12 @@ def run_once(cookie_file) -> RunResult:
         run_daily_checkin(driver)
     if CONFIG.giveaway:
         run_giveaway(driver)
+    available_cases_len = 0
+    opened_cases = 0
+    ignored_cases = 0
     if CONFIG.cases:
         available_cases = get_cases(driver)
         available_cases_len = len(available_cases)
-        opened_cases = 0
-        ignored_cases = 0
         for case in available_cases:
             # Skip ignored cases
             if not case.is_ignored:
@@ -105,7 +106,7 @@ def run():
         title="Tasks completed!",
         description=(
             f"Accounts Done: {len(done_accounts)}\n"
-            f"Accounts Failed: {len(failed_accounts)}\n\n"
+            f"Accounts Failed: {', '.join(failed_accounts) if failed_accounts else 0}\n\n"
             f"Earned Coins: {sum(i.p.balance.coins - i.ip.balance.coins for i in account_results)}\n"
             f"Earned Gold: {sum(i.p.balance.gold - i.ip.balance.gold for i in account_results)}"
         ),
