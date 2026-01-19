@@ -18,8 +18,8 @@ def run_once(cookie_file) -> RunResult:
     # Load cookies to browser
     if cookie_file.split("/")[-1] != CONFIG.new_account:
         if not load_cookies(driver, cookie_file):
-            prerror(f"No cookie file: {cookie_file}")
-            return RunResult(success=False)
+            driver.quit()
+            return RunResult.fail(f"No cookie file: {cookie_file}")
     else:
         prinfo(f"New account: {cookie_file}, waiting 90 seconds for user to log in...")
         random_sleep(90, 0)
@@ -30,9 +30,8 @@ def run_once(cookie_file) -> RunResult:
     # Verify if login was successful
     init_profile = run_get_profile(driver)
     if init_profile is None or init_profile.id == '':
-        prerror(f"Failed to get profile information. Skipping {cookie_file}")
         driver.quit()
-        return RunResult(success=False)
+        return RunResult.fail("Failed to get profile information")
 
     # Run actions
     if CONFIG.checkin:
@@ -59,7 +58,7 @@ def run_once(cookie_file) -> RunResult:
     if curr_profile is None or curr_profile.id == '':
         prerror(f"Failed to get profile information. Skipping {cookie_file}")
         driver.quit()
-        return RunResult(success=False)
+        return RunResult.fail("Failed to get profile information")
 
     # Wait before closing
     if CONFIG.wait_after > 0:
@@ -90,14 +89,12 @@ def run():
 
     # Iterate over all accounts
     for name, cookie_file in CONFIG.accounts.items():
-        if (name not in CONFIG.accounts if CONFIG.accounts else False):
-            continue
         prinfo(f"Processing account: {name}")
         res = run_once(cookie_file)
         if res.success:
             done_accounts.append(name)
             account_results.append(res)
-            prsuccess(f"Account {name} done")
+            prsuccess(f"Account {res.p.username} done")
         else:
             failed_accounts.append(name)
             prerror(f"Account {name} failed")

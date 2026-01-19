@@ -45,9 +45,10 @@ class Profile:
         gold = sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.GOLD)
         return InventoryMeta(coins, gold)
 
-@dataclass
+@dataclass(slots=True)
 class RunResult:
     success: bool
+    reason: str | None = None
 
     # Initial Profile
     ip: Profile = field(default_factory=lambda: Profile(id=''))
@@ -57,3 +58,17 @@ class RunResult:
     available_cases_len: int = 0
     opened_cases: int = 0
     ignored_cases: int = 0
+
+    @classmethod
+    def ok(cls) -> "RunResult":
+        return cls(success=True)
+
+    @classmethod
+    def fail(cls, reason: str) -> "RunResult":
+        return cls(success=False, reason=reason)
+
+    def __post_init__(self):
+        if self.success and self.reason is not None:
+            raise ValueError("reason is not allowed when success is True")
+        if not self.success and not self.reason:
+            raise ValueError("reason is required when success is False")
