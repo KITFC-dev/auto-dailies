@@ -3,6 +3,12 @@ from dataclasses import dataclass, field
 from src.constants import CurrencyType
 
 @dataclass(slots=True)
+class Swal:
+    title: str | None = None
+    text: str | None = None
+    icon: str | None = None
+
+@dataclass(slots=True)
 class Case:
     link: str
     is_ignored: bool

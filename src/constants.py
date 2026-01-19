@@ -40,6 +40,20 @@ class SelEnum(tuple, Enum):
     def __str__(self):
         return f"{self.value[0]}={self.value[1]}"
 
+class SwalSelectors(SelEnum):
+    OVERLAY = (By.CLASS_NAME, 'swal-overlay')
+    MODAL = (By.CLASS_NAME, 'swal-modal')
+    CONTENT = (By.CLASS_NAME, 'swal-content')
+    FOOTER = (By.CLASS_NAME, 'swal-footer')
+
+    TITLE = (By.CLASS_NAME, 'swal-title')
+    TEXT = (By.CLASS_NAME, 'swal-text')
+    ICON = (By.CLASS_NAME, 'swal-icon')
+    CONFIRM_BUTTON = (By.CLASS_NAME, 'swal-button swal-button--confirm')
+
+    CONTENT_TEXT = (By.TAG_NAME, 'p')
+    CONTENT_ICON = (By.TAG_NAME, 'img')
+
 class CommonSelectors(SelEnum):
     """Selectors for common elements. """
     CONFIRM_BUTTON: S = (By.CLASS_NAME, 'swal-button swal-button--confirm')
@@ -110,3 +124,8 @@ class CurrencyType(str, Enum):
     COIN = "coin"
     GOLD = "mor"
     UNKNOWN = "unknown"
+
+class CaseResultType(str, Enum):
+    COOLDOWN_FAILURE = "С момента последнего открытия коробки еще не прошло достаточно времени"
+    PAYMENTS_FAILURE = "Выводы и покупки за указанное время не найдены 😔 Необходимо иметь хотя бы один вывод или покупку"
+    SUCCESS = "" # not known yet

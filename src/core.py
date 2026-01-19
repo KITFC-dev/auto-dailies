@@ -47,10 +47,15 @@ def run_once(cookie_file) -> RunResult:
         for case in available_cases:
             # Skip ignored cases
             if not case.is_ignored:
+                prinfo(f"Opening case: {case.name}")
                 if open_case(driver, case.link):
                     prsuccess(f"Opened case: {case.name}")
                     opened_cases += 1
-                    random_sleep(7)
+                else:
+                    prerror(f"Failed to open case: {case.name}")
+                    
+                # Cooldown after each case
+                random_sleep(7)
             else:
                 ignored_cases += 1
 
