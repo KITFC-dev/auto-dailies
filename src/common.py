@@ -39,7 +39,7 @@ def get_swal(driver) -> Swal:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
 
     try:
-        wait_for(Condition.VISIBLE, wait, SwalSelectors.OVERLAY)
+        wait_for(Condition.VISIBLE, wait, SwalSelectors.MODAL)
         swal = find(driver, SwalSelectors.MODAL)
         if swal:
             title = find(swal, SwalSelectors.TITLE)

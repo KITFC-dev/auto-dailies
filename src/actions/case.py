@@ -6,11 +6,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn
-from src.common import random_sleep, get_swal, similarity
+from src.common import random_sleep, get_swal
 from src.config import CONFIG
 from src.models import Case
 from src.constants import BASE_URL, IGNORE_CASES, \
-    CaseSelectors, Condition, CaseResultType
+    CaseSelectors, Condition
 
 def get_cases(driver) -> list[Case]:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -107,12 +107,8 @@ def open_case(driver, case_link, card_idx=None):
             driver.execute_script("arguments[0].scrollIntoView(true);", picked_card)
             picked_card.click()
 
-            case_swal = get_swal(driver)
-
-            if any(similarity(text, failure) >= 0.8 
-            for failure in [CaseResultType.COOLDOWN_FAILURE, CaseResultType.PAYMENTS_FAILURE]
-            ) \
-            or case_swal is None:
+            # if there are no swal alerts then the case was opened successfully
+            if not get_swal(driver).text:
                 return True
     except TimeoutException:
         prwarn(f"Couldn't find the case with link {case_link}.")
