@@ -40,6 +40,17 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
 
     try:
         wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
+
+        # Load all items
+        while True:
+            load_more = wait_for(Condition.VISIBLE, wait, InventorySelectors.LOAD_MORE_BUTTON)
+            if load_more:
+                load_more.click()
+                print("Loading more items...")
+                random_sleep(1)
+            else:
+                break
+
         items = find(driver, InventorySelectors.ITEM_BOX, multiple=True)
 
         for item in items:

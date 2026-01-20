@@ -74,6 +74,7 @@ class CommonSelectors(SelEnum):
     """Selectors for common elements. """
     CONFIRM_BUTTON: S = (By.CLASS_NAME, 'swal-button swal-button--confirm')
     LINK = (By.TAG_NAME, 'a')
+    BUTTON = (By.TAG_NAME, 'button')
 
 class CheckinSelectors(SelEnum):
     """Selectors for check in page. """
@@ -128,6 +129,8 @@ class InventorySelectors(SelEnum):
     PRICE = (By.CSS_SELECTOR, 'span.icur-container.ml-1')
     SELL_BUTTON = (By.CSS_SELECTOR, 'a.inventory-item-link.inventory-item-link_sell')
     CURRENCY_TYPE = (By.XPATH, './/span[contains(@class,"icur-container")]//i')
+
+    LOAD_MORE_BUTTON = (By.XPATH, '//button[contains(@class, "btn") and contains(normalize-space(.), "Больше")]')
 
 class Condition:
     """
