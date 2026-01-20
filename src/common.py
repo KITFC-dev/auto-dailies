@@ -57,6 +57,7 @@ def get_swal(driver) -> Swal:
             if not title or not text:
                 content = find(swal, SwalSelectors.CONTENT)
                 if content:
+                    title = find(content, SwalSelectors.CONTENT_TITLE)
                     text = find(content, SwalSelectors.CONTENT_TEXT)
                     icon = find(content, SwalSelectors.CONTENT_ICON)
             

@@ -75,8 +75,6 @@ class CheckinResult(Result):
     monthly_bonus: float = 0
     payments_bonus: float = 0
     skipped_day: bool = False
-
-    # will be implemented later
     earned: int = 0
     currency_type: CurrencyType = CurrencyType.UNKNOWN
 

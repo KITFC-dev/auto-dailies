@@ -6,7 +6,7 @@ from src.locators import wait_for, find
 from src.logger import prsuccess, prwarn, prerror
 from src.common import random_sleep, get_swal
 from src.config import CONFIG
-from src.constants import CHECKIN_URL, CheckinSelectors, Condition
+from src.constants import CHECKIN_URL, CheckinSelectors, Condition, CurrencyType
 from src.models import CheckinResult
 
 def run_daily_checkin(driver) -> CheckinResult:
@@ -21,7 +21,11 @@ def run_daily_checkin(driver) -> CheckinResult:
             prsuccess("Daily check-in button clicked")
             checked_in = True
             random_sleep(0.5)
-            get_swal(driver).click_confirm()
+            swal = get_swal(driver)
+            if swal:
+                random_sleep(0.5)
+                swal.click_confirm()
+                title = swal.title
         else:
             prwarn("No daily check-in button detected. Seems like you already checked in today")
             checked_in = False
@@ -29,6 +33,17 @@ def run_daily_checkin(driver) -> CheckinResult:
         monthly_bonus_el = find(driver, CheckinSelectors.MONTHLY_BONUS)
         payments_bonus_el = find(driver, CheckinSelectors.PAYMENTS_BONUS)
         skipped_day_el = find(driver, CheckinSelectors.SKIPPED_DAY_FALSE)
+        # Earned and currency type from swal
+        earned = 0
+        currency_type = CurrencyType.UNKNOWN
+        if title:
+            num = re.search(r'\d+', title.strip())
+            if num:
+                earned = int(num.group())
+            if 'чайник' in title.lower():
+                currency_type = CurrencyType.COIN
+            elif 'мор' in title.lower():
+                currency_type = CurrencyType.GOLD
         # Streak
         streak = 0
         if streak_el:
@@ -60,6 +75,8 @@ def run_daily_checkin(driver) -> CheckinResult:
             monthly_bonus=monthly_bonus,
             payments_bonus=payments_bonus,
             skipped_day=skipped_day,
+            earned=earned,
+            currency_type=currency_type,
         )
     except Exception as e:
         prerror(f"Error while checking in daily: {e}")
