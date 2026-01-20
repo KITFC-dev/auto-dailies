@@ -31,7 +31,7 @@ def get_profile_balance(driver) -> Balance | None:
 
 def get_profile_inventory(driver) -> list[InventoryItem]:
     """
-    Get user's inventory. 
+    Get user's inventory and sell specified items.
     """
     res = []
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
