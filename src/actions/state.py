@@ -46,7 +46,6 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
             load_more = wait_for(Condition.VISIBLE, wait, InventorySelectors.LOAD_MORE_BUTTON)
             if load_more:
                 load_more.click()
-                print("Loading more items...")
                 random_sleep(1)
             else:
                 break
