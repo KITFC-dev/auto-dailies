@@ -6,11 +6,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from typing import Literal, overload
 
-from src.constants import SelEnum, Condition
+from src.constants import SelEnum
 from src.logger import prwarn, prerror
 
 def wait_for(
-    c: Condition, 
+    c, 
     wait: WebDriverWait, 
     sel: SelEnum
 ) -> WebElement | None:
@@ -19,7 +19,7 @@ def wait_for(
     and return the WebElement.
 
     Args:
-        condition: LocatorEnum type
+        condition: Condition function
         wait: WebDriverWait instance
         selector: SelEnum element
 
@@ -27,7 +27,7 @@ def wait_for(
         WebElement if found, otherwise None
     """
     try:
-        return wait.until(c.value(sel))
+        return wait.until(c(sel))
     except TimeoutException:
         prwarn(f"Timeout while waiting for {sel}")
     except WebDriverException as e:

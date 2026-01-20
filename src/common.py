@@ -14,6 +14,10 @@ from src.config import CONFIG
 def similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
+def compare_list(a: str, b: list[str]) -> float:
+    """Compare a string against a list of strings. """
+    return any(similarity(a, item) for item in b)
+
 def random_sleep(amount: float = 2.0, r: float = 0.5):
     """Sleep for certain amount of time with a random jitter. """
     time.sleep(max(0.0, amount + random.uniform(-r, r)))

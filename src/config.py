@@ -15,12 +15,18 @@ class Config:
         self.checkin = args.checkin or flags.get("checkin", False)
         self.giveaway = args.giveaway or flags.get("giveaway", False)
         self.cases = args.cases or flags.get("cases", False)
+        self.sell_inventory = args.sell_inventory or flags.get("sell_inventory", False)
 
         general = raw.get("general", {})
         self.wait_timeout = general.get("wait_timeout", 2)
         self.wait_after = args.wait_after if args.wait_after is not None else general.get("wait_after", 0)
         self.giveaway_price_threshold = general.get("giveaway_price_threshold", 0)
         self.case_price_threshold = general.get("case_price_threshold", 0)
+
+        selling = raw.get("selling", {})
+        self.sell_gold = selling.get("sell_gold", False)
+        self.sell_ignored = selling.get("sell_ignored", False)
+        self.sell_gold_price_threshold = selling.get("sell_gold_price_threshold", 0)
 
         paths = raw.get("paths", {})
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
@@ -45,6 +51,7 @@ class Config:
         parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
         parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
         parser.add_argument("-cs", "--cases", action="store_true", help="Opens the cases.")
+        parser.add_argument("-si", "--sell_inventory", action="store_true", help="Sell items from inventory.")
 
         # General
         parser.add_argument("-w", "--wait-after", type=int, help="Number of seconds to wait before closing the browser.")

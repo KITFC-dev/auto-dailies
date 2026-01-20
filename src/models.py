@@ -23,10 +23,11 @@ class Balance:
 
 @dataclass(slots=True)
 class InventoryItem:
+    name: str
     image: str | None = None
-    name: str | None = None
     price: int | None = None
     currency_type: CurrencyType = CurrencyType.UNKNOWN
+    sold: bool = False
 
 @dataclass(slots=True)
 class InventoryMeta:

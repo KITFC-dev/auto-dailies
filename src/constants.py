@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
-from functools import partial
 from enum import Enum
 
 # Cases to ignore when opening cases
@@ -15,6 +14,23 @@ IGNORE_CASES = [
     "korobka-inadzumy",
     "dar-arxontov",
     "pokrovitelstvo-dilyuka"
+]
+
+IGNORE_ITEMS = [
+    # Limited items
+    "2021", "2022", "2023", "2024", "2025", "2026"
+    "памят",
+    "сувенир",
+    "фигурк",
+    
+    # Paid items
+    "кристалл",
+    "благослов",
+    "гранул",
+    "гем",
+    "молитв",
+    "скин",
+    "пак",
 ]
 
 BASE_URL: str = "https://genshindrop.io"
@@ -110,15 +126,16 @@ class InventorySelectors(SelEnum):
     IMAGE = (By.CLASS_NAME, 'inventory-item_left__cover')
     NAME = (By.CLASS_NAME, 'profile-item-left-name')
     PRICE = (By.CSS_SELECTOR, 'span.icur-container.ml-1')
+    SELL_BUTTON = (By.CSS_SELECTOR, 'a.inventory-item-link.inventory-item-link_sell')
     CURRENCY_TYPE = (By.XPATH, './/span[contains(@class,"icur-container")]//i')
 
-class Condition(Enum):
+class Condition:
     """
     Conditions for finding the element. 
     """
-    PRESENCE = partial(EC.presence_of_element_located)
-    CLICKABLE = partial(EC.element_to_be_clickable)
-    VISIBLE = partial(EC.visibility_of_element_located)
+    PRESENCE = EC.presence_of_element_located
+    CLICKABLE = EC.element_to_be_clickable
+    VISIBLE = EC.visibility_of_element_located
 
 class CurrencyType(str, Enum):
     COIN = "coin"
@@ -142,3 +159,11 @@ class GiveawayResultType(str, Enum):
     Use title in swal for comparing.
     """
     SUCCESS = "Вы в раздаче"
+
+class SellResultType(str, Enum):
+    """
+    Result messages for selling items.
+
+    Use title in swal for comparing.
+    """
+    SUCCESS = "Продано"

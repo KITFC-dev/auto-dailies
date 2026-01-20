@@ -7,6 +7,8 @@ checkin = true
 giveaway = true
 # Open cases
 cases = true
+# Sell items from inventory
+sell_inventory = false
 
 [general]
 # Amount of time to wait for the elements to load
@@ -19,6 +21,17 @@ giveaway_price_threshold = 0
 # Price threshold for opening cases, same logic as in giveaways
 # using 1 as threshold because weekly case usually costs 1 coin.
 case_price_threshold = 1
+
+[selling]
+# These settings require sell_inventory to be set to true
+# Sell items that cost gold?
+sell_gold = false
+# Sell ignored items? (Crystals, Welkin, Skins etc.)
+# Not recommended to enable this!
+sell_ignored = false
+# Gold price threshold for max price
+# For example if set to 5 and item is 7, item wont be sold
+sell_gold_price_threshold = 0
 
 [discord]
 # URL to send logs to
