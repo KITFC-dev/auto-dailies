@@ -79,6 +79,11 @@ class CommonSelectors(SelEnum):
 class CheckinSelectors(SelEnum):
     """Selectors for check in page. """
     BUTTON = (By.CLASS_NAME, 'checkin-day-today-label-check')
+    STREAK = (By.CSS_SELECTOR, 'div.checkin-today-value_text')
+    MONTHLY_BONUS = (By.XPATH, "//div[contains(@class, 'checkin-status-item_value')]/i[contains(@class, 'i-calendar')]/..")
+    PAYMENTS_BONUS = (By.XPATH, "//div[contains(@class, 'checkin-status-item_value')]/i[contains(@class, 'i-shop')]/..")
+    SKIPPED_DAY_FALSE = (By.CSS_SELECTOR, 'i.i.i-check')
+    SKIPPED_DAY_TRUE = (By.CSS_SELECTOR, 'i.i.i-cross')
 
 class GiveawaySelectors(SelEnum):
     """Selectors for giveaway page. """

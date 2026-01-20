@@ -4,6 +4,15 @@ from dataclasses import dataclass, field
 from src.constants import CurrencyType
 
 @dataclass(slots=True)
+class Result:
+    success: bool
+    reason: str | None = None
+
+    def __post_init__(self):
+        if self.success and self.reason is not None:
+            raise ValueError("Cannot have reason when success is True")
+
+@dataclass(slots=True)
 class Swal:
     title: str | None = None
     text: str | None = None
@@ -61,6 +70,17 @@ class Profile:
         return InventoryMeta(coins, gold)
 
 @dataclass(slots=True)
+class CheckinResult(Result):
+    streak: int = 0
+    monthly_bonus: float = 0
+    payments_bonus: float = 0
+    skipped_day: bool = False
+
+    # will be implemented later
+    earned: int = 0
+    currency_type: CurrencyType = CurrencyType.UNKNOWN
+
+@dataclass(slots=True)
 class RunResult:
     success: bool
     reason: str | None = None
@@ -69,6 +89,8 @@ class RunResult:
     ip: Profile = field(default_factory=lambda: Profile(id=''))
     # Profile
     p: Profile = field(default_factory=lambda: Profile(id=''))
+
+    checkin: CheckinResult | None = None
 
     available_cases_len: int = 0
     opened_cases: int = 0

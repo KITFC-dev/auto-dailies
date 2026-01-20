@@ -35,7 +35,8 @@ def run_once(cookie_file) -> RunResult:
 
     # Run actions
     if CONFIG.checkin:
-        run_daily_checkin(driver)
+        checkin = run_daily_checkin(driver)
+        prinfo(f"Check-in result: {checkin.success}, Streak: {checkin.streak}, Monthly bonus: {checkin.monthly_bonus}, Payments bonus: {checkin.payments_bonus}, Skipped day: {checkin.skipped_day}, Earned: {checkin.earned}, Currency type: {checkin.currency_type}")
     if CONFIG.giveaway:
         run_giveaway(driver)
     available_cases_len = 0
@@ -78,6 +79,7 @@ def run_once(cookie_file) -> RunResult:
         success=True,
         ip=init_profile,
         p=curr_profile,
+        checkin=checkin if CONFIG.checkin else None,
         available_cases_len=available_cases_len,
         opened_cases=opened_cases,
         ignored_cases=ignored_cases,
@@ -118,17 +120,17 @@ def run():
             {
                 "name": f"{r.p.username} ({r.p.id})",
                 "value": (
-                    f"```diff\n"
-                    f"Inventory value:\n"
-                    f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
-                    f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
+                    "```diff\n"
+                    + (f"Streak: {r.checkin.streak} | M Bonus: {r.checkin.monthly_bonus * 100}% | P Bonus: {r.checkin.payments_bonus * 100}%\n" if r.checkin else "")
+                    + (f"Cases opened: {r.opened_cases}/{r.available_cases_len} ({r.ignored_cases} ignored)\n" if CONFIG.cases else "")
+                    + "Inventory value:\n"
+                    + f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
+                    + f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
 
-                    f"Balance:\n"
-                    f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
-                    f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
-
-                    f"Cases opened: {r.opened_cases}/{r.available_cases_len} ({r.ignored_cases} ignored)"
-                    f"```\n"
+                    + "Balance:\n"
+                    + f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
+                    + f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
+                    + "```\n"
                 ),
                 "inline": False,
             }
