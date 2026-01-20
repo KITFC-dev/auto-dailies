@@ -65,9 +65,10 @@ class Profile:
 
     @property
     def inventory_meta(self) -> InventoryMeta:
-        coins = sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.COIN and not i.sold)
-        gold = sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.GOLD and not i.sold)
-        return InventoryMeta(coins, gold)
+        return InventoryMeta(
+            sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.COIN and not i.sold),
+            sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.GOLD and not i.sold),
+        )
 
 @dataclass(slots=True)
 class CheckinResult(Result):

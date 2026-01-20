@@ -3,7 +3,7 @@ from src.logger import prinfo, prsuccess, prerror, prwebhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import get_cases, open_case
-from src.actions.state import run_get_profile
+from src.actions.profile import run_get_profile
 from src.models import RunResult
 from src.common import random_sleep, diff_text
 from src.config import CONFIG
