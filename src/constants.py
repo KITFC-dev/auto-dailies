@@ -65,7 +65,7 @@ class SwalSelectors(SelEnum):
     TITLE = (By.CLASS_NAME, 'swal-title')
     TEXT = (By.CLASS_NAME, 'swal-text')
     ICON = (By.CLASS_NAME, 'swal-icon')
-    CONFIRM_BUTTON = (By.CLASS_NAME, 'swal-button swal-button--confirm')
+    CONFIRM_BUTTON = (By.CSS_SELECTOR, ".swal-button.swal-button--confirm")
 
     CONTENT_TEXT = (By.TAG_NAME, 'p')
     CONTENT_ICON = (By.TAG_NAME, 'img')

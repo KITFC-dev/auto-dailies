@@ -49,6 +49,9 @@ def get_swal(driver) -> Swal:
             title = find(swal, SwalSelectors.TITLE)
             text = find(swal, SwalSelectors.TEXT)
             icon = find(swal, SwalSelectors.ICON)
+            
+            wait_for(Condition.VISIBLE, wait, SwalSelectors.CONFIRM_BUTTON)
+            confirm_button = find(swal, SwalSelectors.CONFIRM_BUTTON)
 
             # Some alerts have content and footer instead of title, text and icon
             if not title or not text:
@@ -60,7 +63,8 @@ def get_swal(driver) -> Swal:
             return Swal(
                 title=title.text.strip() if title else None,
                 text=text.text.strip() if text else None,
-                icon=icon.get_attribute("src") if icon else None
+                icon=icon.get_attribute("src") if icon else None,
+                confirm_button=confirm_button
             )
 
     except Exception as e:

@@ -1,3 +1,4 @@
+from selenium.webdriver.remote.webelement import WebElement
 from dataclasses import dataclass, field
 
 from src.constants import CurrencyType
@@ -7,6 +8,13 @@ class Swal:
     title: str | None = None
     text: str | None = None
     icon: str | None = None
+    confirm_button: WebElement | None = None
+    
+    def click_confirm(self) -> bool:
+        if self.confirm_button:
+            self.confirm_button.click()
+            return True
+        return False
 
 @dataclass(slots=True)
 class Case:

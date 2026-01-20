@@ -97,10 +97,17 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
 
                 if sell:
                     try:
+                        # Scroll into view
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", sell_button)
                         sell_button.click()
                         swal = get_swal(driver)
                         if swal.title and similarity(swal.title, SellResultType.SUCCESS):
                             prsuccess(f"Successfully sold {name} for {price} {currency_type}")
+                            random_sleep(0.5)
+                            if not swal.click_confirm():
+                                # Fallback to refreshing if failed to click confirm
+                                driver.refresh()
+                                wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
                         else:
                             raise Exception(f"Error while selling {name}: {swal.title}, {swal.text}")
                         random_sleep(1.5)
