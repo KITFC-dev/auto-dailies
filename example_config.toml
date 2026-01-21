@@ -3,6 +3,8 @@
 headless = false
 # Run daily check-in
 checkin = true
+# Show debug messages
+debug = false
 # Run giveaways
 giveaway = true
 # Open cases

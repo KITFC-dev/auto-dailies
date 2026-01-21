@@ -34,17 +34,17 @@ class Config:
         self.sell_ignored = selling.get("sell_ignored", False)
         self.sell_gold_price_threshold = selling.get("sell_gold_price_threshold", 0)
 
+        discord = raw.get("discord", {})
+        self.webhook_url = args.webhook_url or discord.get("webhook_url", "")
+        self.webhook_name = discord.get("profile_name", "")
+        self.webhook_avatar = discord.get("profile_avatar", "")
+
         paths = raw.get("paths", {})
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
         self.accounts_dir = paths.get("accounts_file", "accounts")
         self.new_account = f"{args.new_account}.pkl" if args.new_account else None
         self.accounts = self.load_accounts()
-
-        discord = raw.get("discord", {})
-        self.webhook_url = args.webhook_url or discord.get("webhook_url", "")
-        self.webhook_name = discord.get("profile_name", "")
-        self.webhook_avatar = discord.get("profile_avatar", "")
 
         self.validate()
 
