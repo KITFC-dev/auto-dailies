@@ -32,7 +32,6 @@ def run_once(cookie_file) -> RunResult:
     if init_profile is None or init_profile.id == '':
         driver.quit()
         return RunResult(False, "Failed to get profile information")
-
     # Run actions
     if CONFIG.checkin:
         checkin = run_daily_checkin(driver)

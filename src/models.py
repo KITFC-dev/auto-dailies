@@ -2,6 +2,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from dataclasses import dataclass, field
 
 from src.constants import CurrencyType
+from src.config import CONFIG
 
 @dataclass(slots=True)
 class Result:
@@ -29,6 +30,7 @@ class Swal:
 class Case:
     link: str
     is_ignored: bool
+    is_target: bool
     image: str | None = None
     name: str | None = None
     price: str | None = None
@@ -109,3 +111,9 @@ class RunResult(Result):
     def all_gold(self) -> int:
         return self.p.balance.gold + self.p.inventory_meta.all_gold
 
+    @property
+    def has_reached_target_gold(self) -> bool:
+        if CONFIG.target_gold_amount > 0:
+            gold = self.p.balance.gold if CONFIG.ignore_inventory else self.all_gold
+            return gold >= CONFIG.target_gold_amount
+        return False

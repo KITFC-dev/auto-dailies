@@ -40,7 +40,8 @@ def get_cases(driver) -> list[Case]:
                     image=img.get_attribute("src") if img else None,
                     name=name.text if name else None,
                     price=price.text if price else None,
-                    is_ignored=href.split("/")[-1] in IGNORE_CASES
+                    is_ignored=href.split("/")[-1] in IGNORE_CASES,
+                    is_target=href.split("/")[-1].lower() == CONFIG.target_case.lower(),
                 )
             )
 
@@ -50,10 +51,10 @@ def get_cases(driver) -> list[Case]:
 
     return []
 
-def open_case(driver, case_link) -> bool:
+def open_case(driver, case: Case) -> bool:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    if driver.current_url != case_link:
-        driver.get(case_link)
+    if driver.current_url != case.link:
+        driver.get(case.link)
 
     try:
         wait_for(Condition.PRESENCE, wait, CaseSelectors.CARD_LIST)
@@ -63,7 +64,7 @@ def open_case(driver, case_link) -> bool:
         # Extract requirements for the case
         case_price = None
         reqs_el = find(driver, CaseSelectors.REQUIREMENTS)
-        if reqs_el:
+        if reqs_el and not case.is_target:
             # Find all elements that have requirement text
             req_els = find(reqs_el, CaseSelectors.REQUIREMENT, multiple=True)
             for req_el in req_els:
@@ -72,15 +73,19 @@ def open_case(driver, case_link) -> bool:
                     match = re.search(r'\d+', text)
                     if match:
                         case_price = int(match.group())
-                        if case_price > CONFIG.case_price_threshold:
-                            prinfo(f"Case price ({case_price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
-                            return False
 
+        # Decide if to open the case
         if case_price is None:
             prinfo("No coin requirement found, opening the case anyway...")
+        elif case.is_target:
+            prinfo(f"Target case detected. Opening regardless of price ({case_price} coins)...")
+        elif case_price > CONFIG.case_price_threshold:
+            prinfo(f"Case price ({case_price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
+            return False
         else:
             prinfo(f"Case price: {case_price} coins. Opening...")
 
+        # Open the case
         card_el = find(driver, CaseSelectors.CARD_LIST)
         if card_el:
             available_cards = find(card_el, CaseSelectors.CARD, multiple=True)
@@ -91,7 +96,7 @@ def open_case(driver, case_link) -> bool:
             if not get_swal(driver).text:
                 return True
     except TimeoutException:
-        prwarn(f"Couldn't find the case with link {case_link}.")
+        prwarn(f"Couldn't find the case with link {case.link}.")
 
     return False
 
@@ -102,10 +107,10 @@ def run_cases(driver) -> CasesResult:
     try:
         available_cases = get_cases(driver)
         for case in available_cases:
-            # Skip ignored cases
-            if not case.is_ignored:
+            # Skip ignored cases, unless target
+            if case.is_target or not case.is_ignored:
                 prinfo(f"Opening case: {case.name}")
-                if open_case(driver, case.link):
+                if open_case(driver, case):
                     prsuccess(f"Opened case: {case.name}")
                     opened_cases += 1
                 else:

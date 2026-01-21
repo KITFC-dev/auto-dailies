@@ -24,6 +24,11 @@ class Config:
         self.giveaway_price_threshold = general.get("giveaway_price_threshold", 0)
         self.case_price_threshold = general.get("case_price_threshold", 0)
 
+        targets = raw.get("targets", {})
+        self.target_gold_amount = targets.get("target_gold_amount", 0)
+        self.ignore_inventory = targets.get("ignore_inventory", False)
+        self.target_case = targets.get("target_case", "")
+
         selling = raw.get("selling", {})
         self.sell_gold = selling.get("sell_gold", False)
         self.sell_ignored = selling.get("sell_ignored", False)

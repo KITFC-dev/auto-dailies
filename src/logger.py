@@ -30,7 +30,9 @@ def summary_webhook(results: list):
             f"Earned Gold: `{sum(i.p.balance.gold - i.ip.balance.gold for i in results if i.success)}`\n"
 
             f"All Coins: `{sum(i.all_coins for i in results if i.success)}`\n"
-            f"All Gold: `{sum(i.all_gold for i in results if i.success)}`"
+            f"All Gold: `{sum(i.all_gold for i in results if i.success)}`\n\n"
+
+            f"Reached Gold Target: {', '.join([i.p.username for i in results if i.has_reached_target_gold]) or 'None'}"
         )
     }]
 

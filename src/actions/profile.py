@@ -1,7 +1,7 @@
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prwarn, prerror, prsuccess
-from src.common import random_sleep, get_swal, similarity
+from src.common import random_sleep, get_swal, similarity, scroll_into
 from src.config import CONFIG
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
@@ -98,12 +98,12 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
                 if sell:
                     try:
                         # Scroll into view
-                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", sell_button)
+                        scroll_into(driver, sell_button)
                         sell_button.click()
                         swal = get_swal(driver)
                         if swal.title and similarity(swal.title, SellResultType.SUCCESS):
                             prsuccess(f"Successfully sold {name} for {price} {currency_type}")
-                            random_sleep(0.5)
+                            random_sleep(1)
                             if not swal.click_confirm():
                                 # Fallback to refreshing if failed to click confirm
                                 driver.refresh()

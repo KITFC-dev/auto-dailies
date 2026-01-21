@@ -1,8 +1,6 @@
 [flags]
 # Headless mode
 headless = false
-# Enable debug messages
-debug = false
 # Run daily check-in
 checkin = true
 # Run giveaways
@@ -23,6 +21,16 @@ giveaway_price_threshold = 0
 # Price threshold for opening cases, same logic as in giveaways
 # using 1 as threshold because weekly case usually costs 1 coin.
 case_price_threshold = 1
+
+[targets]
+# Target gold amount to reach
+# if reached, will notify in webhook
+target_gold_amount = 301
+# Ignore inventory?
+ignore_inventory = false
+# Target case to open, need name in a link
+# example: bednaya-mona
+target_case = ""
 
 [selling]
 # These settings require sell_inventory to be set to true
