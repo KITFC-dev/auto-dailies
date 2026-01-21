@@ -80,6 +80,12 @@ class CheckinResult(Result):
     currency_type: CurrencyType = CurrencyType.UNKNOWN
 
 @dataclass(slots=True)
+class CasesResult(Result):
+    available_cases: list[Case] = field(default_factory=list)
+    opened_cases: int = 0
+    ignored_cases: int = 0
+
+@dataclass(slots=True)
 class RunResult:
     success: bool
     reason: str | None = None
@@ -90,10 +96,7 @@ class RunResult:
     p: Profile = field(default_factory=lambda: Profile(id=''))
 
     checkin: CheckinResult | None = None
-
-    available_cases_len: int = 0
-    opened_cases: int = 0
-    ignored_cases: int = 0
+    cases: CasesResult | None = None
 
     @classmethod
     def ok(cls) -> "RunResult":

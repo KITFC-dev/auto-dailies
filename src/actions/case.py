@@ -5,10 +5,10 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
-from src.logger import prinfo, prwarn
+from src.logger import prinfo, prwarn, prerror, prsuccess
 from src.common import random_sleep, get_swal
 from src.config import CONFIG
-from src.models import Case
+from src.models import Case, CasesResult
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 
@@ -114,3 +114,34 @@ def open_case(driver, case_link, card_idx=None):
         prwarn(f"Couldn't find the case with link {case_link}.")
 
     return False
+
+def run_cases(driver) -> CasesResult:
+    opened_cases = 0
+    ignored_cases = 0
+
+    try:
+        available_cases = get_cases(driver)
+        for case in available_cases:
+            # Skip ignored cases
+            if not case.is_ignored:
+                prinfo(f"Opening case: {case.name}")
+                if open_case(driver, case.link):
+                    prsuccess(f"Opened case: {case.name}")
+                    opened_cases += 1
+                else:
+                    prerror(f"Failed to open case: {case.name}")
+                        
+                # Cooldown after each case
+                random_sleep(7)
+            else:
+                ignored_cases += 1
+
+        return CasesResult(
+            success=True,
+            available_cases=available_cases,
+            opened_cases=opened_cases,
+            ignored_cases=ignored_cases,
+        )
+    except Exception as e:
+        prerror(f"Cases action failed: {e}")
+        return CasesResult(success=False, reason=str(e))
