@@ -68,8 +68,8 @@ def run():
     results: list[RunResult] = []
 
     # Iterate over all accounts
-    for name, cookie_file in CONFIG.accounts.items():
-        prinfo(f"Processing account: {name}")
-        results.append(run_once(cookie_file))
+    for file in CONFIG.accounts.values():
+        prinfo(f"Processing cookie file: {file}")
+        results.append(run_once(file))
 
     summary_webhook(results)
