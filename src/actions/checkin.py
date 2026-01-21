@@ -16,6 +16,7 @@ def run_daily_checkin(driver) -> CheckinResult:
 
     try:
         button = wait_for(Condition.CLICKABLE, wait, CheckinSelectors.BUTTON)
+        title = None
         if button:
             button.click()
             prsuccess("Daily check-in button clicked")
