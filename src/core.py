@@ -36,9 +36,8 @@ def run_once(cookie_file) -> RunResult:
     # Run actions
     if CONFIG.checkin:
         checkin = run_daily_checkin(driver)
-        prinfo(f"Check-in result: {checkin.success}, Streak: {checkin.streak}, Monthly bonus: {checkin.monthly_bonus}, Payments bonus: {checkin.payments_bonus}, Skipped day: {checkin.skipped_day}, Earned: {checkin.earned}, Currency type: {checkin.currency_type}")
     if CONFIG.giveaway:
-        run_giveaway(driver)
+        giveaway = run_giveaway(driver)
     if CONFIG.cases:
         cases = run_cases(driver)
 
@@ -62,6 +61,7 @@ def run_once(cookie_file) -> RunResult:
         ip=init_profile,
         p=curr_profile,
         checkin=checkin if CONFIG.checkin else None,
+        giveaway=giveaway if CONFIG.giveaway else None,
         cases=cases if CONFIG.cases else None,
     )
 
@@ -103,6 +103,7 @@ def run():
                     "```diff\n"
                     + (f"Streak: {r.checkin.streak} | M Bonus: {r.checkin.monthly_bonus * 100}% | P Bonus: {r.checkin.payments_bonus * 100}%\n" if r.checkin else "")
                     + (f"Cases opened: {r.cases.opened_cases}/{len(r.cases.available_cases)} ({r.cases.ignored_cases} ignored)\n" if r.cases else "")
+                    + (f"Giveaways joined: {len(r.giveaway.joined)}/{len(r.giveaway.giveaways)}\n" if r.giveaway else "")
                     + "Inventory value:\n"
                     + f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
                     + f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"

@@ -38,6 +38,9 @@ def is_docker():
     cgroup = Path('/proc/self/cgroup')
     return Path('/.dockerenv').is_file() or (cgroup.is_file() and 'docker' in cgroup.read_text())
 
+def scroll_into(driver, element):
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+
 def get_swal(driver) -> Swal:
     """Get 'SweetAlert' (swal) alert. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)

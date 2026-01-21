@@ -86,6 +86,11 @@ class CasesResult(Result):
     ignored_cases: int = 0
 
 @dataclass(slots=True)
+class GiveawayResult(Result):
+    giveaways: list[str] = field(default_factory=list)
+    joined: list[str] = field(default_factory=list)
+
+@dataclass(slots=True)
 class RunResult:
     success: bool
     reason: str | None = None
@@ -96,6 +101,7 @@ class RunResult:
     p: Profile = field(default_factory=lambda: Profile(id=''))
 
     checkin: CheckinResult | None = None
+    giveaway: GiveawayResult | None = None
     cases: CasesResult | None = None
 
     @classmethod
