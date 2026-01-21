@@ -56,24 +56,17 @@ def open_case(driver, case_link, card_idx=None):
         driver.get(case_link)
 
     try:
-        # Wait until case cards are present
         wait_for(Condition.PRESENCE, wait, CaseSelectors.CARD_LIST)
         random_sleep(1)
         
-        # Extract requirements for the case, this is needed
-        # to check if the price is above the threshold.
-        # If no requirement is found, it's free
-        coin_price = None
-        req_containers = find(driver, CaseSelectors.REQUIREMENTS, multiple=True)
-        if req_containers:
-            # Pick the first container with reqs
-            req_container = req_containers[0]
-
+        # Extract requirements for the case
+        case_price = None
+        reqs_el = find(driver, CaseSelectors.REQUIREMENTS)
+        if reqs_el:
             # Find all elements that have requirement text
-            req_texts = find(req_container, CaseSelectors.REQUIREMENT, multiple=True)
-            for req_text in req_texts:
-                text = req_text.text.strip()
-                # Check if the text contains coin price text which is 'чайник'
+            req_els = find(reqs_el, CaseSelectors.REQUIREMENT, multiple=True)
+            for req_el in req_els:
+                text = req_el.text.strip()
                 if 'чайник' in text.lower():
                     match = re.search(r'\d+', text)
                     if match:
@@ -82,8 +75,10 @@ def open_case(driver, case_link, card_idx=None):
                             prinfo(f"Case price ({case_price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
                             return False
 
-        if coin_price is None:
+        if case_price is None:
             prinfo("No coin requirement found, opening the case anyway...")
+        else:
+            prinfo(f"Case price: {case_price} coins. Opening...")
 
         # Pick the card, but wait 3 seconds for the animation to finish
         random_sleep(3)
