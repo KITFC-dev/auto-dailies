@@ -1,52 +1,106 @@
 import requests
-from src.config import CONFIG
+
 from colorama import Fore, Style
 
-def _send_webhook(msg=None, embeds=None):
-    # Skip if webhook url is empty
-    if not (CONFIG.webhook_url.strip()):
-        return
-    
+from src.config import CONFIG
+
+def diff_text(label: str, init_val: int, curr_val: int) -> str:
+    """Generates a diff stylized text from id. """
+    if init_val < curr_val:
+        diff = '+'
+    elif init_val > curr_val:
+        diff = '-'
+    else:
+        diff = ' '
+
+    return f"{diff} {label.title()}: {init_val} -> {curr_val}\n"
+
+def _print_log(msg, color = Fore.CYAN, type = "info"):
+    print(f"{color}[{type.upper()}]{Style.RESET_ALL} {msg}")
+
+def summary_webhook(results: list):
+    summary_embed = [{
+        "title": "AutoDailies tasks completed!",
+        "color": 2818303,
+        "description": (
+            f"Accounts Done: `{len([r for r in results if r.success])}`\n"
+            f"Accounts Failed: `{len([r for r in results if not r.success])}`\n\n"
+
+            f"Earned Coins: `{sum(i.p.balance.coins - i.ip.balance.coins for i in results if i.success)}`\n"
+            f"Earned Gold: `{sum(i.p.balance.gold - i.ip.balance.gold for i in results if i.success)}`\n"
+
+            f"All Coins: `{sum(i.all_coins for i in results if i.success)}`\n"
+            f"All Gold: `{sum(i.all_gold for i in results if i.success)}`"
+        )
+    }]
+
+    accounts_embeds = []
+    for i in range(0, len(results), 25):
+        # Discord allows 25 fields per embed
+        batch = results[i:i+25]
+        fields = []
+
+        # Construct fields
+        for r in batch:
+            value = ""
+            value += "```diff\n"
+            if r.checkin:
+                value += (
+                    f"Streak: {r.checkin.streak} | "
+                    f"M Bonus: {r.checkin.monthly_bonus * 100}% | "
+                    f"P Bonus: {r.checkin.payments_bonus * 100}%\n"
+                    f"{'Day was skipped! | ' if r.checkin.skipped_day else ''}"
+                    f"{'failed' if not r.checkin.success else ''}"
+                )
+            if r.cases:
+                value += (
+                    f"Cases opened: "
+                    f"{r.cases.opened_cases}/{len(r.cases.available_cases)} "
+                    f"({r.cases.ignored_cases} ignored)\n"
+                    f"{'(failed)' if not r.cases.success else ''}"
+                )
+            if r.giveaway:
+                value += (
+                    f"Giveaways joined: "
+                    f"{len(r.giveaway.joined)}/{len(r.giveaway.giveaways)}\n"
+                    f"{'(failed)' if not r.giveaway.success else ''}"
+                )
+            value += (
+                f"All Coins: {r.all_coins} | All Gold: {r.all_gold}\n"
+                "Inventory value:\n"
+                f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
+                f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
+                "Balance:\n"
+                f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
+                f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
+            )
+            value += "```\n"
+
+            fields.append({
+                "name": f"{r.p.username} ({r.p.id})",
+                "value": value,
+                "inline": False,
+            })
+
+        # Append embed
+        accounts_embeds.append({
+            "title": "Accounts Summary" if i == 0 else "",
+            "color": 2818303,
+            "fields": fields
+        })
+
     # Discord webhook
     payload = {}
-    if msg:
-        payload["content"] = msg
-    if embeds:
-        payload["embeds"] = embeds
+    payload["embeds"] = summary_embed + accounts_embeds
     if CONFIG.webhook_name:
         payload["username"] = CONFIG.webhook_name
     if CONFIG.webhook_avatar:
         payload["avatar_url"] = CONFIG.webhook_avatar
 
-    # Send webhook
     r = requests.post(CONFIG.webhook_url, json=payload, timeout=5)
-
     if not r.ok:
         prerror(f"Failed to send webhook: {r.status_code} {r.text}")
 
-def _print_log(msg, color = Fore.CYAN, type = "info", webhook=False):
-    # Print log
-    print(f"{color}[{type.upper()}]{Style.RESET_ALL} {msg}")
-
-    # Optionally send webhook
-    if webhook:
-        _send_webhook(msg)
-
-def prwebhook(
-    msg=None, 
-    title=None, 
-    color=None, 
-    description=None, 
-    fields=None
-):
-    _send_webhook(msg, embeds=[
-        {
-            "title": title, 
-            "color": color if color else 2818303, 
-            "description": description, 
-            "fields": fields
-        }
-    ])
 
 def prinfo(msg): _print_log(msg)
 def prsuccess(msg): _print_log(msg, color = Fore.GREEN, type = "success")

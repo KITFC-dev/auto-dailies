@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn, prerror, prsuccess
-from src.common import random_sleep, get_swal
+from src.common import random_sleep, get_swal, scroll_into
 from src.config import CONFIG
 from src.models import Case, CasesResult
 from src.constants import BASE_URL, IGNORE_CASES, \
@@ -85,6 +85,7 @@ def open_case(driver, case_link) -> bool:
         if card_el:
             available_cards = find(card_el, CaseSelectors.CARD, multiple=True)
             picked_card = random.choice(available_cards)
+            scroll_into(driver, picked_card)
             picked_card.click()
 
             if not get_swal(driver).text:

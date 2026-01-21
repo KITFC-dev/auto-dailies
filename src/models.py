@@ -91,10 +91,7 @@ class GiveawayResult(Result):
     joined: list[str] = field(default_factory=list)
 
 @dataclass(slots=True)
-class RunResult:
-    success: bool
-    reason: str | None = None
-
+class RunResult(Result):
     # Initial Profile
     ip: Profile = field(default_factory=lambda: Profile(id=''))
     # Profile
@@ -104,16 +101,11 @@ class RunResult:
     giveaway: GiveawayResult | None = None
     cases: CasesResult | None = None
 
-    @classmethod
-    def ok(cls) -> "RunResult":
-        return cls(success=True)
+    @property
+    def all_coins(self) -> int:
+        return self.p.balance.coins + self.p.inventory_meta.all_coins
+    
+    @property
+    def all_gold(self) -> int:
+        return self.p.balance.gold + self.p.inventory_meta.all_gold
 
-    @classmethod
-    def fail(cls, reason: str) -> "RunResult":
-        return cls(success=False, reason=reason)
-
-    def __post_init__(self):
-        if self.success and self.reason is not None:
-            raise ValueError("reason is not allowed when success is True")
-        if not self.success and not self.reason:
-            raise ValueError("reason is required when success is False")
