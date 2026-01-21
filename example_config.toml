@@ -1,6 +1,8 @@
 [flags]
 # Headless mode
 headless = false
+# Enable debug messages
+debug = false
 # Run daily check-in
 checkin = true
 # Run giveaways

@@ -52,3 +52,4 @@ def prinfo(msg): _print_log(msg)
 def prsuccess(msg): _print_log(msg, color = Fore.GREEN, type = "success")
 def prwarn(msg): _print_log(msg, color = Fore.YELLOW, type = "warning")
 def prerror(msg): _print_log(msg, color = Fore.RED, type = "error")
+def prdebug(msg): _print_log(msg, color = Fore.BLUE, type = "debug") if CONFIG.debug else None

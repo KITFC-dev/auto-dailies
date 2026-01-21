@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from typing import Literal, overload
 
 from src.constants import SelEnum
-from src.logger import prwarn, prerror
+from src.logger import prdebug, prerror
 
 def wait_for(
     c, 
@@ -29,7 +29,7 @@ def wait_for(
     try:
         return wait.until(c(sel))
     except TimeoutException:
-        prwarn(f"Timeout while waiting for {sel}")
+        prdebug(f"Timeout while waiting for {sel}")
     except WebDriverException as e:
         prerror(f"Driver error while waiting for {sel}: {e}")
     
@@ -73,7 +73,7 @@ def find(
         return driver.find_element(*sel)
 
     except (NoSuchElementException, StaleElementReferenceException):
-        prwarn(f"Element not found: {sel}")
+        prdebug(f"Element not found: {sel}")
         
     except WebDriverException as e:
         prerror(f"Driver error while finding element {sel}: {e}")

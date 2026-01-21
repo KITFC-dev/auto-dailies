@@ -12,6 +12,7 @@ class Config:
 
         flags = raw.get("flags", {})
         self.headless = args.headless or flags.get("headless", False)
+        self.debug = args.debug or flags.get("debug", False)
         self.checkin = args.checkin or flags.get("checkin", False)
         self.giveaway = args.giveaway or flags.get("giveaway", False)
         self.cases = args.cases or flags.get("cases", False)
@@ -48,6 +49,7 @@ class Config:
 
         # Flags
         parser.add_argument("-H", "--headless", action="store_true", help="Starts the browser in headless mode.")
+        parser.add_argument("-d", "--debug", action="store_true", help="Enables debug.")
         parser.add_argument("-c", "--checkin", action="store_true", help="Runs the daily check-in.")
         parser.add_argument("-g", "--giveaway", action="store_true", help="Runs the giveaway.")
         parser.add_argument("-cs", "--cases", action="store_true", help="Opens the cases.")
