@@ -50,14 +50,15 @@ def get_cases(driver) -> list[Case]:
 
     return []
 
-def open_case(driver, case_link, card_idx=None):
+def open_case(driver, case_link) -> bool:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != case_link:
         driver.get(case_link)
 
     try:
         wait_for(Condition.PRESENCE, wait, CaseSelectors.CARD_LIST)
-        random_sleep(1)
+        # Wait for card animation to finish
+        random_sleep(3)
         
         # Extract requirements for the case
         case_price = None
@@ -80,29 +81,12 @@ def open_case(driver, case_link, card_idx=None):
         else:
             prinfo(f"Case price: {case_price} coins. Opening...")
 
-        # Pick the card, but wait 3 seconds for the animation to finish
-        random_sleep(3)
-        cards = find(driver, CaseSelectors.CARD_LIST, multiple=True)
-        if cards:
-            card_el = cards[0]
-
-            # Scroll into view
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card_el)
-
-            # Find available cards
+        card_el = find(driver, CaseSelectors.CARD_LIST)
+        if card_el:
             available_cards = find(card_el, CaseSelectors.CARD, multiple=True)
-
-            # Pick random card or the one specified
-            if card_idx:
-                picked_card = available_cards[card_idx]
-            else:
-                picked_card = random.choice(available_cards)
-
-            # Click the card
-            driver.execute_script("arguments[0].scrollIntoView(true);", picked_card)
+            picked_card = random.choice(available_cards)
             picked_card.click()
 
-            # if there are no swal alerts then the case was opened successfully
             if not get_swal(driver).text:
                 return True
     except TimeoutException:
