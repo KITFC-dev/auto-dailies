@@ -1,6 +1,6 @@
 # AutoDailies
 
-![AutoDailies Thumbnail](https://10ku.net/autodailies/auto-dailies-thumbnail.png)
+![AutoDailies Thumbnail](https://10ku.net/autodailies/auto-dailies-thumbnail-icon.png)
 
 AutoDailies is automated selenium script for [GenshinDrop.io](https://genshindrop.io) to automate tasks like daily check-in, opening cases or joining giveaways on multiple accounts. It can earn in-game items in hoyo games such as primogems, welkin moon and others.
 
