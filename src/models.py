@@ -74,12 +74,12 @@ class Profile:
 
 @dataclass(slots=True)
 class CheckinResult(Result):
-    streak: int | None = 0
-    monthly_bonus: float | None = 0
-    payments_bonus: float | None = 0
-    skipped_day: bool | None = False
-    earned: int | None = 0
-    currency_type: CurrencyType | None = CurrencyType.UNKNOWN
+    streak: int = 0
+    monthly_bonus: float = 0
+    payments_bonus: float = 0
+    skipped_day: bool = False
+    earned: int = 0
+    currency_type: CurrencyType = CurrencyType.UNKNOWN
 
 @dataclass(slots=True)
 class CasesResult(Result):

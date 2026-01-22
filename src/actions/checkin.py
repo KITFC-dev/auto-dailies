@@ -34,6 +34,10 @@ def run_daily_checkin(driver) -> CheckinResult:
         payments_bonus_el = find(driver, CheckinSelectors.PAYMENTS_BONUS)
         skipped_day_el = find(driver, CheckinSelectors.SKIPPED_DAY_FALSE)
 
+        streak = parse_num(streak_el)
+        monthly_bonus = parse_num(monthly_bonus_el, is_percent=True)
+        payments_bonus = parse_num(payments_bonus_el, is_percent=True)
+
         # Earned and currency type from swal
         earned = 0
         currency_type = CurrencyType.UNKNOWN
@@ -53,11 +57,11 @@ def run_daily_checkin(driver) -> CheckinResult:
 
         return CheckinResult(
             success=checked_in,
-            streak=parse_num(streak_el),
-            monthly_bonus=parse_num(monthly_bonus_el, is_percent=True),
-            payments_bonus=parse_num(payments_bonus_el, is_percent=True),
+            streak=streak if streak else 0,
+            monthly_bonus=monthly_bonus if monthly_bonus else 0.0,
+            payments_bonus=payments_bonus if payments_bonus else 0.0,
             skipped_day=skipped_day,
-            earned=earned,
+            earned=earned if earned else 0,
             currency_type=currency_type,
         )
     except Exception as e:

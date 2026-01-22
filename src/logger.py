@@ -49,10 +49,10 @@ def summary_webhook(results: list):
             if r.checkin:
                 value += (
                     f"Streak: {r.checkin.streak} | "
-                    f"M Bonus: {r.checkin.monthly_bonus * 100}% | "
-                    f"P Bonus: {r.checkin.payments_bonus * 100}%\n"
+                    f"M: {r.checkin.monthly_bonus * 100}% | "
+                    f"P: {r.checkin.payments_bonus * 100}%\n"
                     f"{'Day was skipped! | ' if r.checkin.skipped_day else ''}"
-                    f"{'failed' if not r.checkin.success else ''}"
+                    f"{'(failed)' if not r.checkin.success else ''}"
                 )
             if r.cases:
                 value += (
