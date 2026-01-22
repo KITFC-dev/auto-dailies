@@ -1,7 +1,7 @@
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prwarn, prerror, prsuccess
-from src.common import random_sleep, get_swal, similarity, scroll_into
+from src.common import random_sleep, get_swal, similarity, scroll_into, parse_num
 from src.config import CONFIG
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
@@ -18,12 +18,12 @@ def get_profile_balance(driver) -> Balance | None:
         driver.get(PROFILE_URL)
 
     try:
-        gold = wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD)
-        coins = wait_for(Condition.PRESENCE, wait, StateSelectors.COINS)
+        gold = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD))
+        coins = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.COINS))
         if not gold or not coins:
             raise Exception("Balance or coins not found")
 
-        return Balance(gold=int(gold.text.strip()), coins=int(coins.text.strip()))
+        return Balance(gold=gold, coins=coins)
         random_sleep(0.3)
     except Exception as e:
         prwarn(f"Error while getting balance: {e}")
@@ -69,10 +69,7 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
             else:
                 image = None
             # Price
-            if price_loc:
-                price = int(price_loc.text.strip())
-            else:
-                price = 0
+            price = parse_num(price_loc)
             # Currency type
             currency_type = CurrencyType.UNKNOWN
             if ctype_loc is not None:
@@ -151,7 +148,7 @@ def run_get_profile(driver) -> Profile | None:
             id = id_el.text.split("ID")[-1].strip()
             avatar_url = avatar_el.get_attribute("src") if avatar_el else None
             username = username_el.text.strip() if username_el else None
-            rice = int(rice_el.text.strip()) if rice_el and rice_el.text.strip().isdigit() else None
+            rice = parse_num(rice_el)
             is_verified = "true" in str(verified_el.get_attribute("class")) if verified_el else None
 
             balance = get_profile_balance(driver)

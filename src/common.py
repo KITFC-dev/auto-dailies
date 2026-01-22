@@ -1,15 +1,33 @@
 import time
 import random
+import re
 
 from selenium.webdriver.support.ui import WebDriverWait
 from difflib import SequenceMatcher
 from pathlib import Path
+from selenium.webdriver.remote.webelement import WebElement
+from typing import overload, Literal
 
 from src.constants import SwalSelectors, Condition
 from src.locators import wait_for, find
 from src.logger import prerror
 from src.models import Swal
 from src.config import CONFIG
+
+@overload
+def parse_num(el: WebElement | str | None, is_percent: Literal[True]) -> float | None: ...
+@overload
+def parse_num(el: WebElement | str | None, is_percent: Literal[False] = False) -> int | None: ...
+def parse_num(el: WebElement | str | None, is_percent: bool = False) -> int | float | None:
+    if el:
+        string = el.text.strip() if isinstance(el, WebElement) else el.strip()
+        num = re.search(r'\d+', string)
+        if num:
+            res = int(num.group())
+            if is_percent:
+                res = float(res) / 100
+            return res
+    return None
 
 def similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()

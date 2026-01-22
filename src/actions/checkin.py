@@ -1,32 +1,11 @@
-import re
-
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.remote.webelement import WebElement
-
-from typing import overload, Literal
 
 from src.locators import wait_for, find
 from src.logger import prsuccess, prwarn, prerror
-from src.common import random_sleep, get_swal
+from src.common import random_sleep, get_swal, parse_num
 from src.config import CONFIG
 from src.constants import CHECKIN_URL, CheckinSelectors, Condition, CurrencyType
 from src.models import CheckinResult
-
-def _extract_number(text: str) -> int:
-    num = re.search(r'\d+', text)
-    if num:
-        return int(num.group())
-    return 0
-
-@overload
-def _extract_value(el: WebElement | None, is_percent: Literal[True]) -> float: ...
-@overload
-def _extract_value(el: WebElement | None, is_percent: Literal[False] = False) -> int: ...
-def _extract_value(el: WebElement | None, is_percent: bool = False) -> int | float:
-    res = _extract_number(el.text.strip()) if el else 0
-    if is_percent:
-        res = float(res) / 100
-    return res
 
 def run_daily_checkin(driver) -> CheckinResult:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -59,7 +38,7 @@ def run_daily_checkin(driver) -> CheckinResult:
         earned = 0
         currency_type = CurrencyType.UNKNOWN
         if title:
-            earned = _extract_number(title.strip())
+            earned = parse_num(title)
             if 'чайник' in title.lower():
                 currency_type = CurrencyType.COIN
             elif 'мор' in title.lower():
@@ -74,9 +53,9 @@ def run_daily_checkin(driver) -> CheckinResult:
 
         return CheckinResult(
             success=checked_in,
-            streak=_extract_value(streak_el),
-            monthly_bonus=_extract_value(monthly_bonus_el, is_percent=True),
-            payments_bonus=_extract_value(payments_bonus_el, is_percent=True),
+            streak=parse_num(streak_el),
+            monthly_bonus=parse_num(monthly_bonus_el, is_percent=True),
+            payments_bonus=parse_num(payments_bonus_el, is_percent=True),
             skipped_day=skipped_day,
             earned=earned,
             currency_type=currency_type,

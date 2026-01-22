@@ -1,12 +1,11 @@
 import random
-import re
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn, prerror, prsuccess
-from src.common import random_sleep, get_swal, scroll_into
+from src.common import random_sleep, get_swal, scroll_into, parse_num
 from src.config import CONFIG
 from src.models import Case, CasesResult
 from src.constants import BASE_URL, IGNORE_CASES, \
@@ -70,9 +69,7 @@ def open_case(driver, case: Case) -> bool:
             for req_el in req_els:
                 text = req_el.text.strip()
                 if 'чайник' in text.lower():
-                    match = re.search(r'\d+', text)
-                    if match:
-                        case_price = int(match.group())
+                    case_price = parse_num(text)
 
         # Decide if to open the case
         if case_price is None:

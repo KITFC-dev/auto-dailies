@@ -4,7 +4,7 @@ from src.locators import wait_for, find
 from src.config import CONFIG
 from src.models import GiveawayResult
 from src.logger import prsuccess, prwarn, prinfo, prerror
-from src.common import random_sleep, get_swal, scroll_into
+from src.common import random_sleep, get_swal, scroll_into, parse_num
 from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
 
 def run_giveaway(driver) -> GiveawayResult:
@@ -60,16 +60,11 @@ def click_giveaway_join_button(driver, href) -> bool:
         # Check giveaway's price
         try:
             price_element = wait_for(Condition.PRESENCE, wait, GiveawaySelectors.PRICE)
-            if price_element:
-                price_text = price_element.text.strip()
-                
-                # Check if price is not free
-                if price_text not in ["0", "Бесплатно", "Free"]:                
-                    # Check if price is above threshold
-                    price_value = int(price_text)
-                    if price_value > CONFIG.giveaway_price_threshold:
-                        prwarn(f"Giveaway price ({price_value}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
-                        return False
+            price = parse_num(price_element)
+            if price:
+                if price > CONFIG.giveaway_price_threshold:
+                    prwarn(f"Giveaway price ({price}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
+                    return False
         except Exception:
             prwarn("Could not determine giveaway price")
 
