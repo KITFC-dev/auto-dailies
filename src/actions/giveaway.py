@@ -1,3 +1,5 @@
+import traceback
+
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
@@ -24,25 +26,25 @@ def run_giveaway(driver) -> GiveawayResult:
             link = find(giveaway, GiveawaySelectors.LINK)
             if link:
                 links.append(link.get_attribute("href"))
+
+        # Join all giveaways
+        joined = []
+        for link in links:
+            prinfo(f"Checking out giveaway: {link}")
+            random_sleep(1)
+            if click_giveaway_join_button(driver, link):
+                joined.append(link)
+                random_sleep(5)
+
+        return GiveawayResult(
+            success=True,
+            giveaways=links,
+            joined=joined
+        )
     
     except Exception as e:
-        prerror(f"Error while getting giveaway links: {e}")
+        prerror(f"Giveaway action failed: {e}\n{traceback.format_exc()}")
         return GiveawayResult(success=False, reason=str(e))
-
-    # Join all giveaways
-    joined = []
-    for link in links:
-        prinfo(f"Checking out giveaway: {link}")
-        random_sleep(1)
-        if click_giveaway_join_button(driver, link):
-            joined.append(link)
-            random_sleep(5)
-
-    return GiveawayResult(
-        success=True,
-        giveaways=links,
-        joined=joined
-    )
 
 def click_giveaway_join_button(driver, href) -> bool:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)

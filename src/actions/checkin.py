@@ -1,3 +1,5 @@
+import traceback
+
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
@@ -65,6 +67,6 @@ def run_daily_checkin(driver) -> CheckinResult:
             currency_type=currency_type,
         )
     except Exception as e:
-        prerror(f"Error while checking in daily: {e}")
+        prerror(f"Error while checking in daily: {e}\n{traceback.format_exc()}")
 
     return CheckinResult(success=False, reason="Check-in failed due to exception")

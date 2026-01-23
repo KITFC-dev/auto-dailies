@@ -1,3 +1,5 @@
+import traceback
+
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prwarn, prerror, prsuccess
@@ -165,6 +167,6 @@ def run_get_profile(driver) -> Profile | None:
             )
 
     except Exception as e:
-        prerror(f"Error while getting profile data: {e}")
+        prerror(f"Error while getting profile data: {e}\n{traceback.format_exc()}")
 
     return None

@@ -1,3 +1,4 @@
+import traceback
 import time
 import random
 import re
@@ -10,7 +11,7 @@ from typing import overload, Literal
 
 from src.constants import SwalSelectors, Condition
 from src.locators import wait_for, find
-from src.logger import prerror
+from src.logger import prerror, prdebug
 from src.models import Swal
 from src.config import CONFIG
 
@@ -56,31 +57,34 @@ def retry_click(driver, element, retries=5):
         except Exception:
             driver.execute_script("arguments[0].click();", element)
             return True
+        prdebug(f"Click attempt {i + 1} failed.")
     return False
 
 def get_swal(driver) -> Swal:
     """Get 'SweetAlert' (swal) alert. """
+    def _find(d, w, sel):
+        if wait_for(Condition.PRESENCE, w, sel):
+            return find(d, sel)
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
 
     try:
-        wait_for(Condition.VISIBLE, wait, SwalSelectors.MODAL)
-        swal = find(driver, SwalSelectors.MODAL)
+        swal = _find(driver, wait, SwalSelectors.MODAL)
         if swal:
-            title = find(swal, SwalSelectors.TITLE)
-            text = find(swal, SwalSelectors.TEXT)
-            icon = find(swal, SwalSelectors.ICON)
+            title = _find(swal, wait, SwalSelectors.TITLE)
+            text = _find(swal, wait, SwalSelectors.TEXT)
+            icon = _find(swal, wait, SwalSelectors.ICON)
             
-            wait_for(Condition.VISIBLE, wait, SwalSelectors.CONFIRM_BUTTON)
-            confirm_button = find(swal, SwalSelectors.CONFIRM_BUTTON)
+            confirm_button = _find(swal, wait, SwalSelectors.CONFIRM_BUTTON)
 
             # Some alerts have content and footer instead of title, text and icon
             if not title or not text:
-                content = find(swal, SwalSelectors.CONTENT)
+                content = _find(swal, wait, SwalSelectors.CONTENT)
                 if content:
-                    title = find(content, SwalSelectors.CONTENT_TITLE)
-                    text = find(content, SwalSelectors.CONTENT_TEXT)
-                    icon = find(content, SwalSelectors.CONTENT_ICON)
-            
+                    title = _find(content, wait, SwalSelectors.CONTENT_TITLE)
+                    text = _find(content, wait, SwalSelectors.CONTENT_TEXT)
+                    icon = _find(content, wait, SwalSelectors.CONTENT_ICON)
+
+            prdebug(f"Swal: title={title}, text={text}, icon={icon}, confirm_button={confirm_button}")
             return Swal(
                 title=title.text.strip() if title else None,
                 text=text.text.strip() if text else None,
@@ -89,6 +93,6 @@ def get_swal(driver) -> Swal:
             )
 
     except Exception as e:
-        prerror(f"Error while getting swal alert: {e}")
+        prerror(f"Error while getting swal alert: {e}\n{traceback.format_exc()}")
     
     return Swal()

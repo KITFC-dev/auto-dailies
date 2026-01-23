@@ -1,4 +1,5 @@
 import random
+import traceback
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -125,5 +126,5 @@ def run_cases(driver) -> CasesResult:
             ignored_cases=ignored_cases,
         )
     except Exception as e:
-        prerror(f"Cases action failed: {e}")
+        prerror(f"Cases action failed: {e}\n{traceback.format_exc()}")
         return CasesResult(success=False, reason=str(e))
