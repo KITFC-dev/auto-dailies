@@ -103,12 +103,12 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
                         if swal.title and similarity(swal.title, SellResultType.SUCCESS):
                             prsuccess(f"Successfully sold {name} for {price} {currency_type}")
                             random_sleep(1)
-                            if not swal.click_confirm():
-                                # Fallback to refreshing if failed to click confirm
-                                driver.refresh()
-                                wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
+                            swal.click_confirm()
                         else:
-                            raise Exception(f"Error while selling {name}: {swal.title}, {swal.text}")
+                            prerror(f"Error while selling {name}: {swal.title}, {swal.text}")
+                            # Fallback to refreshing if failed to sell
+                            driver.refresh()
+                            wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
                         random_sleep(1.5)
                     except Exception as e:
                         prwarn(f"{e}")

@@ -91,8 +91,13 @@ def open_case(driver, case: Case) -> bool:
             scroll_into(driver, picked_card)
             picked_card.click()
 
-            if not get_swal(driver).text:
+            # Check if the case was opened successfully
+            swal = get_swal(driver)
+            if not swal.text:
                 return True
+            else:
+                # failed
+                swal.click_confirm()
     except TimeoutException:
         prwarn(f"Couldn't find the case with link {case.link}.")
 

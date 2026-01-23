@@ -84,11 +84,14 @@ def get_swal(driver) -> Swal:
                     text = _find(content, wait, SwalSelectors.CONTENT_TEXT)
                     icon = _find(content, wait, SwalSelectors.CONTENT_ICON)
 
-            prdebug(f"Swal: title={title}, text={text}, icon={icon}, confirm_button={confirm_button}")
+            title = title.text.strip() if title else None
+            text = text.text.strip() if text else None
+            icon = icon.get_attribute("src") if icon else None
+            prdebug(f"Got Swal: title={title}, text={text}, icon={icon}, confirm_button={confirm_button}")
             return Swal(
-                title=title.text.strip() if title else None,
-                text=text.text.strip() if text else None,
-                icon=icon.get_attribute("src") if icon else None,
+                title=title,
+                text=text,
+                icon=icon,
                 confirm_button=confirm_button
             )
 
