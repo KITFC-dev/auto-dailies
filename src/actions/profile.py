@@ -3,8 +3,8 @@ import traceback
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prwarn, prerror, prsuccess
-from src.common import random_sleep, get_swal, similarity, scroll_into, \
-    parse_num, retry_click
+from src.common import random_sleep, get_swal, similarity, \
+    parse_num, click_el
 from src.config import CONFIG
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
@@ -48,7 +48,7 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
         while True:
             load_more = wait_for(Condition.VISIBLE, wait, InventorySelectors.LOAD_MORE_BUTTON)
             if load_more:
-                load_more.click()
+                click_el(driver, load_more)
                 random_sleep(1)
             else:
                 break
@@ -97,8 +97,7 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
 
                 if sell:
                     try:
-                        scroll_into(driver, sell_button)
-                        retry_click(driver, sell_button)
+                        click_el(driver, sell_button)
                         swal = get_swal(driver)
                         if swal.title and similarity(swal.title, SellResultType.SUCCESS):
                             prsuccess(f"Successfully sold {name} for {price} {currency_type}")

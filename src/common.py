@@ -49,9 +49,10 @@ def is_docker():
 def scroll_into(driver, element):
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
 
-def retry_click(driver, element, retries=5):
+def click_el(driver, element, retries=5):
     for i in range(retries):
         try:
+            scroll_into(driver, element)
             element.click()
             return True
         except Exception:

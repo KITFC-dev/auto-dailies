@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
 from src.logger import prsuccess, prwarn, prerror
-from src.common import random_sleep, get_swal, parse_num
+from src.common import random_sleep, get_swal, parse_num, click_el
 from src.config import CONFIG
 from src.constants import CHECKIN_URL, CheckinSelectors, Condition, CurrencyType
 from src.models import CheckinResult
@@ -19,7 +19,7 @@ def run_daily_checkin(driver) -> CheckinResult:
         title = None
         checked_in = False
         if button:
-            button.click()
+            click_el(driver, button)
             prsuccess("Daily check-in button clicked")
             random_sleep(0.5)
             swal = get_swal(driver)
