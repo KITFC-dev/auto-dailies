@@ -48,6 +48,16 @@ def is_docker():
 def scroll_into(driver, element):
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
 
+def retry_click(driver, element, retries=5):
+    for i in range(retries):
+        try:
+            element.click()
+            return True
+        except Exception:
+            driver.execute_script("arguments[0].click();", element)
+            return True
+    return False
+
 def get_swal(driver) -> Swal:
     """Get 'SweetAlert' (swal) alert. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
