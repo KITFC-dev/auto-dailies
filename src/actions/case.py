@@ -6,10 +6,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.locators import wait_for, find
 from src.logger import prinfo, prwarn, prerror, prsuccess
-from src.common import random_sleep, get_swal, parse_num, \
-    click_el
 from src.config import CONFIG
 from src.models import Case, CasesResult
+from src.common import random_sleep, get_swal, parse_num, \
+    click_el
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 

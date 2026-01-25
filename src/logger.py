@@ -1,7 +1,5 @@
 import requests
-
 from colorama import Fore, Style
-
 from src.config import CONFIG
 
 def diff_text(label: str, init_val: int, curr_val: int) -> str:

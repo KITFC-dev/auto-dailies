@@ -4,14 +4,14 @@ from src.locators import wait_for, find
 from src.config import CONFIG
 from src.models import GiveawayResult
 from src.logger import prsuccess, prwarn, prinfo
+from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
 from src.common import random_sleep, get_swal, parse_num, handle_exceptions, \
     click_el
-from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
 
 @handle_exceptions(default=GiveawayResult(success=False, reason="Failed to join giveaways"))
 def run_giveaway(driver) -> GiveawayResult:
     """Checks out all giveaways on the giveaways main page. """
-    wait = WebDriverWait(driver, CONFIG.wait_timeout+1)
+    wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != GIVEAWAY_URL:
         driver.get(GIVEAWAY_URL)
 

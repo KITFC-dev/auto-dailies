@@ -91,7 +91,7 @@ def get_swal(driver) -> Swal:
     def _find(d, w, sel):
         if wait_for(Condition.PRESENCE, w, sel):
             return find(d, sel)
-    wait = WebDriverWait(driver, CONFIG.wait_timeout)
+    wait = WebDriverWait(driver, 1)
 
     try:
         swal = _find(driver, wait, SwalSelectors.MODAL)

@@ -3,14 +3,14 @@ import traceback
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prwarn, prerror, prsuccess
+from src.config import CONFIG
+from src.locators import wait_for, find
+from src.models import Balance, InventoryItem, Profile
 from src.common import random_sleep, get_swal, similarity, \
     parse_num, click_el
-from src.config import CONFIG
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
         SellResultType
-from src.locators import wait_for, find
-from src.models import Balance, InventoryItem, Profile
 
 def get_profile_balance(driver) -> Balance | None:
     """
