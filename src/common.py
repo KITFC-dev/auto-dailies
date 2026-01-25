@@ -2,18 +2,41 @@ import traceback
 import time
 import random
 import re
+import functools
 
 from selenium.webdriver.support.ui import WebDriverWait
 from difflib import SequenceMatcher
 from pathlib import Path
 from selenium.webdriver.remote.webelement import WebElement
 from typing import overload, Literal
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+    ElementClickInterceptedException,
+    ElementNotInteractableException,
+    InvalidElementStateException,
+)
 
 from src.constants import SwalSelectors, Condition
 from src.locators import wait_for, find
 from src.logger import prerror, prdebug
 from src.models import Swal
 from src.config import CONFIG
+
+def handle_exceptions(default=None):
+    """
+    A decorator that catches and logs any exceptions then returns a default value.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                tb = traceback.format_exc()
+                prdebug(f"Exception in {func.__name__}: {e}\n{tb}")
+                return default
+        return wrapper
+    return decorator
 
 @overload
 def parse_num(el: WebElement | str | None, is_percent: Literal[True]) -> float | None: ...
@@ -52,13 +75,15 @@ def scroll_into(driver, element):
 def click_el(driver, element, retries=5):
     for i in range(retries):
         try:
+            wait_for(Condition.CLICKABLE, WebDriverWait(driver, CONFIG.wait_timeout), element)
             scroll_into(driver, element)
             element.click()
             return True
-        except Exception:
-            driver.execute_script("arguments[0].click();", element)
-            return True
-        prdebug(f"Click attempt {i + 1} failed.")
+        except (ElementClickInterceptedException,
+                StaleElementReferenceException,
+                ElementNotInteractableException,
+                InvalidElementStateException) as e:
+            prdebug(f"Click attempt {i + 1} failed: {e}")
     return False
 
 def get_swal(driver) -> Swal:
