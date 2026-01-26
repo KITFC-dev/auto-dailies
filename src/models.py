@@ -1,5 +1,5 @@
 from selenium.webdriver.remote.webelement import WebElement
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 from src.constants import CurrencyType
 from src.config import CONFIG
@@ -12,6 +12,13 @@ class Result:
     def __post_init__(self):
         if self.success and self.reason is not None:
             raise ValueError("Cannot have reason when success is True")
+
+    def __str__(self):
+        return ', '.join(
+            f"{f.name}={getattr(self, f.name)}"
+            for f in fields(self)
+            if getattr(self, f.name) is not None
+        )
 
 @dataclass(slots=True)
 class Swal:
@@ -75,8 +82,8 @@ class Profile:
 @dataclass(slots=True)
 class CheckinResult(Result):
     streak: int = 0
-    monthly_bonus: float = 0
-    payments_bonus: float = 0
+    monthly_bonus: float = 0.0
+    payments_bonus: float = 0.0
     skipped_day: bool = False
     earned: int = 0
     currency_type: CurrencyType = CurrencyType.UNKNOWN
