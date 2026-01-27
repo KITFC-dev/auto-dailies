@@ -1,13 +1,11 @@
-import traceback
-
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.logger import prwarn, prerror, prsuccess
+from src.logger import prwarn, prerror, prsuccess, prdebug
 from src.config import CONFIG
 from src.locators import wait_for, find
 from src.models import Balance, InventoryItem, Profile
 from src.common import random_sleep, get_swal, similarity, \
-    parse_num, click_el
+    parse_num, click_el, handle_exceptions, parse_img, parse_text
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
         SellResultType
@@ -117,46 +115,38 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
 
     return res
 
+@handle_exceptions()
 def run_profile(driver) -> Profile | None:
-    """
-    Get user's profile information. 
-    """
+    """Get user's profile information. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != PROFILE_URL:
         driver.get(PROFILE_URL)
 
-    try:
-        box = wait_for(Condition.VISIBLE, wait, ProfileSelectors.PANEL_BOX)
-        if box:
-            id_el = find(box, ProfileSelectors.ID)
-            avatar_el = find(box, ProfileSelectors.AVATAR)
-            username_el = find(box, ProfileSelectors.USERNAME)
-            rice_el = find(box, ProfileSelectors.RICE)
-            verified_el = find(box, ProfileSelectors.IS_VERIFIED)
+    box = wait_for(Condition.VISIBLE, wait, ProfileSelectors.PANEL_BOX)
+    if box:
+        # Get profile data
+        id_el = find(box, ProfileSelectors.ID)
+        if id_el is None:
+            raise Exception("ID not found")
+        id = id_el.text.split("ID")[-1].strip()
+        avatar_url = parse_img(find(box, ProfileSelectors.AVATAR))
+        username = parse_text(find(box, ProfileSelectors.USERNAME))
+        rice = parse_num(find(box, ProfileSelectors.RICE))
+        verified_el = find(box, ProfileSelectors.IS_VERIFIED)
+        is_verified = "true" in str(verified_el.get_attribute("class")) if verified_el else None
 
-            if id_el is None:
-                raise Exception("ID not found")
+        # Get other data
+        balance = get_profile_balance(driver)
+        inventory = get_profile_inventory(driver)
 
-            id = id_el.text.split("ID")[-1].strip()
-            avatar_url = avatar_el.get_attribute("src") if avatar_el else None
-            username = username_el.text.strip() if username_el else None
-            rice = parse_num(rice_el)
-            is_verified = "true" in str(verified_el.get_attribute("class")) if verified_el else None
-
-            balance = get_profile_balance(driver)
-            inventory = get_profile_inventory(driver)
-
-            return Profile(
-                id=id,
-                avatar_url=avatar_url,
-                username=username,
-                rice=rice,
-                is_verified=is_verified,
-                balance=balance,
-                inventory=inventory,
-            )
-
-    except Exception as e:
-        prerror(f"Error while getting profile data: {e}\n{traceback.format_exc()}")
-
-    return None
+        data = Profile(
+            id=id,
+            avatar_url=avatar_url,
+            username=username,
+            rice=rice,
+            is_verified=is_verified,
+            balance=balance,
+            inventory=inventory,
+        )
+        prdebug(f"Profile data: {data}")
+        return data

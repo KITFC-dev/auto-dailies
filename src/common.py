@@ -53,6 +53,16 @@ def parse_num(el: WebElement | str | None, is_percent: bool = False) -> int | fl
             return res
     return None
 
+def parse_text(el: WebElement | str | None):
+    if el:
+        return el.text.strip() if isinstance(el, WebElement) else el.strip()
+    return None
+
+def parse_img(el: WebElement | None):
+    if el:
+        return el.get_attribute("src")
+    return None
+
 def similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
