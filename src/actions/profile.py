@@ -12,25 +12,16 @@ from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
         SellResultType
 
-def get_profile_balance(driver) -> Balance | None:
-    """
-    Get user's balance and coins on the website.
-    """
+def get_profile_balance(driver) -> Balance:
+    """Get user's gold and coins. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != PROFILE_URL:
         driver.get(PROFILE_URL)
 
-    try:
-        gold = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD))
-        coins = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.COINS))
-        if not (gold or coins):
-            raise Exception("Balance or coins not found")
+    gold = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD))
+    coins = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.COINS))
 
-        return Balance(gold=gold or 0, coins=coins or 0)
-        random_sleep(0.3)
-    except Exception as e:
-        prwarn(f"Error while getting balance: {e}")
-        return None
+    return Balance(gold=gold or 0, coins=coins or 0)
 
 def get_profile_inventory(driver) -> list[InventoryItem]:
     """
@@ -126,7 +117,7 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
 
     return res
 
-def run_get_profile(driver) -> Profile | None:
+def run_profile(driver) -> Profile | None:
     """
     Get user's profile information. 
     """
@@ -161,7 +152,7 @@ def run_get_profile(driver) -> Profile | None:
                 username=username,
                 rice=rice,
                 is_verified=is_verified,
-                balance=balance if balance else Balance(0, 0),
+                balance=balance,
                 inventory=inventory,
             )
 

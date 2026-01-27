@@ -3,7 +3,7 @@ from src.logger import prinfo, prerror, summary_webhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
-from src.actions.profile import run_get_profile
+from src.actions.profile import run_profile
 from src.models import RunResult
 from src.common import random_sleep
 from src.config import CONFIG
@@ -28,7 +28,7 @@ def run_once(cookie_file) -> RunResult:
     driver.refresh()
 
     # Verify if login was successful
-    init_profile = run_get_profile(driver)
+    init_profile = run_profile(driver)
     if init_profile is None or init_profile.id == '':
         driver.quit()
         return RunResult(False, "Failed to get profile information")
@@ -40,7 +40,7 @@ def run_once(cookie_file) -> RunResult:
     if CONFIG.cases:
         cases = run_cases(driver)
 
-    curr_profile = run_get_profile(driver)
+    curr_profile = run_profile(driver)
     if curr_profile is None or curr_profile.id == '':
         prerror(f"Failed to get profile information. Skipping {cookie_file}")
         driver.quit()
