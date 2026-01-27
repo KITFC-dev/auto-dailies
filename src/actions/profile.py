@@ -23,10 +23,10 @@ def get_profile_balance(driver) -> Balance | None:
     try:
         gold = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.GOLD))
         coins = parse_num(wait_for(Condition.PRESENCE, wait, StateSelectors.COINS))
-        if not gold or not coins:
+        if not (gold or coins):
             raise Exception("Balance or coins not found")
 
-        return Balance(gold=gold, coins=coins)
+        return Balance(gold=gold or 0, coins=coins or 0)
         random_sleep(0.3)
     except Exception as e:
         prwarn(f"Error while getting balance: {e}")
