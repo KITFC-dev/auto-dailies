@@ -1,14 +1,14 @@
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.logger import prwarn, prerror, prsuccess, prdebug
+from src.logger import prsuccess, prdebug
 from src.config import CONFIG
 from src.locators import wait_for, find
 from src.models import Balance, InventoryItem, Profile
-from src.common import random_sleep, get_swal, similarity, \
-    parse_num, click_el, handle_exceptions, parse_img, parse_text
+from src.common import random_sleep, get_swal, parse_num, \
+    click_el, handle_exceptions, parse_img, parse_text
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
-    ProfileSelectors, InventorySelectors, Condition, CurrencyType, \
-        SellResultType
+    ProfileSelectors, InventorySelectors, Condition, CurrencyType
 
 def get_profile_balance(driver) -> Balance:
     """Get user's gold and coins. """
@@ -21,98 +21,75 @@ def get_profile_balance(driver) -> Balance:
 
     return Balance(gold=gold or 0, coins=coins or 0)
 
+def sell_item(driver, i: InventoryItem, sell_button: WebElement | None) -> bool:
+    """Helper for selling items from user's inventory. """
+    # Check if can sell item
+    can_sell = False
+    if CONFIG.sell_inventory and sell_button is not None:
+        # is item in ignored items list
+        if (not any(ignored.lower() in i.name.lower() for ignored in IGNORE_ITEMS) or CONFIG.sell_ignored is True):
+            # Check for gold items
+            match i.currency_type:
+                case CurrencyType.GOLD:
+                    if CONFIG.sell_gold:
+                        if i.price <= CONFIG.sell_gold_price_threshold:
+                            can_sell = True
+                case CurrencyType.COIN:
+                    can_sell = True
+    
+    # Sell item
+    if can_sell:
+        click_el(driver, sell_button)
+        swal = get_swal(driver)
+        if swal.confirm_button:
+            prsuccess(f"Successfully sold {i.name} for {i.price} {i.currency_type}")
+            random_sleep(1)
+            swal.click_confirm()
+        # Cooldown after selling
+        random_sleep(2, 1)
+    return can_sell
+
 def get_profile_inventory(driver) -> list[InventoryItem]:
-    """
-    Get user's inventory and sell specified items.
-    """
+    """Get user's inventory items. """
     res = []
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != PROFILE_URL:
         driver.get(PROFILE_URL)
 
-    try:
-        wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
+    wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
+    # Load all items
+    while True:
+        load_more = wait_for(Condition.VISIBLE, wait, InventorySelectors.LOAD_MORE_BUTTON)
+        if load_more:
+            click_el(driver, load_more)
+            random_sleep(1)
+        else:
+            break
 
-        # Load all items
-        while True:
-            load_more = wait_for(Condition.VISIBLE, wait, InventorySelectors.LOAD_MORE_BUTTON)
-            if load_more:
-                click_el(driver, load_more)
-                random_sleep(1)
-            else:
-                break
-
-        items = find(driver, InventorySelectors.ITEM_BOX, multiple=True)
-
-        for item in items:
-            img_loc = find(item, InventorySelectors.IMAGE)
-            name_loc = find(item, InventorySelectors.NAME)
-            price_loc = find(item, InventorySelectors.PRICE)
-            ctype_loc = find(item, InventorySelectors.CURRENCY_TYPE)
-            sell_button = find(item, InventorySelectors.SELL_BUTTON)
-            # Name
-            if name_loc:
-                name = name_loc.text.strip()
-            else:
-                continue # skip items without a name
-            # Image
-            if img_loc:
-                image = img_loc.get_attribute("src")
-            else:
-                image = None
-            # Price
-            price = parse_num(price_loc)
-            # Currency type
-            currency_type = CurrencyType.UNKNOWN
-            if ctype_loc is not None:
-                c_type = str(ctype_loc.get_attribute("class"))
-                if "coin" in c_type:
-                    currency_type = CurrencyType.COIN
-                elif "mor" in c_type:
-                    currency_type = CurrencyType.GOLD
-            
-            # Check if we need to sell items
-            sell = False
-            if CONFIG.sell_inventory and sell_button is not None and \
-            (not any(ignored.lower() in name.lower() for ignored in IGNORE_ITEMS)
-             or CONFIG.sell_ignored is True):
-                # Check for gold items
-                if currency_type == CurrencyType.GOLD:
-                    if CONFIG.sell_gold:
-                        if price <= CONFIG.sell_gold_price_threshold:
-                            sell = True
-                elif currency_type == CurrencyType.COIN:
-                    sell = True
-
-                if sell:
-                    try:
-                        click_el(driver, sell_button)
-                        swal = get_swal(driver)
-                        if swal.title and similarity(swal.title, SellResultType.SUCCESS):
-                            prsuccess(f"Successfully sold {name} for {price} {currency_type}")
-                            random_sleep(1)
-                            swal.click_confirm()
-                        else:
-                            prerror(f"Error while selling {name}: {swal.title}, {swal.text}")
-                            # Fallback to refreshing if failed to sell
-                            driver.refresh()
-                            wait_for(Condition.VISIBLE, wait, InventorySelectors.ITEM_BOX)
-                        random_sleep(1.5)
-                    except Exception as e:
-                        prwarn(f"{e}")
-                        sell = False
-
-            res.append(InventoryItem( 
-                    name=name, 
-                    image=image,
-                    price=price, 
-                    currency_type=currency_type,
-                    sold=sell,
-                )
-            )
-    except Exception as e:
-        prwarn(f"Error while getting inventory: {e}")
-
+    for item in find(driver, InventorySelectors.ITEM_BOX, multiple=True):
+        # Get item info
+        name = parse_text(find(item, InventorySelectors.NAME))
+        if name is None:
+            continue
+        image = parse_img(find(item, InventorySelectors.IMAGE))
+        price = parse_num(find(item, InventorySelectors.PRICE))
+        ctype_loc = find(item, InventorySelectors.CURRENCY_TYPE)
+        sell_button = find(item, InventorySelectors.SELL_BUTTON)
+        currency_type = CurrencyType.UNKNOWN
+        if ctype_loc is not None:
+            c_type = str(ctype_loc.get_attribute("class"))
+            if "coin" in c_type:
+                currency_type = CurrencyType.COIN
+            elif "mor" in c_type:
+                currency_type = CurrencyType.GOLD
+        
+        item_data = InventoryItem(
+            name=name,
+            image=image,
+            price=price,
+            currency_type=currency_type)
+        item_data.sold = sell_item(driver, item_data, sell_button)
+        res.append(item_data)
     return res
 
 @handle_exceptions()
