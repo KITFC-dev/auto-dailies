@@ -4,8 +4,8 @@ from src.config import CONFIG
 from src.models import GiveawayResult
 from src.logger import prsuccess, prwarn, prinfo, prdebug
 from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
-from src.common import random_sleep, get_swal, parse_num, handle_exceptions, \
-    click_el, wait_for, find
+from src.common import random_sleep, get_swal, parse_num, \
+    handle_exceptions, click_el, wait_for, find
 
 @handle_exceptions(default=GiveawayResult(success=False, reason="Failed to join giveaways"))
 def run_giveaway(driver) -> GiveawayResult:

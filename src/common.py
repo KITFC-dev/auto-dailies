@@ -64,7 +64,8 @@ def find(driver: WebDriver | WebElement, sel: SelEnum | tuple[str, str], *, mult
 
 def handle_exceptions(default=None):
     """
-    A decorator that catches and logs any exceptions then returns a default value.
+    A decorator that catches and logs any exceptions 
+    if has exceptions returns a default value.
     """
     def decorator(func):
         @functools.wraps(func)

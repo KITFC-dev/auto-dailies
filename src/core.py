@@ -1,5 +1,5 @@
 from src.browser import create_driver, load_cookies, save_cookies
-from src.logger import prinfo, prerror, summary_webhook
+from src.logger import prinfo, summary_webhook
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
@@ -10,12 +10,12 @@ from src.config import CONFIG
 from src.constants import BASE_URL
 
 def run_once(cookie_file) -> RunResult:
-    """Logs in to the website using the given cookie file and runs given actions. """
+    """Run specified actions for given pickle file. """
     driver = create_driver()
     if driver.current_url != BASE_URL:
         driver.get(BASE_URL)
 
-    # Load cookies to browser
+    # Inject cookies into browser
     if cookie_file.split("/")[-1] != CONFIG.new_account:
         if not load_cookies(driver, cookie_file):
             driver.quit()
@@ -24,7 +24,6 @@ def run_once(cookie_file) -> RunResult:
         prinfo(f"New account: {cookie_file}, waiting 90 seconds for user to log in...")
         random_sleep(90, 0)
         save_cookies(driver, cookie_file)
-
     driver.refresh()
 
     # Verify if login was successful
@@ -32,6 +31,7 @@ def run_once(cookie_file) -> RunResult:
     if init_profile is None or init_profile.id == '':
         driver.quit()
         return RunResult(False, "Failed to get profile information")
+
     # Run actions
     if CONFIG.checkin:
         checkin = run_daily_checkin(driver)
@@ -40,9 +40,9 @@ def run_once(cookie_file) -> RunResult:
     if CONFIG.cases:
         cases = run_cases(driver)
 
+    # Get profile information after actions
     curr_profile = run_profile(driver)
     if curr_profile is None or curr_profile.id == '':
-        prerror(f"Failed to get profile information. Skipping {cookie_file}")
         driver.quit()
         return RunResult(False, "Failed to get profile information")
 
