@@ -8,19 +8,59 @@ from selenium.webdriver.support.ui import WebDriverWait
 from difflib import SequenceMatcher
 from pathlib import Path
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webdriver import WebDriver
 from typing import overload, Literal
 from selenium.common.exceptions import (
     StaleElementReferenceException,
     ElementClickInterceptedException,
     ElementNotInteractableException,
     InvalidElementStateException,
+    NoSuchElementException, 
+    WebDriverException,
+    TimeoutException,
 )
 
-from src.constants import SwalSelectors, Condition
-from src.locators import wait_for, find
-from src.logger import prdebug
+from src.constants import SwalSelectors, Condition, SelEnum
+from src.logger import prerror, prdebug
 from src.models import Swal
 from src.config import CONFIG
+
+def wait_for(c, wait: WebDriverWait, sel: SelEnum) -> WebElement | None:
+    """
+    Wait for a selector to satisfy the given condition 
+    and then return the WebElement.
+    """
+    try:
+        return wait.until(c(sel))
+    except TimeoutException:
+        prdebug(f"Timeout while waiting for {sel}")
+    except WebDriverException as e:
+        prerror(f"Driver error while waiting for {sel}: {e}")
+    
+    return None
+
+@overload
+def find(driver, sel: SelEnum | tuple[str, str], *, multiple: Literal[True]) -> list[WebElement]: ...
+@overload
+def find(driver, sel: SelEnum | tuple[str, str], *, multiple: Literal[False] = False) -> WebElement | None: ...
+def find(driver: WebDriver | WebElement, sel: SelEnum | tuple[str, str], *, multiple: bool = False
+) -> WebElement | None | list[WebElement]:
+    """
+    Find an element and return it.
+    Also supports finding multiple elements. 
+    """
+    try:
+        if multiple:
+            return driver.find_elements(*sel)
+        return driver.find_element(*sel)
+
+    except (NoSuchElementException, StaleElementReferenceException):
+        prdebug(f"Element not found: {sel}")
+        
+    except WebDriverException as e:
+        prerror(f"Driver error while finding element {sel}: {e}")
+    
+    return [] if multiple else None
 
 def handle_exceptions(default=None):
     """
@@ -125,3 +165,5 @@ def get_swal(driver) -> Swal:
         )
         prdebug(data)
         return data
+    
+    return Swal()

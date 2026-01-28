@@ -1,8 +1,8 @@
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.locators import wait_for, find
 from src.logger import prsuccess, prwarn, prdebug
-from src.common import get_swal, parse_num, click_el, handle_exceptions
+from src.common import get_swal, parse_num, click_el, handle_exceptions, \
+    wait_for, find
 from src.config import CONFIG
 from src.constants import CHECKIN_URL, CheckinSelectors, Condition, CurrencyType
 from src.models import CheckinResult

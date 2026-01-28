@@ -2,11 +2,11 @@ import random
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.locators import wait_for, find
 from src.logger import prinfo, prerror, prsuccess, prdebug
 from src.config import CONFIG
 from src.models import Case, CasesResult
-from src.common import random_sleep, get_swal, parse_num, click_el, handle_exceptions
+from src.common import random_sleep, get_swal, parse_num, click_el, \
+    handle_exceptions, wait_for, find
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 

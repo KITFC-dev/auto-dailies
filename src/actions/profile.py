@@ -3,10 +3,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prsuccess, prdebug
 from src.config import CONFIG
-from src.locators import wait_for, find
 from src.models import Balance, InventoryItem, Profile
 from src.common import random_sleep, get_swal, parse_num, \
-    click_el, handle_exceptions, parse_img, parse_text
+    click_el, handle_exceptions, parse_img, parse_text, \
+    wait_for, find
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType
 
