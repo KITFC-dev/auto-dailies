@@ -59,9 +59,6 @@ def join_giveaway(driver, href) -> bool:
             if price > CONFIG.giveaway_price_threshold:
                 prwarn(f"Giveaway price ({price}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
                 return False
-    else:
-        prwarn(f"No giveaway price detected in {href}. Skipping.")
-        return False
 
     # Join giveaway
     click_el(driver, join_button)
