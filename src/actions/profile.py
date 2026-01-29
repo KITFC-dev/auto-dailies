@@ -6,7 +6,7 @@ from src.config import CONFIG
 from src.models import Balance, InventoryItem, Profile
 from src.common import random_sleep, get_swal, parse_num, \
     click_el, handle_exceptions, parse_img, parse_text, \
-    wait_for, find
+    wait_for, find, parse_attr, parse_currency
 from src.constants import PROFILE_URL, IGNORE_ITEMS, StateSelectors, \
     ProfileSelectors, InventorySelectors, Condition, CurrencyType
 
@@ -73,15 +73,9 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
             continue
         image = parse_img(find(item, InventorySelectors.IMAGE))
         price = parse_num(find(item, InventorySelectors.PRICE))
-        ctype_loc = find(item, InventorySelectors.CURRENCY_TYPE)
+        currency_type = parse_currency(
+            parse_attr(find(item, InventorySelectors.CURRENCY_TYPE)))
         sell_button = find(item, InventorySelectors.SELL_BUTTON)
-        currency_type = CurrencyType.UNKNOWN
-        if ctype_loc is not None:
-            c_type = str(ctype_loc.get_attribute("class"))
-            if "coin" in c_type:
-                currency_type = CurrencyType.COIN
-            elif "mor" in c_type:
-                currency_type = CurrencyType.GOLD
         
         item_data = InventoryItem(
             name=name,
@@ -110,7 +104,7 @@ def run_profile(driver) -> Profile | None:
         username = parse_text(find(box, ProfileSelectors.USERNAME))
         rice = parse_num(find(box, ProfileSelectors.RICE))
         verified_el = find(box, ProfileSelectors.IS_VERIFIED)
-        is_verified = "true" in str(verified_el.get_attribute("class")) if verified_el else None
+        is_verified = "true" in parse_attr(verified_el) if verified_el else None
 
         # Get other data
         balance = get_profile_balance(driver)

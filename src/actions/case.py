@@ -6,7 +6,8 @@ from src.logger import prinfo, prerror, prsuccess, prdebug
 from src.config import CONFIG
 from src.models import Case, CasesResult
 from src.common import random_sleep, get_swal, parse_num, click_el, \
-    handle_exceptions, wait_for, find
+    handle_exceptions, wait_for, find, parse_attr, parse_currency, \
+    parse_img, parse_text
 from src.constants import BASE_URL, IGNORE_CASES, \
     CaseSelectors, Condition
 
@@ -17,24 +18,21 @@ def get_cases(driver) -> list[Case]:
 
     # Get case elements
     container = wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
-    cases = find(container, CaseSelectors.CASE, multiple=True)
     res: list[Case] = []
 
     # Parse data
-    for case in cases:
-        href = case.get_attribute("href")
-        if not href:
+    for case in find(container, CaseSelectors.CASE, multiple=True):
+        href = parse_attr(case, "href")
+        if href == '':
             continue
-        img = find(case, CaseSelectors.IMAGE)
-        name = find(case, CaseSelectors.NAME)
-        price = find(case, CaseSelectors.PRICE)
+        image = parse_img(find(case, CaseSelectors.IMAGE))
+        name = parse_text(find(case, CaseSelectors.NAME))
 
         res.append(
             Case(
                 link=href,
-                image=img.get_attribute("src") if img else None,
-                name=name.text if name else None,
-                price=price.text if price else None,
+                image=image,
+                name=name,
                 is_ignored=href.split("/")[-1] in IGNORE_CASES,
                 is_target=href.split("/")[-1].lower() == CONFIG.target_case.lower(),
             )
@@ -51,26 +49,24 @@ def open_case(driver, case: Case) -> bool:
     random_sleep(3) # card animation
     
     # Extract case price
-    case_price = None
+    price = None
     reqs_el = find(driver, CaseSelectors.REQUIREMENTS)
     if reqs_el:
         # Find all elements that have requirement text
         req_els = find(reqs_el, CaseSelectors.REQUIREMENT, multiple=True)
         for req_el in req_els:
-            text = req_el.text.strip()
-            if 'чайник' in text.lower():
-                case_price = parse_num(text)
+            price = parse_num(parse_currency(req_el))
 
     # Decide if to open the case
     if case.is_target:
         prinfo("Target case detected. Opening regardless of price...")
-    elif case_price is None:
+    elif price is None:
         prinfo("No coin requirement found, opening the case anyway...")
-    elif case_price > CONFIG.case_price_threshold:
-        prinfo(f"Case price ({case_price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
+    elif price > CONFIG.case_price_threshold:
+        prinfo(f"Case price ({price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
         return False
     else:
-        prinfo(f"Case price: {case_price} coins. Opening...")
+        prinfo(f"Case price: {price} coins. Opening...")
 
     # Open the case
     card_el = find(driver, CaseSelectors.CARD_LIST)

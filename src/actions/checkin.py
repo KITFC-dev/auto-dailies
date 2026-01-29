@@ -2,10 +2,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from src.logger import prsuccess, prwarn, prdebug
 from src.common import get_swal, parse_num, click_el, handle_exceptions, \
-    wait_for, find
+    wait_for, find, parse_currency
 from src.config import CONFIG
-from src.constants import CHECKIN_URL, CheckinSelectors, Condition, \
-    CurrencyType
+from src.constants import CHECKIN_URL, CheckinSelectors, Condition
 from src.models import CheckinResult
 
 @handle_exceptions(default=CheckinResult(success=False, reason="Failed to check in"))
@@ -36,14 +35,8 @@ def run_daily_checkin(driver) -> CheckinResult:
     skipped_day = not bool(find(driver, CheckinSelectors.SKIP_AVAILABLE))
 
     # Earned and currency type from swal
-    earned = 0
-    currency_type = CurrencyType.UNKNOWN
-    if title:
-        earned = parse_num(title)
-        if 'чайник' in title.lower():
-            currency_type = CurrencyType.COIN
-        elif 'мор' in title.lower():
-            currency_type = CurrencyType.GOLD
+    earned = parse_num(title)
+    currency_type = parse_currency(title)
 
     data = CheckinResult(
         success=checked_in,

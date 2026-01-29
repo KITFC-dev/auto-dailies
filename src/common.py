@@ -20,7 +20,8 @@ from selenium.common.exceptions import (
     TimeoutException,
 )
 
-from src.constants import SwalSelectors, Condition, SelEnum
+from src.constants import SwalSelectors, Condition, SelEnum, \
+    CurrencyType
 from src.logger import prerror, prdebug
 from src.models import Swal
 from src.config import CONFIG
@@ -79,14 +80,23 @@ def handle_exceptions(default=None):
         return wrapper
     return decorator
 
+def parse_text(el: WebElement | str | None) -> str | None:
+    if el:
+        return el.text.strip() if isinstance(el, WebElement) else el.strip()
+    return None
+
+def parse_attr(el: WebElement | None, attr: str = "class") -> str:
+    if el:
+        return str(el.get_attribute(attr))
+    return ''
+
 @overload
 def parse_num(el: WebElement | str | None, is_percent: Literal[True]) -> float | None: ...
 @overload
 def parse_num(el: WebElement | str | None, is_percent: Literal[False] = False) -> int | None: ...
 def parse_num(el: WebElement | str | None, is_percent: bool = False) -> int | float | None:
     if el:
-        string = el.text.strip() if isinstance(el, WebElement) else el.strip()
-        num = re.search(r'\d+', string)
+        num = re.search(r'\d+', str(parse_text(el)))
         if num:
             res = int(num.group())
             if is_percent:
@@ -94,15 +104,17 @@ def parse_num(el: WebElement | str | None, is_percent: bool = False) -> int | fl
             return res
     return None
 
-def parse_text(el: WebElement | str | None) -> str | None:
-    if el:
-        return el.text.strip() if isinstance(el, WebElement) else el.strip()
-    return None
+def parse_img(el: WebElement | None) -> str:
+    return parse_attr(el, "src")
 
-def parse_img(el: WebElement | None) -> str | None:
-    if el:
-        return str(el.get_attribute("src"))
-    return None
+def parse_currency(el: WebElement | str | None) -> CurrencyType:
+    res = CurrencyType.UNKNOWN
+    tex = str(parse_text(el)).lower()
+    if 'чайник' in tex or 'coin' in tex:
+        res = CurrencyType.COIN
+    elif 'мор' in tex or 'mor' in tex:
+        res = CurrencyType.GOLD
+    return res
 
 def similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()

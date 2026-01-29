@@ -40,7 +40,6 @@ class Case:
     is_target: bool
     image: str | None = None
     name: str | None = None
-    price: str | None = None
 
 @dataclass(slots=True)
 class Balance:
