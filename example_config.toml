@@ -27,7 +27,7 @@ case_price_threshold = 1
 [targets]
 # Target gold amount to reach
 # if reached, will notify in webhook
-target_gold_amount = 286
+target_gold_amount = 299
 # Ignore inventory?
 ignore_inventory = false
 # Target case to open, need name in a link
