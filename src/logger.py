@@ -16,8 +16,8 @@ def diff_text(label: str, init_val: int, curr_val: int) -> str:
 def _print_log(msg, color = Fore.CYAN, type = "info"):
     print(f"{color}[{type.upper()}]{Style.RESET_ALL} {msg}")
 
-def summary_webhook(results: list):
-    summary_embed = [{
+def build_summary(results: list) -> dict:
+    return {
         "title": "AutoDailies tasks completed!",
         "color": 2818303,
         "description": (
@@ -32,66 +32,69 @@ def summary_webhook(results: list):
 
             f"Reached Gold Target: {', '.join([i.p.username for i in results if i.has_reached_target_gold]) or 'None'}"
         )
-    }]
+    }
 
-    accounts_embeds = []
-    for i in range(0, len(results), 25):
-        # Discord allows 25 fields per embed
-        batch = results[i:i+25]
-        fields = []
+def build_accounts_summary(results: list) -> dict:
+    fields = []
+    accounts = {
+        "title": "Accounts Summary",
+        "color": 2818303,
+        "fields": fields
+    }
 
-        # Construct fields
-        for r in batch:
-            value = ""
-            value += "```diff\n"
-            if r.checkin:
-                value += (
-                    f"Streak: {r.checkin.streak} | "
-                    f"M: {r.checkin.monthly_bonus * 100}% | "
-                    f"P: {r.checkin.payments_bonus * 100}%\n"
-                    f"{'Day was skipped! | ' if r.checkin.skipped_day else ''}"
-                    f"{'(failed)' if not r.checkin.success else ''}"
-                )
-            if r.cases:
-                value += (
-                    f"Cases opened: "
-                    f"{r.cases.opened_cases}/{len(r.cases.available_cases)} "
-                    f"({r.cases.ignored_cases} ignored)\n"
-                    f"{'(failed)' if not r.cases.success else ''}"
-                )
-            if r.giveaway:
-                value += (
-                    f"Giveaways joined: "
-                    f"{len(r.giveaway.joined)}/{len(r.giveaway.giveaways)}\n"
-                    f"{'(failed)' if not r.giveaway.success else ''}"
-                )
+    # Construct accounts summary
+    for r in results:
+        value = ""
+        value += "```diff\n"
+        if r.checkin:
             value += (
-                f"All Coins: {r.all_coins} | All Gold: {r.all_gold}\n"
-                "Inventory value:\n"
-                f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
-                f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
-                "Balance:\n"
-                f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
-                f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
+                f"Streak: {r.checkin.streak} | "
+                f"M: {r.checkin.monthly_bonus * 100}% | "
+                f"P: {r.checkin.payments_bonus * 100}%\n"
+                f"{'Day was skipped! | ' if r.checkin.skipped_day else ''}"
+                f"{'(failed)' if not r.checkin.success else ''}"
             )
-            value += "```\n"
+        if r.cases:
+            value += (
+                f"Cases opened: "
+                f"{r.cases.opened_cases}/{len(r.cases.available_cases)} "
+                f"({r.cases.ignored_cases} ignored)\n"
+                f"{'(failed)' if not r.cases.success else ''}"
+            )
+        if r.giveaway:
+            value += (
+                f"Giveaways joined: "
+                f"{len(r.giveaway.joined)}/{len(r.giveaway.giveaways)}\n"
+                f"{'(failed)' if not r.giveaway.success else ''}"
+            )
+        value += (
+            f"All Coins: {r.all_coins} | All Gold: {r.all_gold}\n"
+            "Inventory value:\n"
+            f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
+            f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
+            "Balance:\n"
+            f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
+            f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
+        )
+        value += "```\n"
 
-            fields.append({
-                "name": f"{r.p.username} ({r.p.id})",
-                "value": value,
-                "inline": False,
-            })
-
-        # Append embed
-        accounts_embeds.append({
-            "title": "Accounts Summary" if i == 0 else "",
-            "color": 2818303,
-            "fields": fields
+        fields.append({
+            "name": f"{r.p.username} ({r.p.id})",
+            "value": value,
+            "inline": False,
         })
 
-    # Discord webhook
+    return accounts
+
+def build_notification(results: list):
+    notification = {}
+    notification['summary'] = build_summary(results)
+    notification['accounts'] = build_accounts_summary(results)
+    return notification
+
+def send_discord(notification: dict):
     payload = {}
-    payload["embeds"] = summary_embed + accounts_embeds
+    payload["embeds"] = [notification['summary'], notification['accounts']]
     if CONFIG.webhook_name:
         payload["username"] = CONFIG.webhook_name
     if CONFIG.webhook_avatar:
@@ -101,6 +104,10 @@ def summary_webhook(results: list):
     if not r.ok:
         prerror(f"Failed to send webhook: {r.status_code} {r.text}")
 
+def send_notifications(results: list):
+    notification = build_notification(results)
+    if CONFIG.webhook_url:
+        send_discord(notification)
 
 def prinfo(msg): _print_log(msg)
 def prsuccess(msg): _print_log(msg, color = Fore.GREEN, type = "success")
