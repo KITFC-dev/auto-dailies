@@ -39,6 +39,10 @@ class Config:
         self.webhook_name = discord.get("profile_name", "")
         self.webhook_avatar = discord.get("profile_avatar", "")
 
+        telegram = raw.get("telegram", {})
+        self.telegram_token = telegram.get("bot_token", "")
+        self.telegram_chat_id = telegram.get("chat_id", "")
+
         paths = raw.get("paths", {})
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))

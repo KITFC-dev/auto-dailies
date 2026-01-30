@@ -1,9 +1,11 @@
 import requests
+import re
+
 from colorama import Fore, Style
 from src.config import CONFIG
 
 def diff_text(label: str, init_val: int, curr_val: int) -> str:
-    """Generates a diff stylized text from id. """
+    """Generates a diff stylized text. """
     if init_val < curr_val:
         diff = '+'
     elif init_val > curr_val:
@@ -12,6 +14,32 @@ def diff_text(label: str, init_val: int, curr_val: int) -> str:
         diff = ' '
 
     return f"{diff} {label.title()}: {init_val} -> {curr_val}\n"
+
+def md(text: str) -> str:
+    """Escapes markdown characters in text. """
+    parts = re.split(r"(```.*?```|`.*?`)", text, flags=re.DOTALL)
+    escaped = [
+        # Skip code blocks
+        part if part.startswith("```") or part.startswith("`") else re.sub(r'([_*\[\]()~>#+\-=|{}.!])', r'\\\1', part)
+        for part in parts
+    ]
+    return "".join(escaped)
+
+def embed2text(embed: dict) -> str:
+    """Convert discord embed to markdown text for telegram. """
+    text = (
+        f"*{md(embed.get('title', ''))}*\n"
+        f"{md(embed.get('description', ''))}"
+    )
+
+    # Convert fields
+    for field in embed.get('fields', []):
+        text += (
+            f"*{md(field['name'])}*\n"
+            f"{md(field['value'])}"
+        )
+    
+    return text
 
 def _print_log(msg, color = Fore.CYAN, type = "info"):
     print(f"{color}[{type.upper()}]{Style.RESET_ALL} {msg}")
@@ -102,12 +130,31 @@ def send_discord(notification: dict):
 
     r = requests.post(CONFIG.webhook_url, json=payload, timeout=5)
     if not r.ok:
-        prerror(f"Failed to send webhook: {r.status_code} {r.text}")
+        prerror(f"Failed to send Discord webhook: {r.status_code} {r.text}")
+
+def send_telegram(notification: dict):
+    data = {}
+    data["chat_id"] = CONFIG.telegram_chat_id
+    data["text"] = (
+        f"{embed2text(notification['summary'])}\n\n"
+        f"{embed2text(notification['accounts'])}"
+    )
+    data["parse_mode"] = "MarkdownV2"
+
+    r = requests.post(
+        f"https://api.telegram.org/bot{CONFIG.telegram_token}/sendMessage",
+        data=data,
+        timeout=5
+    )
+    if not r.ok:
+        prerror(f"Failed to send Telegram message: {r.status_code} {r.text}")
 
 def send_notifications(results: list):
     notification = build_notification(results)
     if CONFIG.webhook_url:
         send_discord(notification)
+    if CONFIG.telegram_token and CONFIG.telegram_chat_id:
+        send_telegram(notification)
 
 def prinfo(msg): _print_log(msg)
 def prsuccess(msg): _print_log(msg, color = Fore.GREEN, type = "success")

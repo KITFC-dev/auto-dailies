@@ -52,6 +52,13 @@ webhook_url = ""
 profile_name = ""
 profile_avatar = ""
 
+[telegram]
+# Bot token
+bot_token = ""
+# Chat ID to send notifications to
+# this can be @channel or numeric ID like -10...
+chat_id = ""
+
 [paths]
 # Path to Chromium browser
 chromium_path = "/usr/bin/chromium"
