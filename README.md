@@ -4,7 +4,7 @@
 
 AutoDailies is automated selenium script for [GenshinDrop.io](https://genshindrop.io) to automate tasks like daily check-in, opening cases or joining giveaways on multiple accounts. It can earn in-game items in hoyo games such as primogems, welkin moon and others.
 
-You can add your telegram account's cookies using pickle and put them in accounts folder. After that just create cron job for the script and let it run everyday. Please follow the tutorial below on how to set up AutoDailies.
+You can add your telegram account's cookies using pickle and put them in accounts folder. After that just create cron job for the script and let it run everyday. You may also add a discord webhook or telegram bot to receive notifications. Please follow the tutorial below on how to set up AutoDailies.
 
 ## Requirements
 
