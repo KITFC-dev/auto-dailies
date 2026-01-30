@@ -46,9 +46,9 @@ sell_ignored = false
 sell_gold_price_threshold = 0
 
 [discord]
-# URL to send logs to
+# URL to send notifications to
 webhook_url = ""
-# Profile name and avatar for webhook messages
+# Profile name and avatar URL for webhook
 profile_name = ""
 profile_avatar = ""
 
