@@ -17,26 +17,28 @@ def get_cases(driver) -> list[Case]:
         driver.get(BASE_URL)
 
     # Get case elements
-    container = wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
+    wait_for(Condition.PRESENCE, wait, CaseSelectors.BOX)
     res: list[Case] = []
 
-    # Parse data
-    for case in find(container, CaseSelectors.CASE, multiple=True):
-        href = parse_attr(case, "href")
-        if href == '':
-            continue
-        image = parse_img(find(case, CaseSelectors.IMAGE))
-        name = parse_text(find(case, CaseSelectors.NAME))
+    # Get containers for each game
+    for container in find(driver, CaseSelectors.BOX, multiple=True):
+        # Get case info for every container
+        for case in find(container, CaseSelectors.CASE, multiple=True):
+            href = parse_attr(case, "href")
+            if href == '' or href in [case.link for case in res]:
+                continue
+            image = parse_img(find(case, CaseSelectors.IMAGE))
+            name = parse_text(find(case, CaseSelectors.NAME))
 
-        res.append(
-            Case(
-                link=href,
-                image=image,
-                name=name,
-                is_ignored=href.split("/")[-1] in IGNORE_CASES,
-                is_target=href.split("/")[-1].lower() == CONFIG.target_case.lower(),
+            res.append(
+                Case(
+                    link=href,
+                    image=image,
+                    name=name,
+                    is_ignored=href.split("/")[-1] in IGNORE_CASES,
+                    is_target=href.split("/")[-1].lower() == CONFIG.target_case.lower(),
+                )
             )
-        )
 
     return res
 

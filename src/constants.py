@@ -4,7 +4,10 @@ from enum import Enum
 
 # Cases to ignore when opening cases
 IGNORE_CASES = [
+    # Other
     "druzeskii-keis",
+
+    # Genshin
     "nescatnaya-paimon",
     "bednaya-mona",
     "korobka-vezuncika",
@@ -12,7 +15,23 @@ IGNORE_CASES = [
     "damaznaya-udaca",
     "korobka-inadzumy",
     "dar-arxontov",
-    "pokrovitelstvo-dilyuka"
+    "pokrovitelstvo-dilyuka",
+
+    # HSR
+    "usastaya-korobka",
+    "lecebnaya-korobocka",
+    "korobka-straza",
+    "xakasskaya-korobka",
+    "skrytaya-korobka-zele",
+    "oruzeinaya-korobka-kafki",
+
+    # ZZZ
+    "kartonnyi-tv-boks",
+    "tv-boks-randomplay",
+    "tv-boks-agentstva-viktoriya",
+    "korobka-zaicev",
+    "tv-boks-sekcii-6",
+    "tv-boks-ot-kombinata-belobog",
 ]
 
 IGNORE_ITEMS = [
