@@ -114,6 +114,8 @@ def parse_currency(el: WebElement | str | None) -> CurrencyType:
         res = CurrencyType.COIN
     elif 'мор' in tex or 'mor' in tex:
         res = CurrencyType.GOLD
+    elif 'рис' in tex or 'rice' in tex:
+        res = CurrencyType.RICE
     return res
 
 def similarity(a: str, b: str) -> float:

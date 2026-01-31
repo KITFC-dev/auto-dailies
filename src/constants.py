@@ -148,6 +148,7 @@ class Condition:
 class CurrencyType(str, Enum):
     COIN = "coin"
     GOLD = "mor"
+    RICE = "rice"
     UNKNOWN = "unknown"
 
 class CaseResultType(str, Enum):
@@ -158,7 +159,6 @@ class CaseResultType(str, Enum):
     """
     COOLDOWN_FAILURE = "С момента последнего открытия коробки еще не прошло достаточно времени"
     PAYMENTS_FAILURE = "Выводы и покупки за указанное время не найдены 😔 Необходимо иметь хотя бы один вывод или покупку"
-    SUCCESS = "" # not known yet
 
 class GiveawayResultType(str, Enum):
     """
