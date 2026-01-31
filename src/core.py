@@ -1,5 +1,5 @@
 from src.browser import create_driver, load_cookies, save_cookies
-from src.logger import prinfo, send_notifications
+from src.logger import prinfo, Notifications
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
@@ -72,4 +72,4 @@ def run():
         prinfo(f"Processing cookie file: {file}")
         results.append(run_once(file))
 
-    send_notifications(results)
+    Notifications(results).send_all()
