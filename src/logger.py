@@ -8,12 +8,15 @@ def diff_text(label: str, init_val: int, curr_val: int) -> str:
     """Generates a diff stylized text. """
     if init_val < curr_val:
         diff = '+'
+        change = f"{init_val} -> {curr_val}"
     elif init_val > curr_val:
         diff = '-'
+        change = f"{init_val} -> {curr_val}"
     else:
         diff = ' '
+        change = f"{curr_val}"
 
-    return f"{diff} {label.title()}: {init_val} -> {curr_val}\n"
+    return f"{diff} {label.title()}: {change}\n"
 
 def md(text: str) -> str:
     """Escapes markdown characters in text. """
@@ -74,35 +77,41 @@ def build_accounts_summary(results: list) -> dict:
     for r in results:
         value = ""
         value += "```diff\n"
+        value += (
+            f"Coins: {r.all_coins} | Gold: {r.all_gold}\n"
+        )
         if r.checkin:
             value += (
-                f"Streak: {r.checkin.streak} | "
-                f"M: {r.checkin.monthly_bonus * 100}% | "
-                f"P: {r.checkin.payments_bonus * 100}%\n"
-                f"{'Day was skipped! | ' if r.checkin.skipped_day else ''}"
+                f"Streak: {r.checkin.streak} "
+                f"| M: {r.checkin.monthly_bonus * 100}% "
+                f"| P: {r.checkin.payments_bonus * 100}% "
+                f"{'| Day was skipped! ' if r.checkin.skipped_day else ' '}"
                 f"{'(failed)' if not r.checkin.success else ''}"
+                f"\n"
             )
         if r.cases:
             value += (
                 f"Cases opened: "
                 f"{r.cases.opened_cases}/{len(r.cases.available_cases)} "
-                f"({r.cases.ignored_cases} ignored)\n"
+                f"({r.cases.ignored_cases} ignored) "
                 f"{'(failed)' if not r.cases.success else ''}"
+                f"\n"
             )
         if r.giveaway:
             value += (
                 f"Giveaways joined: "
-                f"{len(r.giveaway.joined)}/{len(r.giveaway.giveaways)}\n"
+                f"{len(r.giveaway.joined)}/{len(r.giveaway.giveaways)} "
                 f"{'(failed)' if not r.giveaway.success else ''}"
+                f"\n"
             )
         value += (
-            f"All Coins: {r.all_coins} | All Gold: {r.all_gold}\n"
             "Inventory value:\n"
             f"{diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
             f"{diff_text('gold', r.ip.inventory_meta.all_gold, r.p.inventory_meta.all_gold)}"
             "Balance:\n"
             f"{diff_text('coins', r.ip.balance.coins, r.p.balance.coins)}"
             f"{diff_text('gold', r.ip.balance.gold, r.p.balance.gold)}"
+            f"{diff_text('rice', r.ip.rice, r.p.rice)}"
         )
         value += "```\n"
 
