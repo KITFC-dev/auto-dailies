@@ -87,7 +87,7 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
     return res
 
 @handle_exceptions()
-def run_profile(driver) -> Profile | None:
+def run_profile(driver, initial: bool = False) -> Profile | None:
     """Get user's profile information. """
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != PROFILE_URL:
@@ -106,9 +106,14 @@ def run_profile(driver) -> Profile | None:
         verified_el = find(box, ProfileSelectors.IS_VERIFIED)
         is_verified = "true" in parse_attr(verified_el) if verified_el else None
 
-        # Get other data
-        balance = get_profile_balance(driver)
-        inventory = get_profile_inventory(driver)
+        # Get other data, balance first if initial,
+        # otherwise inventory first
+        if initial:
+            balance = get_profile_balance(driver)
+            inventory = get_profile_inventory(driver)
+        else:
+            inventory = get_profile_inventory(driver)
+            balance = get_profile_balance(driver)
 
         data = Profile(
             id=id,

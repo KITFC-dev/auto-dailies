@@ -27,7 +27,7 @@ def run_once(cookie_file) -> RunResult:
     driver.refresh()
 
     # Verify if login was successful
-    init_profile = run_profile(driver)
+    init_profile = run_profile(driver, initial=True)
     if init_profile is None or init_profile.id == '':
         driver.quit()
         return RunResult(False, "Failed to get profile information")
