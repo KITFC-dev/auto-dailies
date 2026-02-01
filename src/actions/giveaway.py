@@ -5,7 +5,8 @@ from src.models import GiveawayResult
 from src.logger import prsuccess, prwarn, prinfo, prdebug
 from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
 from src.common import random_sleep, get_swal, parse_num, \
-    handle_exceptions, click_el, wait_for, find, parse_attr
+    handle_exceptions, click_el, wait_for, find, parse_attr, \
+    CurrencyType, parse_currency
 
 @handle_exceptions(default=GiveawayResult(success=False, reason="Failed to join giveaways"))
 def run_giveaway(driver) -> GiveawayResult:
@@ -50,14 +51,18 @@ def join_giveaway(driver, href) -> bool:
     if not join_button:
         prwarn("No giveaway join button detected. Seems like you already joined this giveaway")
         return False
-        
-    # Check giveaway's price
+
+    # Decide if to join the giveaway
     price_element = wait_for(Condition.PRESENCE, wait, GiveawaySelectors.PRICE)
     if price_element:
         price = parse_num(price_element)
-        if price:
+        currency = parse_currency(parse_attr(find(price_element, GiveawaySelectors.CURRENCY)))
+        if currency in [CurrencyType.GOLD]:
+            prwarn(f"Giveaway currency is {currency.value}. Skipping.")
+            return False
+        if price and currency == CurrencyType.COIN:
             if price > CONFIG.giveaway_price_threshold:
-                prwarn(f"Giveaway price ({price}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
+                prwarn(f"Giveaway price ({price} {currency.value}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
                 return False
 
     # Join giveaway

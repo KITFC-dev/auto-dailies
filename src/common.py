@@ -110,6 +110,10 @@ def parse_img(el: WebElement | None) -> str:
 def parse_currency(el: WebElement | str | None) -> CurrencyType:
     res = CurrencyType.UNKNOWN
     tex = str(parse_text(el)).lower()
+
+    words = [w for w in tex.split() if '-' not in w] # ignore mor-lg
+    tex = words[-1]
+
     if 'чайник' in tex or 'coin' in tex:
         res = CurrencyType.COIN
     elif 'мор' in tex or 'mor' in tex:
@@ -140,9 +144,10 @@ def scroll_into(driver, element):
 def click_el(driver, element, retries=5):
     for i in range(retries):
         try:
-            wait_for(Condition.CLICKABLE, WebDriverWait(driver, CONFIG.wait_timeout), element)
-            scroll_into(driver, element)
-            element.click()
+            if element:
+                wait_for(Condition.CLICKABLE, WebDriverWait(driver, CONFIG.wait_timeout), element)
+                scroll_into(driver, element)
+                element.click()
             return True
         except (ElementClickInterceptedException,
                 StaleElementReferenceException,

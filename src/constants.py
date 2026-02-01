@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from enum import Enum
 
-# Cases to ignore when opening cases
 IGNORE_CASES = [
     # Other
     "druzeskii-keis",
@@ -108,9 +107,8 @@ class GiveawaySelectors(SelEnum):
     """Selectors for giveaway page. """
     LINK = (By.CLASS_NAME, 'give-box__link')
     GIVEAWAY = (By.CSS_SELECTOR, ".panel.give-box.col-12:not(.--history)")
-    FREE_LABEL: S = (By.CLASS_NAME, 'give-free')
-    PAID_LABEL: S = (By.CLASS_NAME, 'give-pay')
     PRICE = (By.CLASS_NAME, 'give-pay_price__value')
+    CURRENCY = (By.CSS_SELECTOR, '.give-pay_price__value i')
     JOIN_BUTTON = (By.XPATH, "//button[contains(text(), 'Участвовать')]")
 
 class CaseSelectors(SelEnum):
@@ -166,7 +164,7 @@ class Condition:
 
 class CurrencyType(str, Enum):
     COIN = "coin"
-    GOLD = "mor"
+    GOLD = "mora"
     RICE = "rice"
     UNKNOWN = "unknown"
 
