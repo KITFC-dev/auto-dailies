@@ -55,8 +55,6 @@ CHECKIN_URL: str = f"{BASE_URL}/checkin"
 GIVEAWAY_URL: str = f"{BASE_URL}/give"
 PROFILE_URL: str = f"{BASE_URL}/profile"
 
-S = tuple[str, str]
-
 class SelEnum(tuple, Enum):
     """Base class for selector enums. """
     @property
@@ -65,7 +63,7 @@ class SelEnum(tuple, Enum):
     @property
     def val(self) -> str: return self._value_[1]
 
-    def __new__(cls, value: S):
+    def __new__(cls, value: tuple[str, str]):
         obj = tuple.__new__(cls, value)
         obj._value_ = value
         return obj
@@ -90,7 +88,7 @@ class SwalSelectors(SelEnum):
 
 class CommonSelectors(SelEnum):
     """Selectors for common elements. """
-    CONFIRM_BUTTON: S = (By.CLASS_NAME, 'swal-button swal-button--confirm')
+    CONFIRM_BUTTON = (By.CLASS_NAME, 'swal-button swal-button--confirm')
     LINK = (By.TAG_NAME, 'a')
     BUTTON = (By.TAG_NAME, 'button')
 

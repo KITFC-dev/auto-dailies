@@ -9,6 +9,14 @@ from src.common import random_sleep
 from src.config import CONFIG
 from src.constants import BASE_URL
 
+def get_profile(driver, initial=False):
+    res = run_profile(driver, initial=initial)
+    if res is None or res.id == '':
+        driver.quit()
+        return None
+
+    return res
+
 def run_once(cookie_file) -> RunResult:
     """Run specified actions for given pickle file. """
     driver = create_driver()
@@ -27,9 +35,8 @@ def run_once(cookie_file) -> RunResult:
     driver.refresh()
 
     # Verify if login was successful
-    init_profile = run_profile(driver, initial=True)
-    if init_profile is None or init_profile.id == '':
-        driver.quit()
+    init_profile = get_profile(driver, initial=True)
+    if init_profile is None:
         return RunResult(False, "Failed to get profile information")
 
     # Run actions
@@ -41,9 +48,8 @@ def run_once(cookie_file) -> RunResult:
         cases = run_cases(driver)
 
     # Get profile information after actions
-    curr_profile = run_profile(driver)
-    if curr_profile is None or curr_profile.id == '':
-        driver.quit()
+    curr_profile = get_profile(driver, initial=True)
+    if curr_profile is None:
         return RunResult(False, "Failed to get profile information")
 
     # Wait before closing
