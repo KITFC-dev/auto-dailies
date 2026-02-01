@@ -61,7 +61,7 @@ def join_giveaway(driver, href) -> bool:
             prwarn(f"Giveaway currency is {currency.value}. Skipping.")
             return False
         if price and currency == CurrencyType.COIN:
-            if price > CONFIG.giveaway_price_threshold:
+            if price >= CONFIG.giveaway_price_threshold:
                 prwarn(f"Giveaway price ({price} {currency.value}) is above {CONFIG.giveaway_price_threshold}. Skipping.")
                 return False
 

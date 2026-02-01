@@ -64,7 +64,7 @@ def open_case(driver, case: Case) -> bool:
         prinfo("Target case detected. Opening regardless of price...")
     elif price is None:
         prinfo("No coin requirement found, opening the case anyway...")
-    elif price > CONFIG.case_price_threshold:
+    elif price >= CONFIG.case_price_threshold:
         prinfo(f"Case price ({price}) is higher than threshold ({CONFIG.case_price_threshold}), skipping...")
         return False
     else:
