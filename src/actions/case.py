@@ -6,10 +6,10 @@ from src.logger import prinfo, prerror, prsuccess, prdebug
 from src.config import CONFIG
 from src.models import Case, CasesResult
 from src.common import random_sleep, get_swal, parse_num, click_el, \
-    handle_exceptions, wait_for, find, parse_attr, parse_currency, \
-    parse_img, parse_text
+    handle_exceptions, wait_for, find, parse_attr, parse_img, \
+    parse_text, parse_currency
 from src.constants import BASE_URL, IGNORE_CASES, \
-    CaseSelectors, Condition
+    CaseSelectors, Condition, CurrencyType
 
 def get_cases(driver) -> list[Case]:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
@@ -54,10 +54,10 @@ def open_case(driver, case: Case) -> bool:
     price = None
     reqs_el = find(driver, CaseSelectors.REQUIREMENTS)
     if reqs_el:
-        # Find all elements that have requirement text
-        req_els = find(reqs_el, CaseSelectors.REQUIREMENT, multiple=True)
-        for req_el in req_els:
-            price = parse_num(parse_currency(req_el))
+        # Try to parse the price from all requirements
+        for req_el in find(reqs_el, CaseSelectors.REQUIREMENT, multiple=True):
+            if parse_currency(req_el) == CurrencyType.COIN:
+                price = parse_num(req_el)
 
     # Decide if to open the case
     if case.is_target:

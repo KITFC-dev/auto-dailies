@@ -184,6 +184,7 @@ class GiveawayResultType(str, Enum):
     Use title in swal for comparing.
     """
     SUCCESS = "Вы в раздаче"
+    FAILURE = "Не получилось"
 
 class SellResultType(str, Enum):
     """
