@@ -135,17 +135,20 @@ class Notifications:
 
     def _diff_text(self, label: str, init_val: int, curr_val: int) -> str:
         """Generates a diff stylized text. """
-        if init_val < curr_val:
-            diff = '+'
-            change = f"{init_val} -> {curr_val}"
-        elif init_val > curr_val:
-            diff = '-'
-            change = f"{init_val} -> {curr_val}"
-        else:
-            diff = ' '
-            change = f"{curr_val}"
+        if init_val is not None and curr_val is not None:
+            if init_val < curr_val:
+                diff = '+'
+                change = f"{init_val} -> {curr_val}"
+            elif init_val > curr_val:
+                diff = '-'
+                change = f"{init_val} -> {curr_val}"
+            else:
+                diff = ' '
+                change = f"{curr_val}"
 
-        return f"{diff} {label.title()}: {change}\n"
+            return f"{diff} {label.title()}: {change}\n"
+
+        return ""
 
     def _md(self, text: str) -> str:
         """Escapes markdown characters in text. """
