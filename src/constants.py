@@ -91,15 +91,17 @@ class CommonSelectors(SelEnum):
     """Selectors for common elements. """
     CONFIRM_BUTTON = (By.CLASS_NAME, 'swal-button swal-button--confirm')
     LINK = (By.TAG_NAME, 'a')
+    IFRAME = (By.TAG_NAME, 'iframe')
     BUTTON = (By.TAG_NAME, 'button')
     
 class LoginSelectors(SelEnum):
     """Selectors for telegram login actions. """
-    LOGIN_BUTTON = (By.XPATH, "//a[contains(normalize-space(.), 'Войти') and contains(@class, 'header-signin')]")
+    LOGIN_BUTTON = (By.CSS_SELECTOR, "a.header-signin")
     TG_LOGIN_BUTTON = (By.CSS_SELECTOR, 'a.login-button.login-button_telegram')
     
     TG_PHONE_INPUT = (By.CSS_SELECTOR, 'input#login-phone.form-control')
     SUBMIT_BUTTON = (By.CSS_SELECTOR, 'button[type="submit"]')
+    ACCEPT_BUTTON = (By.XPATH, "//button[@onclick='return confirmRequest()']")
 
 class CheckinSelectors(SelEnum):
     """Selectors for check in page. """

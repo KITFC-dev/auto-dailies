@@ -4,6 +4,7 @@ from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
 from src.actions.profile import run_profile
+from src.actions.login import run_login_tg
 from src.models import RunResult
 from src.common import random_sleep
 from src.config import CONFIG
@@ -29,8 +30,7 @@ def run_once(cookie_file) -> RunResult:
             driver.quit()
             return RunResult(False, f"No cookie file: {cookie_file}")
     else:
-        prinfo(f"New account: {cookie_file}, waiting 90 seconds for user to log in...")
-        random_sleep(90, 0)
+        run_login_tg(driver)
         save_cookies(driver, cookie_file)
     driver.refresh()
 

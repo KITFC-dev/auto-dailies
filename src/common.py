@@ -63,6 +63,23 @@ def find(driver: WebDriver | WebElement, sel: SelEnum | tuple[str, str], *, mult
     
     return [] if multiple else None
 
+def switch_newtab(driver) -> str:
+    """Switch the driver to a new tab. """
+    driver.switch_to.window(driver.window_handles[-1])
+    return driver.current_window_handle
+
+def tab_exists(driver, handle: str) -> bool:
+    try:
+        return handle in driver.window_handles
+    except Exception:
+        return False
+
+def close_all_tabs(driver):
+    """Close all tabs. """
+    for tab in driver.window_handles:
+        driver.switch_to.window(tab)
+        driver.close()
+
 def handle_exceptions(default=None):
     """
     A decorator that catches and logs any exceptions 
