@@ -1,6 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.logger import prsuccess, prwarn, prdebug
+from src.logger import prsuccess, prwarn
 from src.common import get_swal, parse_num, click_el, handle_exceptions, \
     wait_for, find, parse_currency
 from src.config import CONFIG
@@ -38,7 +38,7 @@ def run_daily_checkin(driver) -> CheckinResult:
     earned = parse_num(title)
     currency_type = parse_currency(title)
 
-    data = CheckinResult(
+    return CheckinResult(
         success=checked_in,
         streak=streak if streak else 0,
         monthly_bonus=monthly_bonus if monthly_bonus else 0.0,
@@ -47,5 +47,3 @@ def run_daily_checkin(driver) -> CheckinResult:
         earned=earned if earned else 0,
         currency_type=currency_type,
     )
-    prdebug(f"Checkin result: {data}")
-    return data

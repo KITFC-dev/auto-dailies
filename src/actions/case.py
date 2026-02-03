@@ -2,7 +2,7 @@ import random
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.logger import prinfo, prerror, prsuccess, prdebug
+from src.logger import prinfo, prerror, prsuccess
 from src.config import CONFIG
 from src.models import Case, CasesResult
 from src.common import random_sleep, get_swal, parse_num, click_el, \
@@ -104,11 +104,9 @@ def run_cases(driver) -> CasesResult:
         else:
             ignored_cases += 1
 
-    data = CasesResult(
+    return CasesResult(
         success=True,
         available_cases=available_cases,
         opened_cases=opened_cases,
         ignored_cases=ignored_cases,
     )
-    prdebug(f"Cases result: {data}")
-    return data

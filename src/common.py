@@ -72,7 +72,9 @@ def handle_exceptions(default=None):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             try:
-                return func(*args, **kwargs)
+                res = func(*args, **kwargs)
+                prdebug(f"{func.__name__} result: {res}")
+                return res
             except Exception as e:
                 tb = traceback.format_exc()
                 prdebug(f"Exception in {func.__name__}: {e}\n{tb}")

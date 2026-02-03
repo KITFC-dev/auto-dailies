@@ -1,7 +1,7 @@
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.logger import prsuccess, prdebug
+from src.logger import prsuccess
 from src.config import CONFIG
 from src.models import Balance, InventoryItem, Profile
 from src.common import random_sleep, get_swal, parse_num, \
@@ -115,7 +115,7 @@ def run_profile(driver, initial: bool = False) -> Profile | None:
             inventory = get_profile_inventory(driver)
             balance = get_profile_balance(driver)
 
-        data = Profile(
+        return Profile(
             id=id,
             avatar_url=avatar_url,
             username=username,
@@ -124,5 +124,3 @@ def run_profile(driver, initial: bool = False) -> Profile | None:
             balance=balance,
             inventory=inventory,
         )
-        prdebug(f"Profile data: {data}")
-        return data
