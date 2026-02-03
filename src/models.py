@@ -58,6 +58,7 @@ class InventoryItem:
 class InventoryMeta:
     all_coins: int = 0
     all_gold: int = 0
+    sold_items: list = field(default_factory=list)
 
 @dataclass(slots=True)
 class Profile:
@@ -76,6 +77,7 @@ class Profile:
         return InventoryMeta(
             sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.COIN and not i.sold),
             sum(i.price or 0 for i in self.inventory if i.currency_type is CurrencyType.GOLD and not i.sold),
+            [i.name for i in self.inventory if i.sold],
         )
 
 @dataclass(slots=True)

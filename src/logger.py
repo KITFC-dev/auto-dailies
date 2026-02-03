@@ -114,6 +114,11 @@ class Notifications:
                     f"{'(failed)' if not r.giveaway.success else ''}"
                     f"\n"
                 )
+            if len(r.p.inventory_meta.sold_items) > 0:
+                value += (
+                    f"Sold items ({len(r.p.inventory_meta.sold_items)}): {', '.join(r.p.inventory_meta.sold_items)} "
+                    f"\n"
+                )
             value += (
                 "Inventory value:\n"
                 f"{self._diff_text('coins', r.ip.inventory_meta.all_coins, r.p.inventory_meta.all_coins)}"
