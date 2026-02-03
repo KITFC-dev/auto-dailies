@@ -92,6 +92,14 @@ class CommonSelectors(SelEnum):
     CONFIRM_BUTTON = (By.CLASS_NAME, 'swal-button swal-button--confirm')
     LINK = (By.TAG_NAME, 'a')
     BUTTON = (By.TAG_NAME, 'button')
+    
+class LoginSelectors(SelEnum):
+    """Selectors for telegram login actions. """
+    LOGIN_BUTTON = (By.XPATH, "//a[contains(normalize-space(.), 'Войти') and contains(@class, 'header-signin')]")
+    TG_LOGIN_BUTTON = (By.CSS_SELECTOR, 'a.login-button.login-button_telegram')
+    
+    TG_PHONE_INPUT = (By.CSS_SELECTOR, 'input#login-phone.form-control')
+    SUBMIT_BUTTON = (By.CSS_SELECTOR, 'button[type="submit"]')
 
 class CheckinSelectors(SelEnum):
     """Selectors for check in page. """
