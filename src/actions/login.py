@@ -2,10 +2,26 @@ from selenium.webdriver import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.common import handle_exceptions, wait_for, click_el, \
-    switch_newtab, random_sleep, tab_exists
+    switch_newtab, random_sleep, tab_exists, parse_text
+from src.logger import prsuccess
 from src.constants import LoginSelectors, CommonSelectors, Condition
 from src.config import CONFIG
-from src.constants import BASE_URL
+from src.constants import BASE_URL, PROFILE_URL
+
+def get_secretcode(driver) -> str | None:
+    """Get user secret code for verification in Telegram bot. """
+    if driver.current_url != PROFILE_URL:
+        driver.get(PROFILE_URL)
+
+    driver.execute_script('$("#MySecretCode").modal("show");')
+    random_sleep(2)
+    return parse_text(
+        wait_for(
+            Condition.PRESENCE, 
+            WebDriverWait(driver, CONFIG.wait_timeout), 
+            LoginSelectors.SECRET_CODE
+        )
+    )
 
 @handle_exceptions(default=False)
 def run_login_tg(driver) -> bool:
@@ -66,6 +82,7 @@ def run_login_tg(driver) -> bool:
                     driver.switch_to.window(origin_tab)
                     driver.refresh()
                     
+                    prsuccess(f"Login successful, secret code: {get_secretcode(driver)}")
                     return True
     
     return False

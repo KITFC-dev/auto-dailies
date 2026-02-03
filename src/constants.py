@@ -96,6 +96,7 @@ class CommonSelectors(SelEnum):
     
 class LoginSelectors(SelEnum):
     """Selectors for telegram login actions. """
+    SECRET_CODE = (By.CLASS_NAME, 'my-secret-code-value_val')
     LOGIN_BUTTON = (By.CSS_SELECTOR, "a.header-signin")
     TG_LOGIN_BUTTON = (By.CSS_SELECTOR, 'a.login-button.login-button_telegram')
     
