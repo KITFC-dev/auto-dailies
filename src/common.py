@@ -169,7 +169,7 @@ def click_el(driver, element, retries=5):
                 wait_for(Condition.CLICKABLE, WebDriverWait(driver, CONFIG.wait_timeout), element)
                 scroll_into(driver, element)
                 element.click()
-            return True
+                return True
         except (ElementClickInterceptedException,
                 StaleElementReferenceException,
                 ElementNotInteractableException,
