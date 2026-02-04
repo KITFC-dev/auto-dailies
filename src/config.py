@@ -76,7 +76,8 @@ class Config:
         parser.add_argument("--config_path", type=str, help="Path to the config file.")
         
         # For new pkl files
-        parser.add_argument("--new_account", type=str, help="Name of the new account, use to create a new pkl file.")
+        parser.add_argument("--new_account", type=str, help="Phone number (with country code, only numbers) \
+            of the new telegram account to be added.")
 
         return parser.parse_args()
 
