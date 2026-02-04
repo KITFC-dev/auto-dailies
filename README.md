@@ -52,15 +52,13 @@ You can add your telegram account's cookies using pickle and put them in account
 
 ### Adding a new account
 
-1. Run the script `main.py` with the `--new_account=accountname` flag.
+1. Run the script `main.py` with the `--new_account=10987654321` argument that has your phone number you want to add.
 
-2. You will be given 90 seconds to login in to the account.
+2. Wait for confirmation message in telegram, and accept it.
 
-3. Click the login button on top right, you will be redirected to telegram oauth.
+3. `.pkl` file will be automatically added to the `accounts` directory.
 
-4. After logging in with telegram oauth, refresh the initial browser tab and wait for the script to finish.
-
-5. `.pkl` file will be automatically added to the `accounts` directory.
+4. Send `/start` to new bot that appeared in your telegram account, send `/channel` and subscribe to channel, send `/verify` and then click `Start` button then send the secretcode you got in message during logging in, it should look like: `[SUCCESS] Login successful, secret code: ...`.
 
 ## Usage
 
@@ -90,5 +88,5 @@ options:
   --config_path CONFIG_PATH
                         Path to the config file.
   --new_account NEW_ACCOUNT
-                        Name of the new account, use to create a new pkl file.
+                        Phone number (with country code, only numbers) of the new telegram account to be added.
 ```
