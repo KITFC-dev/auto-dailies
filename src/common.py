@@ -37,6 +37,8 @@ def wait_for(c, wait: WebDriverWait, sel: SelEnum) -> WebElement | None:
         prdebug(f"Timeout while waiting for {sel}")
     except WebDriverException as e:
         prerror(f"Driver error while waiting for {sel}: {e}")
+    except AttributeError as e:
+        prerror(f"Invalid selector {sel}: {e}")
     
     return None
 
