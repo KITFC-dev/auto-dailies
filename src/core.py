@@ -25,7 +25,7 @@ def run_once(cookie_file) -> RunResult:
         driver.get(BASE_URL)
 
     # Inject cookies into browser
-    if cookie_file.split("/")[-1] != CONFIG.new_account:
+    if cookie_file.split("/")[-1] != f"{CONFIG.new_account}.pkl":
         if not load_cookies(driver, cookie_file):
             driver.quit()
             return RunResult(False, f"No cookie file: {cookie_file}")
