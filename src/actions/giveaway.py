@@ -1,3 +1,4 @@
+from constants import GiveawayResultType
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.config import CONFIG
@@ -68,6 +69,7 @@ def join_giveaway(driver, href) -> bool:
     swal = get_swal(driver)
     if swal.title or swal.text:
         prsuccess("Giveaway join button clicked")
-        random_sleep(0.5)
+        if swal.title == GiveawayResultType.FAILURE:
+            return False
 
     return True
