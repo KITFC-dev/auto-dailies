@@ -26,8 +26,7 @@ def get_secretcode(driver) -> str | None:
 @handle_exceptions(default=False)
 def run_login_tg(driver) -> bool:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
-    if driver.current_url != BASE_URL:
-        driver.get(BASE_URL)
+    driver.get(CONFIG.referral_url or BASE_URL)
     origin_tab = driver.current_window_handle
     
     # Click login

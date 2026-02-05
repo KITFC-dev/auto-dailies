@@ -48,6 +48,7 @@ class Config:
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
         self.accounts_dir = paths.get("accounts_file", "accounts")
         self.new_account = f"{args.new_account}.pkl" if args.new_account else None
+        self.referral_url = args.referral_url if args.referral_url else None
         self.accounts = self.load_accounts()
 
         self.validate()
@@ -77,6 +78,7 @@ class Config:
         
         # For new pkl files
         parser.add_argument("--new_account", type=str, help="Name of the new account, use to create a new pkl file.")
+        parser.add_argument("--referral_url", type=str, help="Referral URL link that you can use for new accounts.")
 
         return parser.parse_args()
 
@@ -133,5 +135,9 @@ class Config:
         # Check if accounts are not empty
         if not self.accounts or len(self.accounts) == 0:
             raise ValueError(f"No accounts are specified. Please ensure there are .pkl files in the accounts directory ({os.path.abspath(self.accounts_dir)}).")
+
+        # Check if referal link is valid
+        if self.referral_url and not self.referral_url.startswith("https://genshindrop.io/ref/"):
+            raise ValueError(f"Invalid referral URL link: {self.referral_url}")
 
 CONFIG: Config = Config()
