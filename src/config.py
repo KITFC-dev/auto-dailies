@@ -47,7 +47,7 @@ class Config:
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
         self.accounts_dir = paths.get("accounts_file", "accounts")
-        self.new_account = f"{args.new_account}.pkl" if args.new_account else None
+        self.new_account = args.new_account if args.new_account else None
         self.referral_url = args.referral_url if args.referral_url else None
         self.accounts = self.load_accounts()
 
@@ -77,7 +77,8 @@ class Config:
         parser.add_argument("--config_path", type=str, help="Path to the config file.")
         
         # For new pkl files
-        parser.add_argument("--new_account", type=str, help="Name of the new account, use to create a new pkl file.")
+        parser.add_argument("--new_account", type=str, help="Phone number (with country code, only numbers) \
+            of the new telegram account to be added.")
         parser.add_argument("--referral_url", type=str, help="Referral URL link that you can use for new accounts.")
 
         return parser.parse_args()
@@ -106,9 +107,9 @@ class Config:
         # Handle new account
         if self.new_account:
             if self.new_account not in acs.keys():
-                return {self.new_account: f"{self.accounts_dir}/{self.new_account}"}
+                return {self.new_account: f"{self.accounts_dir}/{self.new_account}.pkl"}
             else:
-                raise FileExistsError(f"Account already exists: {self.new_account}")
+                raise FileExistsError(f"Account already exists: {self.new_account}.pkl")
 
         return acs
     
@@ -135,6 +136,11 @@ class Config:
         # Check if accounts are not empty
         if not self.accounts or len(self.accounts) == 0:
             raise ValueError(f"No accounts are specified. Please ensure there are .pkl files in the accounts directory ({os.path.abspath(self.accounts_dir)}).")
+
+        # Check if phone number is valid
+        if self.new_account:
+            if not self.new_account.isdigit() or not 7 < len(self.new_account) < 17:
+                raise ValueError(f"Invalid phone number: {self.new_account}")
 
         # Check if referal link is valid
         if self.referral_url and not self.referral_url.startswith("https://genshindrop.io/ref/"):
