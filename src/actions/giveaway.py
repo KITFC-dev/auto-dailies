@@ -1,10 +1,10 @@
-from constants import GiveawayResultType
 from selenium.webdriver.support.ui import WebDriverWait
 
 from src.config import CONFIG
 from src.models import GiveawayResult
 from src.logger import prsuccess, prwarn, prinfo
-from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition
+from src.constants import GIVEAWAY_URL, GiveawaySelectors, Condition, \
+    GiveawayResultType
 from src.common import random_sleep, get_swal, parse_num, \
     handle_exceptions, click_el, wait_for, find, parse_attr, \
     CurrencyType, parse_currency
