@@ -27,33 +27,57 @@ class Notifications:
             self._send_telegram()
 
     def _send_discord(self):
-        payload = {}
-        payload["embeds"] = [self.summary, self.accounts_summary]
-        if CONFIG.webhook_name:
-            payload["username"] = CONFIG.webhook_name
-        if CONFIG.webhook_avatar:
-            payload["avatar_url"] = CONFIG.webhook_avatar
+        fields = self.accounts_summary["fields"]
+        chunks = [
+            fields[i:i + 25]
+            for i in range(0, len(fields), 25)
+        ]
 
-        r = requests.post(CONFIG.webhook_url, json=payload, timeout=5)
-        if not r.ok:
-            prerror(f"Failed to send Discord webhook: {r.status_code} {r.text}")
+        for i, chunk in enumerate(chunks):
+            payload = {}
+            accounts = {**self.accounts_summary, "fields": chunk}
+            if i == 0:
+                payload["embeds"] = [self.summary, accounts]
+            else:
+                payload["embeds"] = [accounts]
+
+            if CONFIG.webhook_name:
+                payload["username"] = CONFIG.webhook_name
+            if CONFIG.webhook_avatar:
+                payload["avatar_url"] = CONFIG.webhook_avatar
+
+            r = requests.post(CONFIG.webhook_url, json=payload, timeout=5)
+            if not r.ok:
+                prerror(f"Failed to send Discord webhook: {r.status_code} {r.text}")
 
     def _send_telegram(self):
-        data = {}
-        data["chat_id"] = CONFIG.telegram_chat_id
-        data["text"] = (
-            f"{self.embed2text(self.summary)}\n\n"
-            f"{self.embed2text(self.accounts_summary)}"
-        )
-        data["parse_mode"] = "MarkdownV2"
+        fields = self.accounts_summary["fields"]
+        chunks = [
+            fields[i:i + 10]
+            for i in range(0, len(fields), 10)
+        ]
 
-        r = requests.post(
-            f"https://api.telegram.org/bot{CONFIG.telegram_token}/sendMessage",
-            data=data,
-            timeout=5
-        )
-        if not r.ok:
-            prerror(f"Failed to send Telegram message: {r.status_code} {r.text}")
+        for i, chunk in enumerate(chunks):
+            data = {}
+            data["chat_id"] = CONFIG.telegram_chat_id
+            accounts = self.embed2text({"title": "", "description": "", "fields": chunk})
+            if i == 0:
+                data["text"] = (
+                    f"{self.embed2text(self.summary)}\n\n" +
+                    f"{accounts}"
+                )
+            else:
+                data["text"] = accounts
+            
+            data["parse_mode"] = "MarkdownV2"
+
+            r = requests.post(
+                f"https://api.telegram.org/bot{CONFIG.telegram_token}/sendMessage",
+                data=data,
+                timeout=5
+            )
+            if not r.ok:
+                prerror(f"Failed to send Telegram message: {r.status_code} {r.text}")
 
     def _build_summary(self) -> dict:
         results = self.results
