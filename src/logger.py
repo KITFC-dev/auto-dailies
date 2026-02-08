@@ -81,21 +81,28 @@ class Notifications:
 
     def _build_summary(self) -> dict:
         results = self.results
+        d = f"Accounts Done: `{len([r for r in results if r.success])}/{len(results)}`\n"
+
+        if any(r for r in results if not r.success):
+            d += "Failed Accounts:"
+            for r in results:
+                d += f"\n{r.reason}"
+            d += "\n\n"
+        d += (
+            f"Earned Coins: `{sum(i.p.balance.coins - i.ip.balance.coins for i in results if i.success)}`\n"
+            f"Earned Gold: `{sum(i.p.balance.gold - i.ip.balance.gold for i in results if i.success)}`\n"
+            f"All Coins: `{sum(i.all_coins for i in results if i.success)}`\n"
+            f"All Gold: `{sum(i.all_gold for i in results if i.success)}`\n\n"
+        )
+        if any(i for i in results if i.has_reached_target_gold):
+            d += (
+                f"Reached target for gold: {', '.join([i.p.username for i in results if i.has_reached_target_gold])}"
+            )
+
         return {
             "title": "AutoDailies tasks completed!",
             "color": 2818303,
-            "description": (
-                f"Accounts Done: `{len([r for r in results if r.success])}`\n"
-                f"Accounts Failed: `{len([r for r in results if not r.success])}`\n\n"
-
-                f"Earned Coins: `{sum(i.p.balance.coins - i.ip.balance.coins for i in results if i.success)}`\n"
-                f"Earned Gold: `{sum(i.p.balance.gold - i.ip.balance.gold for i in results if i.success)}`\n"
-
-                f"All Coins: `{sum(i.all_coins for i in results if i.success)}`\n"
-                f"All Gold: `{sum(i.all_gold for i in results if i.success)}`\n\n"
-
-                f"Reached Gold Target: {', '.join([i.p.username for i in results if i.has_reached_target_gold]) or 'None'}"
-            )
+            "description": d,
         }
 
     def _build_accounts_summary(self) -> dict:

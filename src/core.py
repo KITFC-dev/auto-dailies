@@ -28,7 +28,7 @@ def run_once(cookie_file) -> RunResult:
     if cookie_file.split("/")[-1] != f"{CONFIG.new_account}.pkl":
         if not load_cookies(driver, cookie_file):
             driver.quit()
-            return RunResult(False, f"No cookie file: {cookie_file}")
+            return RunResult(False, f"{cookie_file}: Cookie file not found.")
     else:
         run_login_tg(driver)
         save_cookies(driver, cookie_file)
@@ -37,7 +37,7 @@ def run_once(cookie_file) -> RunResult:
     # Verify if login was successful
     init_profile = get_profile(driver, initial=True)
     if init_profile is None:
-        return RunResult(False, "Failed to get profile information")
+        return RunResult(False, f"{cookie_file}: Failed to get profile information")
 
     # Run actions
     if CONFIG.checkin:
@@ -50,7 +50,7 @@ def run_once(cookie_file) -> RunResult:
     # Get profile information after actions
     curr_profile = get_profile(driver, initial=True)
     if curr_profile is None:
-        return RunResult(False, "Failed to get profile information")
+        return RunResult(False, f"{cookie_file}: Failed to get profile information")
 
     # Wait before closing
     if CONFIG.wait_after > 0:
