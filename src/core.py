@@ -48,7 +48,7 @@ def run_once(cookie_file) -> RunResult:
         cases = run_cases(driver)
 
     # Get profile information after actions
-    curr_profile = get_profile(driver, initial=True)
+    curr_profile = get_profile(driver)
     if curr_profile is None:
         return RunResult(False, f"{cookie_file}: Failed to get profile information")
 
