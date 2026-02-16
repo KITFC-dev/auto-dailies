@@ -23,6 +23,7 @@ class Config:
         self.wait_after = args.wait_after if args.wait_after is not None else general.get("wait_after", 0)
         self.giveaway_price_threshold = general.get("giveaway_price_threshold", 0)
         self.case_price_threshold = general.get("case_price_threshold", 0)
+        self.referral_url = args.referral_url or general.get("referral_url", "")
 
         targets = raw.get("targets", {})
         self.target_gold_amount = targets.get("target_gold_amount", 0)
@@ -48,7 +49,6 @@ class Config:
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
         self.accounts_dir = paths.get("accounts_file", "accounts")
         self.new_account = args.new_account if args.new_account else None
-        self.referral_url = args.referral_url if args.referral_url else None
         self.accounts = self.load_accounts()
 
         self.validate()

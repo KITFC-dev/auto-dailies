@@ -23,6 +23,8 @@ giveaway_price_threshold = 0
 # Price threshold for opening cases, same logic as in giveaways
 # using 1 as threshold because weekly case usually costs 1 coin.
 case_price_threshold = 1
+# Your referral link to use when adding new accounts
+referral_url = ""
 
 [targets]
 # Target gold amount to reach
