@@ -86,7 +86,8 @@ class Notifications:
         if any(r for r in results if not r.success):
             d += "Failed Accounts:"
             for r in results:
-                d += f"\n{r.reason}"
+                if not r.success and r.reason is not None:
+                    d += f"\n{r.reason}"
             d += "\n\n"
         d += (
             f"Earned Coins: `{sum(i.p.balance.coins - i.ip.balance.coins for i in results if i.success)}`\n"
