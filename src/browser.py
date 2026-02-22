@@ -20,19 +20,25 @@ def create_driver():
     service = Service(executable_path=CONFIG.chromedriver_path)
     return webdriver.Chrome(service=service, options=options)
 
-def load_cookies(driver, cookie_file):
+def load_cookies(driver, cookie_file) -> tuple[bool, str]:
     """
     Load cookies and injects them to the driver,
     also capitalizes "sameSite" cookie attribute
     as some browsers may raise an error.
+
+    Returns:
+        tuple[bool, str]: (success, error)
     """
     if os.path.exists(cookie_file):
-        cookies = pickle.load(open(cookie_file, "rb"))
-        for cookie in cookies:
-            if 'sameSite' in cookie:
-                cookie['sameSite'] = cookie['sameSite'].capitalize()
-            driver.add_cookie(cookie)
-        return True
-    return False
+        try:
+            cookies = pickle.load(open(cookie_file, "rb"))
+            for cookie in cookies:
+                if 'sameSite' in cookie:
+                    cookie['sameSite'] = cookie['sameSite'].capitalize()
+                driver.add_cookie(cookie)
+            return True, ""
+        except Exception as e:
+            return False, f"Failed to load cookies: {e}"
+    return False, "Cookie file not found."
 
 def save_cookies(driver, cookie_file): pickle.dump(driver.get_cookies(), open(cookie_file, "wb"))

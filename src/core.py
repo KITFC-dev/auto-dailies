@@ -26,9 +26,10 @@ def run_once(cookie_file) -> RunResult:
 
     # Inject cookies into browser
     if cookie_file.split("/")[-1] != f"{CONFIG.new_account}.pkl":
-        if not load_cookies(driver, cookie_file):
+        result, error = load_cookies(driver, cookie_file)
+        if not result:
             driver.quit()
-            return RunResult(False, f"{cookie_file}: Cookie file not found.")
+            return RunResult(False, f"{cookie_file}: {error}")
     else:
         run_login_tg(driver)
         save_cookies(driver, cookie_file)
