@@ -92,13 +92,13 @@ def run_cases(driver) -> CasesResult:
     for case in available_cases:
         # Skip ignored cases, unless target
         if case.is_target or not case.is_ignored:
-            prinfo(f"Opening case: {case.name}")
+            prinfo(f"Opening case: {case.name if case.name != '' else case.link}...")
             if open_case(driver, case):
                 prsuccess(f"Opened case: {case.name}")
                 opened_cases += 1
             else:
                 prerror(f"Failed to open case: {case.name}")
-                        
+
             # Cooldown after each case
             random_sleep(7)
         else:

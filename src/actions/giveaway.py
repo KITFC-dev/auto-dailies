@@ -68,7 +68,7 @@ def join_giveaway(driver, href) -> bool:
     click_el(driver, join_button)
     swal = get_swal(driver)
     if swal.title or swal.text:
-        prsuccess("Giveaway join button clicked")
+        prsuccess(f"Giveaway join button clicked for {href}.")
         if swal.title == GiveawayResultType.FAILURE:
             return False
 
