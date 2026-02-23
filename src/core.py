@@ -1,5 +1,5 @@
 from src.browser import create_driver, load_cookies, save_cookies
-from src.logger import prinfo, prerror, Notifications
+from src.logger import prinfo, prerror, prsuccess, Notifications
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
@@ -80,7 +80,7 @@ def run():
         res = run_once(file)
 
         if res.success:
-            prinfo(f"{file} completed successfully.")
+            prsuccess(f"{file} completed successfully.")
         elif res.reason:
             prerror(f"{res.reason}")
         else:
