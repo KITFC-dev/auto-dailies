@@ -1,5 +1,5 @@
 from src.browser import create_driver, load_cookies, save_cookies
-from src.logger import prinfo, Notifications
+from src.logger import prinfo, prerror, Notifications
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
@@ -77,6 +77,15 @@ def run():
     # Iterate over all accounts
     for file in CONFIG.accounts.values():
         prinfo(f"Processing cookie file: {file}")
-        results.append(run_once(file))
+        res = run_once(file)
+
+        if res.success:
+            prinfo(f"{file} completed successfully.")
+        elif res.reason:
+            prerror(f"{res.reason}")
+        else:
+            prerror(f"{file} failed for unknown reason.")
+
+        results.append(res)
 
     Notifications(results).send_all()
