@@ -21,7 +21,7 @@ def run_daily_checkin(driver) -> CheckinResult:
         click_el(driver, button)
         prsuccess("Daily check-in button clicked")
         swal = get_swal(driver)
-        if swal:
+        if swal and (not swal.text or 'fail' not in swal.text.lower()):
             checked_in = True
             swal.click_confirm()
             title = swal.title
