@@ -7,7 +7,7 @@ from src.config import CONFIG
 from src.constants import CHECKIN_URL, CheckinSelectors, Condition
 from src.models import CheckinResult
 
-@handle_exceptions(default=CheckinResult(success=False, reason="Failed to check in"))
+@handle_exceptions(default=CheckinResult(success=False, reason="Failed to check in"), retry=True)
 def run_daily_checkin(driver) -> CheckinResult:
     wait = WebDriverWait(driver, CONFIG.wait_timeout)
     if driver.current_url != CHECKIN_URL:
@@ -21,10 +21,14 @@ def run_daily_checkin(driver) -> CheckinResult:
         click_el(driver, button)
         prsuccess("Daily check-in button clicked")
         swal = get_swal(driver)
+        # Check if swal didnt return 'fail'
         if swal and (not swal.text or 'fail' not in swal.text.lower()):
             checked_in = True
             swal.click_confirm()
             title = swal.title
+        else:
+            # Refresh the page on failure
+            driver.refresh()
     else:
         prwarn("No daily check-in button detected. Seems like you already checked in today")
 

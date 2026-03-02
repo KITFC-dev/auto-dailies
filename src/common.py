@@ -82,7 +82,7 @@ def close_all_tabs(driver):
         driver.switch_to.window(tab)
         driver.close()
 
-def handle_exceptions(default=None):
+def handle_exceptions(default=None, retry: bool = False):
     """
     A decorator that catches and logs any exceptions 
     if has exceptions returns a default value.
@@ -90,14 +90,17 @@ def handle_exceptions(default=None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            try:
-                res = func(*args, **kwargs)
-                prdebug(f"{func.__name__} result: {res}")
-                return res
-            except Exception as e:
-                tb = traceback.format_exc()
-                prdebug(f"Exception in {func.__name__}: {e}\n{tb}")
-                return default
+            for att in range(2 if retry else 1):
+                try:
+                    res = func(*args, **kwargs)
+                    prdebug(f"{func.__name__} result: {res}")
+
+                    if getattr(res, "success", True):
+                        return res
+                except Exception as e:
+                    tb = traceback.format_exc()
+                    prdebug(f"Exception in {func.__name__}: {e}\n{tb}")
+            return default
         return wrapper
     return decorator
 
