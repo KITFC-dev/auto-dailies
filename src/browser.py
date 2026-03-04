@@ -18,7 +18,29 @@ def create_driver():
         options.add_argument("--disable-dev-shm-usage")
 
     service = Service(executable_path=CONFIG.chromedriver_path)
-    return webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(service=service, options=options)
+
+    # Remove browser automation flags
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
+
+    # User agent
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+    )
+    options.add_argument("--window-size=1920,1080")
+
+    # Remove navigator.webdriver
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+            Object.defineProperty(navigator, 'webdriver', {
+            get: () => undefined
+            })
+        """
+    })
+
+    return driver
 
 def load_cookies(driver, cookie_file) -> tuple[bool, str]:
     """
