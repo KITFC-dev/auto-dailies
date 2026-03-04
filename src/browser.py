@@ -17,9 +17,6 @@ def create_driver():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
-    service = Service(executable_path=CONFIG.chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
-
     # Remove browser automation flags
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -30,6 +27,9 @@ def create_driver():
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
     )
     options.add_argument("--window-size=1920,1080")
+
+    service = Service(executable_path=CONFIG.chromedriver_path)
+    driver = webdriver.Chrome(service=service, options=options)
 
     # Remove navigator.webdriver
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
