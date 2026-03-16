@@ -103,7 +103,7 @@ class Notifications:
         
         if any(i for i in results if i.giveaway and i.giveaway.won):
             d += (
-                f"Won giveaways: {', '.join([f'{i.p.username} won {w['item_text']}, promocode: {w['promocode']}' for i in results if i.giveaway for w in i.giveaway.won])}\n"
+                f"Won giveaways: {'\n'.join([f'{i.p.username} won {w['item_text']}, promocode: {w['promocode']}' for i in results if i.giveaway for w in i.giveaway.won])}\n"
             )
 
         return {
