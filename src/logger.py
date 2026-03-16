@@ -99,6 +99,12 @@ class Notifications:
             d += (
                 f"Reached target for gold: {', '.join([i.p.username for i in results if i.has_reached_target_gold])}"
             )
+            d += "\n"
+        
+        if any(i for i in results if i.giveaway and i.giveaway.won):
+            d += (
+                f"Won giveaways: {', '.join([f'{i.p.username} won {w['item_text']}, promocode: {w['promocode']}' for i in results if i.giveaway for w in i.giveaway.won])}\n"
+            )
 
         return {
             "title": "AutoDailies tasks completed!",
