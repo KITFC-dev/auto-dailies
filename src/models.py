@@ -99,6 +99,7 @@ class CasesResult(Result):
 class GiveawayResult(Result):
     giveaways: list[str] = field(default_factory=list)
     joined: list[str] = field(default_factory=list)
+    won: list[str] = field(default_factory=list)
 
 @dataclass(slots=True)
 class RunResult(Result):

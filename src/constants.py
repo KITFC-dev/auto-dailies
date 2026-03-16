@@ -117,9 +117,15 @@ class GiveawaySelectors(SelEnum):
     """Selectors for giveaway page. """
     LINK = (By.CLASS_NAME, 'give-box__link')
     GIVEAWAY = (By.CSS_SELECTOR, ".panel.give-box.col-12:not(.--history)")
+    PAST_GIVEAWAY_BOX = (By.CSS_SELECTOR, ".give__endlist")
+    PAST_GIVEAWAY = (By.CSS_SELECTOR, ".panel.give-box.--history")
     PRICE = (By.CLASS_NAME, 'give-pay_price__value')
     CURRENCY = (By.CSS_SELECTOR, '.give-pay_price__value i')
     JOIN_BUTTON = (By.XPATH, "//button[contains(text(), 'Участвовать')]")
+
+    WIN_BUTTON = (By.CSS_SELECTOR, 'button.give-prize_data__users_user__getprize')
+    WIN_ITEM_TEXT = (By.CSS_SELECTOR, ".craft-recept-item .craft-recept-item__simple-title > div")
+    WIN_PROMOCODE = (By.CSS_SELECTOR, 'div.my-secret-code-value div.my-secret-code-value_val')
 
 class CaseSelectors(SelEnum):
     """Selectors for cases. """
