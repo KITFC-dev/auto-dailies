@@ -54,7 +54,6 @@ def run_giveaway(driver) -> GiveawayResult:
             won_giveaways.append(won)
             random_sleep(1)
 
-    print(won_giveaways)
     return GiveawayResult(
         success=True,
         giveaways=links,
