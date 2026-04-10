@@ -17,6 +17,9 @@ def create_driver():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
+    # Ignore images and trackers loading
+    options.page_load_strategy = "eager"
+
     # Remove browser automation flags
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
