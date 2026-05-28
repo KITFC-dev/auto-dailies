@@ -61,6 +61,15 @@ bot_token = ""
 # this can be @channel or numeric ID like -10...
 chat_id = ""
 
+[db]
+# Postgres database configuration
+enabled = false
+host = "localhost"
+port = 5432
+name = "database name"
+username = "username"
+password = "password"
+
 [paths]
 # Path to Chromium browser
 chromium_path = "/usr/bin/chromium"

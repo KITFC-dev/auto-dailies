@@ -1,5 +1,5 @@
 from src.browser import create_driver, load_cookies, save_cookies
-from src.logger import prinfo, prerror, prsuccess, Notifications
+from src.logger import prinfo, prerror, prsuccess, Notifications, Db
 from src.actions.checkin import run_daily_checkin
 from src.actions.giveaway import run_giveaway
 from src.actions.case import run_cases
@@ -73,6 +73,7 @@ def run_once(cookie_file) -> RunResult:
 
 def run():
     results: list[RunResult] = []
+    db = Db()
 
     # Iterate over all accounts
     for file in CONFIG.accounts.values():
@@ -87,5 +88,6 @@ def run():
             prerror(f"{file} failed for unknown reason.")
 
         results.append(res)
+        db.insert_run_result(res)
 
     Notifications(results).send_all()

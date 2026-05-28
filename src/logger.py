@@ -1,8 +1,13 @@
 import requests
+import psycopg2
+import psycopg2.extensions
 import re
 
 from colorama import Fore, Style
+from typing import Optional
+
 from src.config import CONFIG
+from src.models import RunResult
 
 def _print_log(msg, color = Fore.CYAN, type = "info"):
     print(f"{color}[{type.upper()}]{Style.RESET_ALL} {msg}")
@@ -12,6 +17,118 @@ def prsuccess(msg): _print_log(msg, color = Fore.GREEN, type = "success")
 def prwarn(msg): _print_log(msg, color = Fore.YELLOW, type = "warning")
 def prerror(msg): _print_log(msg, color = Fore.RED, type = "error")
 def prdebug(msg): _print_log(msg, color = Fore.BLUE, type = "debug") if CONFIG.debug else None
+
+class Db:
+    def __init__(self):
+        self.conn = None
+        if CONFIG.db_enabled:
+            self.conn = self.connect()
+            if self.conn:
+                self._init_db()
+
+    def connect(self) -> Optional[psycopg2.extensions.connection]:
+        try:
+            connection = psycopg2.connect(
+                host=CONFIG.db_host,
+                port=CONFIG.db_port,
+                database=CONFIG.db_name,
+                user=CONFIG.db_username,
+                password=CONFIG.db_password,
+                connect_timeout=5
+            )
+            prinfo("Connected to the database successfully.")
+            return connection
+        except Exception as e:
+            prerror(f"Database connection failed: {e}")
+            return None
+
+    def _init_db(self):
+        if self.conn is None:
+            return
+
+        query = """
+        CREATE TABLE IF NOT EXISTS autodailies_run_results (
+            id SERIAL PRIMARY KEY,
+            timestamp TIMESTAMPTZ DEFAULT NOW(),
+            account_id VARCHAR(100) NOT NULL,
+            username VARCHAR(100),
+            success BOOLEAN NOT NULL,
+            fail_reason TEXT,
+            coins_balance INT DEFAULT 0,
+            gold_balance INT DEFAULT 0,
+            rice_balance INT DEFAULT 0,
+            total_coins INT DEFAULT 0,
+            total_gold INT DEFAULT 0,
+            checkin_streak INT DEFAULT 0,
+            checkin_earned INT DEFAULT 0,
+            giveaways_joined INT DEFAULT 0,
+            cases_opened INT DEFAULT 0
+        );
+        """
+
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(query)
+                self.conn.commit()
+        except Exception as e:
+            prerror(f"Failed to initialize database: {e}")
+            if self.conn:
+                try:
+                    self.conn.rollback()
+                except psycopg2.InterfaceError:
+                    pass
+
+    def insert_run_result(self, result: RunResult) -> bool:
+        if not CONFIG.db_enabled or self.conn is None:
+            return False
+        
+        profile = result.p if result.p.id else result.ip
+        account_id = profile.id
+        username = profile.username
+
+        checkin_streak = result.checkin.streak if result.checkin else 0
+        checkin_earned = result.checkin.earned if result.checkin else 0
+
+        giveaways_joined = len(result.giveaway.joined) if result.giveaway else 0
+        cases_opened = result.cases.opened_cases if result.cases else 0
+
+        query = """
+        INSERT INTO autodailies_run_results (
+            account_id, username, success, fail_reason,
+            coins_balance, gold_balance, rice_balance, total_coins, total_gold,
+            checkin_streak, checkin_earned, giveaways_joined, cases_opened
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """
+
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(query, (
+                    account_id,
+                    username,
+                    result.success,
+                    result.reason,
+                    profile.balance.coins,
+                    profile.balance.gold,
+                    profile.rice,
+                    result.all_coins,
+                    result.all_gold,
+                    checkin_streak,
+                    checkin_earned,
+                    giveaways_joined,
+                    cases_opened
+                ))
+                self.conn.commit()
+                prsuccess(f"Successfully logged results for account: {account_id}")
+                return True
+
+        except Exception as e:
+            prerror(f"Error writing run results to the database: {e}")
+            if self.conn:
+                try:
+                    self.conn.rollback()
+                except Exception as e:
+                    prerror(f"Failed to rollback transaction: {e}")
+            return False
 
 class Notifications:
     def __init__(self, results: list):

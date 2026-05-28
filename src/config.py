@@ -44,6 +44,14 @@ class Config:
         self.telegram_token = telegram.get("bot_token", "")
         self.telegram_chat_id = telegram.get("chat_id", "")
 
+        db = raw.get("db", {})
+        self.db_enabled = db.get("enabled", False)
+        self.db_host = db.get("host", "")
+        self.db_port = db.get("port", 0)
+        self.db_name = db.get("name", "")
+        self.db_username = db.get("username", "")
+        self.db_password = db.get("password", "")
+
         paths = raw.get("paths", {})
         self.chromium_path = args.chromium_path or os.path.abspath(paths.get("chromium_path", ""))
         self.chromedriver_path = args.chromedriver_path or os.path.abspath(paths.get("chromedriver_path", ""))
