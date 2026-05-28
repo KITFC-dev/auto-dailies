@@ -17,7 +17,7 @@ You can add your telegram account's cookies using pickle and put them in account
 1. Clone the repository using:
 
     ```bash
-    git clone https://github.com/kitfc-dev/autodailies.git
+    git clone https://github.com/tensake/autodailies.git
     ```
 
 2. Install python dependencies:
@@ -39,7 +39,7 @@ You can add your telegram account's cookies using pickle and put them in account
 1. Clone the repository using:
 
     ```bash
-    git clone https://github.com/kitfc-dev/autodailies.git
+    git clone https://github.com/tensake/autodailies.git
     ```
 
 2. Add account `.pkl` files to the `accounts` or directory you choose, that contain pickle files needed to login to the website.
