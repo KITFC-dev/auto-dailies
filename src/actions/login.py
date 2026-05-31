@@ -54,37 +54,45 @@ def run_login_tg(driver) -> bool:
     driver.get(CONFIG.referral_url or BASE_URL)
     origin_tab = driver.current_window_handle
     
-    # Open Telegram login page
+    # Open Telegram login page if not open already. Don't retry because
+    # theres a possiblity of this form appearing automatically.
+    click_el(
+        driver, 
+        wait_for(
+            Condition.CLICKABLE, 
+            wait, 
+            LoginSelectors.LOGIN_BUTTON), 
+        retries=0
+    )
+
+    # Proceed with authentication
     if click_el(driver, wait_for(
-        Condition.CLICKABLE, wait, LoginSelectors.LOGIN_BUTTON
+        Condition.CLICKABLE, wait, LoginSelectors.TG_LOGIN_BUTTON
         )):
-        if click_el(driver, wait_for(
-            Condition.CLICKABLE, wait, LoginSelectors.TG_LOGIN_BUTTON
-            )):
-            # Open Telegram OAuth window
-            tg_tab = switch_newtab(driver)
-            tg_iframe = wait_for(
-                Condition.PRESENCE, wait, CommonSelectors.IFRAME
-            )
-            if tg_iframe:
-                driver.switch_to.frame(tg_iframe)
+        # Open Telegram OAuth window
+        tg_tab = switch_newtab(driver)
+        tg_iframe = wait_for(
+            Condition.PRESENCE, wait, CommonSelectors.IFRAME
+        )
+        if tg_iframe:
+            driver.switch_to.frame(tg_iframe)
+            click_el(driver, wait_for(
+                Condition.CLICKABLE, wait, CommonSelectors.BUTTON
+            ))
+            # Complete oauth
+            if oauth_loop(driver, switch_newtab(driver)):
+                # Switch back to tg login tab
+                driver.switch_to.window(tg_tab)
                 click_el(driver, wait_for(
                     Condition.CLICKABLE, wait, CommonSelectors.BUTTON
                 ))
-                # Complete oauth
-                if oauth_loop(driver, switch_newtab(driver)):
-                    # Switch back to tg login tab
-                    driver.switch_to.window(tg_tab)
-                    click_el(driver, wait_for(
-                        Condition.CLICKABLE, wait, CommonSelectors.BUTTON
-                    ))
-                    driver.close()
-                    
-                    # Switch back to main window and refresh
-                    driver.switch_to.window(origin_tab)
-                    driver.refresh()
-                    
-                    prsuccess(f"Login successful, secret code: {get_secretcode(driver)}")
-                    return True
+                driver.close()
+                
+                # Switch back to main window and refresh
+                driver.switch_to.window(origin_tab)
+                driver.refresh()
+                
+                prsuccess(f"Login successful, secret code: {get_secretcode(driver)}")
+                return True
     
     return False
