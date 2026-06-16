@@ -66,6 +66,7 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
         else:
             break
 
+    # Snapshot all item data before selling to avoid stale references
     for item in find(driver, InventorySelectors.ITEM_BOX, multiple=True):
         # Get item info
         name = parse_text(find(item, InventorySelectors.NAME))
@@ -75,15 +76,19 @@ def get_profile_inventory(driver) -> list[InventoryItem]:
         price = parse_num(find(item, InventorySelectors.PRICE))
         currency_type = parse_currency(
             parse_attr(find(item, InventorySelectors.CURRENCY_TYPE)))
-        sell_button = find(item, InventorySelectors.SELL_BUTTON)
-        
-        item_data = InventoryItem(
+
+        res.append(InventoryItem(
             name=name,
             image=image,
             price=price,
-            currency_type=currency_type)
+            currency_type=currency_type))
+
+    # Sell items
+    item_boxes = find(driver, InventorySelectors.ITEM_BOX, multiple=True)
+    for i, item_data in enumerate(res):
+        sell_button = find(item_boxes[i], InventorySelectors.SELL_BUTTON) if i < len(item_boxes) else None
         item_data.sold = sell_item(driver, item_data, sell_button)
-        res.append(item_data)
+
     return res
 
 @handle_exceptions()
